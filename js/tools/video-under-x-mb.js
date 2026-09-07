@@ -2,22 +2,38 @@
 'use strict';
 const input=document.getElementById('videoFileInput'),drop=document.getElementById('videoDropZone'),info=document.getElementById('videoFileInfo'),size=document.getElementById('videoTargetSize'),unit=document.getElementById('videoTargetUnit'),audio=document.getElementById('videoAudioBitrate'),button=document.getElementById('videoAnalyzeButton'),result=document.getElementById('videoAnalyzeResult'),durationEl=document.getElementById('videoDuration'),originalEl=document.getElementById('videoOriginalSize'),targetEl=document.getElementById('videoTargetResult'),bitrateEl=document.getElementById('videoBitrateResult'),status=document.getElementById('videoStatus');
 let file=null,duration=0,sourceWidth=0,sourceHeight=0,videoKbps=0,audioKbps=128,targetBytes=0,ffmpeg=null,fetchFileFn=null,outputURL=null;
+
+const modeLabel=document.createElement('label');
+modeLabel.textContent='Compression mode';
+const mode=document.createElement('select');
+mode.id='videoCompressionMode';
+mode.innerHTML='<option value="fast" selected>Fast · quicker, smart resize</option><option value="quality">Best quality · slower, preserves more detail</option>';
+button.parentNode.insertBefore(modeLabel,button);
+button.parentNode.insertBefore(mode,button);
+
 const actionWrap=document.createElement('div');
 actionWrap.className='controls';
 actionWrap.innerHTML='<button id="videoEncodeButton" type="button" disabled>Compress video</button><div id="videoProgressBox" class="status-box" hidden></div><button id="videoDownloadButton" class="download-button" type="button" hidden>Download compressed video</button>';
 result.appendChild(actionWrap);
 const encodeButton=actionWrap.querySelector('#videoEncodeButton'),progressBox=actionWrap.querySelector('#videoProgressBox'),downloadButton=actionWrap.querySelector('#videoDownloadButton');
+
 function bytes(n){if(n<1048576)return `${(n/1024).toFixed(1)} KB`;return `${(n/1048576).toFixed(2)} MB`;}
 function time(s){const m=Math.floor(s/60),r=Math.round(s%60);return `${m}:${String(r).padStart(2,'0')}`;}
 function ext(name){const m=(name||'').match(/\.([a-z0-9]+)$/i);return m?m[1].toLowerCase():'mp4';}
 function originalBase(name){return (name||'video').replace(/\.[^.]+$/,'').replace(/[<>:"/\\|?*\u0000-\u001F]/g,'-').replace(/\s+/g,' ').replace(/[. ]+$/,'').trim()||'video';}
 function cleanError(err){const raw=err&&err.message?err.message:String(err||'Unknown error');return raw.replace(/^Error:\s*/,'').slice(0,900);}
 function resetOutput(){if(outputURL){URL.revokeObjectURL(outputURL);outputURL=null;}downloadButton.hidden=true;progressBox.hidden=true;encodeButton.disabled=true;}
-function smartScale(){
+
+function smartScale(selectedMode=mode.value){
   if(!sourceWidth||!sourceHeight)return null;
   let cap=0;
-  if(videoKbps<700)cap=480;
-  else if(videoKbps<1800)cap=720;
+  if(selectedMode==='fast'){
+    if(videoKbps<900)cap=480;
+    else if(videoKbps<2500)cap=720;
+  }else{
+    if(videoKbps<450)cap=480;
+    else if(videoKbps<1200)cap=720;
+  }
   if(!cap)return null;
   const shortSide=Math.min(sourceWidth,sourceHeight);
   if(shortSide<=cap)return null;
@@ -26,9 +42,22 @@ function smartScale(){
   const h=Math.max(2,Math.round(sourceHeight*ratio/2)*2);
   return {w,h,cap};
 }
+
+function refreshAnalysis(){
+  if(!file||!duration||result.hidden)return;
+  const selectedMode=mode.value;
+  const scale=smartScale(selectedMode);
+  const modeText=selectedMode==='fast'?'Fast mode uses the quickest encoder settings and more aggressive smart resizing.':'Best quality uses a slower encoder preset and keeps more of the original resolution.';
+  if(videoKbps>=80&&targetBytes<file.size){
+    status.textContent=`${modeText} Target: around ${videoKbps} kbps video + ${audioKbps} kbps audio.${scale?` Output will be resized from ${sourceWidth}×${sourceHeight} to ${scale.w}×${scale.h}.`:' Original resolution will be preserved.'} Processing stays on this device.`;
+  }
+}
+mode.addEventListener('change',refreshAnalysis);
+
 function setFile(f){if(!f||!f.type.startsWith('video/'))return alert('Please choose a video file.');file=f;duration=0;sourceWidth=0;sourceHeight=0;resetOutput();button.disabled=true;result.hidden=true;info.hidden=false;info.textContent=`${f.name} · ${bytes(f.size)} · reading duration…`;const u=URL.createObjectURL(f),v=document.createElement('video');v.preload='metadata';v.onloadedmetadata=()=>{duration=v.duration;sourceWidth=v.videoWidth||0;sourceHeight=v.videoHeight||0;URL.revokeObjectURL(u);if(!Number.isFinite(duration)||duration<=0)return alert('Could not read video duration.');const dims=sourceWidth&&sourceHeight?` · ${sourceWidth}×${sourceHeight}`:'';info.textContent=`${f.name} · ${bytes(f.size)} · ${time(duration)}${dims}`;button.disabled=false;};v.onerror=()=>{URL.revokeObjectURL(u);alert('Could not read this video. Try MP4 or WebM.');};v.src=u;}
 input.addEventListener('change',e=>setFile(e.target.files[0]));['dragenter','dragover'].forEach(t=>drop.addEventListener(t,e=>{e.preventDefault();drop.classList.add('dragging')}));['dragleave','drop'].forEach(t=>drop.addEventListener(t,e=>{e.preventDefault();drop.classList.remove('dragging')}));drop.addEventListener('drop',e=>setFile(e.dataTransfer.files[0]));
-button.addEventListener('click',()=>{if(!file||!duration)return;const target=Number(size.value);if(!target||target<=0)return alert('Enter a valid target size.');targetBytes=target*(unit.value==='MB'?1048576:1024);audioKbps=Number(audio.value);const totalKbps=(targetBytes*8/duration/1000)*0.93;videoKbps=Math.floor(totalKbps-audioKbps);durationEl.textContent=time(duration);originalEl.textContent=bytes(file.size);targetEl.textContent=`${target} ${unit.value}`;downloadButton.hidden=true;if(videoKbps<80){bitrateEl.textContent='Too low';status.textContent='That target is probably too small for this duration. Increase the target size for a usable video.';encodeButton.disabled=true;}else if(targetBytes>=file.size){bitrateEl.textContent='No compression needed';status.textContent='Your original video is already under this limit.';encodeButton.disabled=true;}else{const scale=smartScale();bitrateEl.textContent=`≈ ${videoKbps} kbps`;status.textContent=`Ready to encode around ${videoKbps} kbps video + ${audioKbps} kbps audio.${scale?` Smart resize: ${sourceWidth}×${sourceHeight} → ${scale.w}×${scale.h} for better speed and quality at this bitrate.`:''} Processing stays on this device.`;encodeButton.disabled=false;encodeButton.textContent='Compress video';}result.hidden=false;});
+
+button.addEventListener('click',()=>{if(!file||!duration)return;const target=Number(size.value);if(!target||target<=0)return alert('Enter a valid target size.');targetBytes=target*(unit.value==='MB'?1048576:1024);audioKbps=Number(audio.value);const totalKbps=(targetBytes*8/duration/1000)*0.93;videoKbps=Math.floor(totalKbps-audioKbps);durationEl.textContent=time(duration);originalEl.textContent=bytes(file.size);targetEl.textContent=`${target} ${unit.value}`;downloadButton.hidden=true;if(videoKbps<80){bitrateEl.textContent='Too low';status.textContent='That target is probably too small for this duration. Increase the target size for a usable video.';encodeButton.disabled=true;}else if(targetBytes>=file.size){bitrateEl.textContent='No compression needed';status.textContent='Your original video is already under this limit.';encodeButton.disabled=true;}else{bitrateEl.textContent=`≈ ${videoKbps} kbps`;encodeButton.disabled=false;encodeButton.textContent='Compress video';refreshAnalysis();}result.hidden=false;refreshAnalysis();});
 
 async function loadFFmpeg(){
   if(ffmpeg)return ffmpeg;
@@ -48,13 +77,10 @@ async function loadFFmpeg(){
   }
   if(!FFmpegClass||!fetchFile||!toBlobURL)throw new Error('FFmpeg modules loaded but required exports were missing.');
   const instance=new FFmpegClass();
-  instance.on('progress',({progress})=>{if(Number.isFinite(progress)){const pct=Math.max(0,Math.min(100,Math.round(progress*100)));progressBox.textContent=`Compressing… ${pct}% · keep this tab open`;}});
+  instance.on('progress',({progress})=>{if(Number.isFinite(progress)){const pct=Math.max(0,Math.min(100,Math.round(progress*100)));progressBox.textContent=`Compressing… ${pct}% · ${mode.value==='fast'?'Fast':'Best quality'} mode · keep this tab open`;}});
   instance.on('log',({message})=>{if(message)console.debug('[CreatorTools FFmpeg]',message);});
   const localWorkerURL=new URL('js/vendor/ffmpeg-worker.js',document.baseURI).href;
-  const bases=[
-    'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.10/dist/esm',
-    'https://unpkg.com/@ffmpeg/core@0.12.10/dist/esm'
-  ];
+  const bases=['https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.10/dist/esm','https://unpkg.com/@ffmpeg/core@0.12.10/dist/esm'];
   let lastErr=null;
   for(const baseURL of bases){
     try{
@@ -68,24 +94,28 @@ async function loadFFmpeg(){
 }
 
 encodeButton.addEventListener('click',async()=>{if(!file||videoKbps<80)return;encodeButton.disabled=true;downloadButton.hidden=true;progressBox.hidden=false;try{
+  const selectedMode=mode.value;
   const engine=await loadFFmpeg();
   progressBox.textContent='Preparing video in browser memory…';
   const inputName=`input.${ext(file.name)}`,outputName='creator-tools-output.mp4';
   try{await engine.deleteFile(inputName);}catch(_){}try{await engine.deleteFile(outputName);}catch(_){}
   await engine.writeFile(inputName,await fetchFileFn(file));
-  progressBox.textContent='Compressing… 0% · fast mode · keep this tab open';
-  const scale=smartScale();
+  progressBox.textContent=`Compressing… 0% · ${selectedMode==='fast'?'Fast':'Best quality'} mode · keep this tab open`;
+  const scale=smartScale(selectedMode);
   const args=['-i',inputName,'-map','0:v:0','-map','0:a?','-map_metadata','0'];
-  if(scale)args.push('-vf',`scale=${scale.w}:${scale.h}:flags=fast_bilinear`);
-  args.push('-c:v','libx264','-b:v',`${videoKbps}k`,'-maxrate',`${Math.max(videoKbps,100)}k`,'-bufsize',`${Math.max(videoKbps*2,200)}k`,'-preset','ultrafast','-tune','fastdecode','-pix_fmt','yuv420p','-c:a','aac','-b:a',`${audioKbps}k`,'-movflags','+faststart','-y',outputName);
+  if(scale)args.push('-vf',`scale=${scale.w}:${scale.h}:flags=${selectedMode==='fast'?'fast_bilinear':'bicubic'}`);
+  args.push('-c:v','libx264','-b:v',`${videoKbps}k`,'-maxrate',`${Math.max(videoKbps,100)}k`,'-bufsize',`${Math.max(videoKbps*2,200)}k`,'-preset',selectedMode==='fast'?'ultrafast':'veryfast');
+  if(selectedMode==='fast')args.push('-tune','fastdecode');
+  args.push('-pix_fmt','yuv420p','-c:a','aac','-b:a',`${audioKbps}k`,'-movflags','+faststart','-y',outputName);
   const code=await engine.exec(args);if(code!==0)throw new Error(`FFmpeg exited with code ${code}`);
   const data=await engine.readFile(outputName);const blob=new Blob([data.buffer],{type:'video/mp4'});
   if(outputURL)URL.revokeObjectURL(outputURL);outputURL=URL.createObjectURL(blob);
   const targetLabel=`${String(size.value).replace(/\.0+$/,'')} ${unit.value}`;
   downloadButton.dataset.filename=`${originalBase(file.name)} - compressed under ${targetLabel}.mp4`;
   downloadButton.hidden=false;
-  progressBox.textContent=`Done ✓ ${bytes(blob.size)} output.${scale?` ${scale.w}×${scale.h}.`:''} ${blob.size<=targetBytes?'Target reached.':'Slightly above target; encoding size can vary a little.'}`;
+  progressBox.textContent=`Done ✓ ${bytes(blob.size)} output · ${selectedMode==='fast'?'Fast':'Best quality'} mode.${scale?` ${scale.w}×${scale.h}.`:''} ${blob.size<=targetBytes?'Target reached.':'Slightly above target; encoding size can vary a little.'}`;
   try{await engine.deleteFile(inputName);}catch(_){}try{await engine.deleteFile(outputName);}catch(_){}
 }catch(err){console.error('[CreatorTools video compression]',err);progressBox.textContent=`Compression failed: ${cleanError(err)}`;}finally{encodeButton.disabled=false;encodeButton.textContent='Compress again';}});
+
 downloadButton.addEventListener('click',()=>{if(!outputURL)return;const a=document.createElement('a');a.href=outputURL;a.download=downloadButton.dataset.filename||'creator-tools-compressed.mp4';document.body.appendChild(a);a.click();a.remove();});
 })();
