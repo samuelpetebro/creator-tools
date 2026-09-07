@@ -1,6 +1,14 @@
 (() => {
   'use strict';
 
+  if (!document.querySelector('link[data-aero-v2]')) {
+    const style = document.createElement('link');
+    style.rel = 'stylesheet';
+    style.href = 'css/aero-v2.css?v=1';
+    style.dataset.aeroV2 = 'true';
+    document.head.appendChild(style);
+  }
+
   const presets = {
     youtube: { name: 'YouTube Thumbnail', width: 1280, height: 720 },
     'instagram-post': { name: 'Instagram Post', width: 1080, height: 1080 },
