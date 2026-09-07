@@ -18,12 +18,18 @@ const resetCropButton=document.querySelector('#resetCropButton');
 let currentFile=null,currentImage=null,currentObjectUrl=null;
 let focusX=.5,focusY=.5,dragging=false,lastPointer={x:0,y:0};
 
+// Never visually disable the export control. If there is no image yet,
+// clicking it simply tells the user what is missing.
+processBtn.disabled=false;
+processBtn.removeAttribute('disabled');
+
 function clamp(v,min,max){return Math.min(max,Math.max(min,v));}
 function getCropRect(img,preset){
-  const sourceRatio=img.naturalWidth/img.naturalHeight,targetRatio=preset.width/preset.height;
-  let sw=img.naturalWidth,sh=img.naturalHeight;
-  if(sourceRatio>targetRatio)sw=img.naturalHeight*targetRatio;else sh=img.naturalWidth/targetRatio;
-  const maxX=img.naturalWidth-sw,maxY=img.naturalHeight-sh;
+  const iw=img.naturalWidth||img.width,ih=img.naturalHeight||img.height;
+  const sourceRatio=iw/ih,targetRatio=preset.width/preset.height;
+  let sw=iw,sh=ih;
+  if(sourceRatio>targetRatio)sw=ih*targetRatio;else sh=iw/targetRatio;
+  const maxX=iw-sw,maxY=ih-sh;
   return{sx:maxX*focusX,sy:maxY*focusY,sw,sh,maxX,maxY};
 }
 function renderCropPreview(){
@@ -43,8 +49,16 @@ function loadImage(file){
   if(currentObjectUrl)URL.revokeObjectURL(currentObjectUrl);
   currentObjectUrl=URL.createObjectURL(file);
   const img=new Image();
-  img.onload=()=>{currentImage=img;focusX=.5;focusY=.5;cropEditor.hidden=false;processBtn.disabled=false;result.hidden=true;requestAnimationFrame(renderCropPreview);};
-  img.onerror=()=>{alert('Could not read this image. Try JPG, PNG or WebP.');processBtn.disabled=true;};
+  img.onload=()=>{
+    currentImage=img;focusX=.5;focusY=.5;cropEditor.hidden=false;result.hidden=true;
+    processBtn.disabled=false;processBtn.removeAttribute('disabled');processBtn.textContent='Export this crop';
+    requestAnimationFrame(renderCropPreview);
+  };
+  img.onerror=()=>{
+    currentImage=null;
+    processBtn.disabled=false;processBtn.removeAttribute('disabled');
+    alert('This browser could not read that image. Try JPG, PNG or WebP.');
+  };
   img.src=currentObjectUrl;
 }
 function setFile(file){
@@ -72,7 +86,7 @@ function stopDragging(){dragging=false;cropStage.classList.remove('is-dragging')
 cropStage.addEventListener('pointerup',stopDragging);cropStage.addEventListener('pointercancel',stopDragging);cropStage.addEventListener('pointerleave',e=>{if(e.buttons===0)stopDragging();});
 
 function buildExport(){
-  if(!currentImage)return false;
+  if(!currentImage){alert('Upload an image first.');return false;}
   const preset=presets[select.value],crop=getCropRect(currentImage,preset);
   canvas.width=preset.width;canvas.height=preset.height;
   ctx.save();ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);
