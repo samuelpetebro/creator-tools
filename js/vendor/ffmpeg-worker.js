@@ -1,0 +1,14 @@
+const FFMessageType={LOAD:'LOAD',EXEC:'EXEC',WRITE_FILE:'WRITE_FILE',READ_FILE:'READ_FILE',DELETE_FILE:'DELETE_FILE',RENAME:'RENAME',CREATE_DIR:'CREATE_DIR',LIST_DIR:'LIST_DIR',DELETE_DIR:'DELETE_DIR',ERROR:'ERROR',PROGRESS:'PROGRESS',LOG:'LOG',MOUNT:'MOUNT',UNMOUNT:'UNMOUNT'};
+let ffmpeg;
+async function load({coreURL,wasmURL,workerURL}){const first=!ffmpeg;if(!coreURL)throw new Error('Missing coreURL');const mod=await import(coreURL);const createFFmpegCore=mod.default||mod.createFFmpegCore||self.createFFmpegCore;if(!createFFmpegCore)throw new Error('failed to import ffmpeg-core.js');const resolvedWasm=wasmURL||coreURL.replace(/\.js$/i,'.wasm');const resolvedWorker=workerURL||coreURL.replace(/\.js$/i,'.worker.js');ffmpeg=await createFFmpegCore({mainScriptUrlOrBlob:`${coreURL}#${btoa(JSON.stringify({wasmURL:resolvedWasm,workerURL:resolvedWorker}))}`});ffmpeg.setLogger(data=>self.postMessage({type:FFMessageType.LOG,data}));ffmpeg.setProgress(data=>self.postMessage({type:FFMessageType.PROGRESS,data}));return first;}
+function exec({args,timeout=-1}){ffmpeg.setTimeout(timeout);ffmpeg.exec(...args);const ret=ffmpeg.ret;ffmpeg.reset();return ret;}
+function writeFile({path,data}){ffmpeg.FS.writeFile(path,data);return true;}
+function readFile({path,encoding}){return ffmpeg.FS.readFile(path,{encoding});}
+function deleteFile({path}){ffmpeg.FS.unlink(path);return true;}
+function rename({oldPath,newPath}){ffmpeg.FS.rename(oldPath,newPath);return true;}
+function createDir({path}){ffmpeg.FS.mkdir(path);return true;}
+function listDir({path}){return ffmpeg.FS.readdir(path).map(name=>{const stat=ffmpeg.FS.stat(`${path}/${name}`);return{name,isDir:ffmpeg.FS.isDir(stat.mode)};});}
+function deleteDir({path}){ffmpeg.FS.rmdir(path);return true;}
+function mount({fsType,options,mountPoint}){const fs=ffmpeg.FS.filesystems[fsType];if(!fs)return false;ffmpeg.FS.mount(fs,options,mountPoint);return true;}
+function unmount({mountPoint}){ffmpeg.FS.unmount(mountPoint);return true;}
+self.onmessage=async({data:{id,type,data}})=>{const trans=[];let out;try{if(type!==FFMessageType.LOAD&&!ffmpeg)throw new Error('ffmpeg is not loaded');switch(type){case FFMessageType.LOAD:out=await load(data);break;case FFMessageType.EXEC:out=exec(data);break;case FFMessageType.WRITE_FILE:out=writeFile(data);break;case FFMessageType.READ_FILE:out=readFile(data);break;case FFMessageType.DELETE_FILE:out=deleteFile(data);break;case FFMessageType.RENAME:out=rename(data);break;case FFMessageType.CREATE_DIR:out=createDir(data);break;case FFMessageType.LIST_DIR:out=listDir(data);break;case FFMessageType.DELETE_DIR:out=deleteDir(data);break;case FFMessageType.MOUNT:out=mount(data);break;case FFMessageType.UNMOUNT:out=unmount(data);break;default:throw new Error('unknown message type');}}catch(e){self.postMessage({id,type:FFMessageType.ERROR,data:String(e)});return;}if(out instanceof Uint8Array)trans.push(out.buffer);self.postMessage({id,type,data:out},trans);};
