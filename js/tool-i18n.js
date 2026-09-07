@@ -1,0 +1,21 @@
+(()=>{'use strict';
+const lang=()=>localStorage.getItem('droop-lang')||((navigator.language||'en').toLowerCase().startsWith('es')?'es':'en');
+const common={
+ en:{all:'All tools',image:'Image',video:'Video',audio:'Audio',privacy:'Local processing · No uploads',runs:'✦ Runs locally',no:'No uploads',footer:'droop · Everything you need before you post.',footer2:'Private browser-based tools.'},
+ es:{all:'Todas las herramientas',image:'Imagen',video:'Video',audio:'Audio',privacy:'Procesamiento local · Sin subidas',runs:'✦ Funciona localmente',no:'Sin subidas',footer:'droop · Todo lo que necesitás antes de publicar.',footer2:'Herramientas privadas desde tu navegador.'}
+};
+const pages={
+ 'make-it-fit.html':{es:{lead:'Subí una imagen, elegí dónde la querés usar y obtené automáticamente el recorte y las dimensiones correctas.',ready:'Lista para publicar',drop:'Soltá una imagen acá',choose:'o hacé clic para elegir un archivo',button:'Ajustar mi imagen',readyFor:'Lista para',output:'Resultado',download:'Descargar imagen',info:[['Elegí el destino','No hace falta recordar dimensiones ni relaciones de aspecto.'],['Recorte automático','La imagen se centra y se adapta al formato seleccionado.'],['Procesamiento privado','Tu imagen permanece en tu dispositivo mientras se prepara.']]}},
+ 'under-x-mb.html':{es:{lead:'Definí el tamaño máximo y dejá que droop encuentre la mejor calidad de imagen posible sin superar ese límite.',auto:'Calidad automática',drop:'Soltá una imagen acá',choose:'procesada en tu dispositivo',button:'Comprimir al límite',original:'Original',result:'Resultado',quality:'Calidad JPEG',dimensions:'Dimensiones',download:'Descargar imagen comprimida',info:[['Elegí el límite','Ingresá el máximo de KB o MB que necesitás cumplir.'],['La calidad es automática','La herramienta busca el mejor resultado para que no tengas que adivinar.'],['Redimensiona solo si hace falta','Si comprimir no alcanza, las dimensiones se reducen progresivamente.']]}}
+};
+function txt(el,v){if(el&&v!=null)el.textContent=v}
+function apply(){const l=lang(),c=common[l],file=location.pathname.split('/').pop()||'index.html',p=pages[file]?.[l];document.documentElement.lang=l;
+ const nav=document.querySelectorAll('.top-nav a');[c.all,c.image,c.video,c.audio].forEach((v,i)=>txt(nav[i],v));txt(document.querySelector('.privacy-pill'),c.privacy);
+ const foot=document.querySelectorAll('footer span');txt(foot[0],c.footer);txt(foot[1],c.footer2);
+ let sw=document.querySelector('.lang-switch');if(!sw){sw=document.createElement('button');sw.className='lang-switch';sw.type='button';document.querySelector('.site-header')?.appendChild(sw);}txt(sw,l==='es'?'EN':'ES');sw.onclick=()=>{localStorage.setItem('droop-lang',l==='es'?'en':'es');location.reload();};
+ if(!p)return;
+ txt(document.querySelector('.tool-lead'),p.lead);const chips=document.querySelectorAll('.trust-chip');txt(chips[0],c.runs);if(file==='make-it-fit.html'){txt(chips[1],c.no);txt(chips[2],p.ready);txt(document.querySelector('#dropZone strong'),p.drop);txt(document.querySelector('#dropZone span'),p.choose);txt(document.querySelector('#processButton'),p.button);txt(document.querySelector('#resultPreset')?.previousElementSibling,p.readyFor);txt(document.querySelector('#resultDimensions')?.previousElementSibling,p.output);txt(document.querySelector('#downloadButton'),p.download);}else{txt(chips[0],c.runs);txt(chips[1],p.auto);txt(chips[2],c.no);txt(document.querySelector('#compressDropZone strong'),p.drop);txt(document.querySelector('#compressDropZone span'),p.choose);txt(document.querySelector('#compressButton'),p.button);const labels=document.querySelectorAll('#compressResult .comparison-grid span');[p.original,p.result,p.quality,p.dimensions].forEach((v,i)=>txt(labels[i],v));txt(document.querySelector('#compressDownloadButton'),p.download);}
+ document.querySelectorAll('.tool-info .info-card').forEach((card,i)=>{if(!p.info[i])return;txt(card.querySelector('h3'),p.info[i][0]);txt(card.querySelector('p'),p.info[i][1]);});
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',apply);else apply();
+})();
