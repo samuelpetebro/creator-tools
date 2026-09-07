@@ -3,13 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="CreatorTools helps creators resize and prepare images for YouTube, Instagram, TikTok, Discord, Spotify and more — directly in the browser." />
+  <meta name="description" content="CreatorTools helps creators resize, compress and prepare images for YouTube, Instagram, TikTok, Discord, Spotify and more — directly in the browser." />
   <title>CreatorTools — Everything you need before you post</title>
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
   <header class="site-header">
     <a class="brand" href="#">CreatorTools</a>
+    <nav class="top-nav" aria-label="Main navigation">
+      <a href="#make-it-fit">Make It Fit</a>
+      <a href="#under-x-mb">Under X MB</a>
+    </nav>
     <span class="privacy-pill">Local processing · No uploads</span>
   </header>
 
@@ -17,8 +21,11 @@
     <section class="hero">
       <p class="eyebrow">TOOLS FOR CREATORS</p>
       <h1>Everything you need<br />before you post.</h1>
-      <p class="hero-copy">Drop an image, choose where you're posting it, and CreatorTools prepares it for you.</p>
-      <a class="primary-link" href="#make-it-fit">Try Make It Fit ↓</a>
+      <p class="hero-copy">Drop an image, choose what you need, and CreatorTools handles the technical stuff in your browser.</p>
+      <div class="hero-actions">
+        <a class="primary-link" href="#make-it-fit">Try Make It Fit ↓</a>
+        <a class="secondary-link" href="#under-x-mb">Compress Under X MB</a>
+      </div>
     </section>
 
     <section class="workflow" aria-labelledby="workflow-title">
@@ -34,7 +41,7 @@
 
     <section class="tool-section" id="make-it-fit" aria-labelledby="tool-title">
       <div class="tool-copy">
-        <p class="section-label">FIRST TOOL · V0.1</p>
+        <p class="section-label">TOOL 01</p>
         <h2 id="tool-title">Make It Fit</h2>
         <p>Upload one image and choose its destination. We resize and crop it locally in your browser.</p>
       </div>
@@ -70,6 +77,54 @@
         </div>
       </div>
     </section>
+
+    <section class="tool-section tool-section-light" id="under-x-mb" aria-labelledby="under-title">
+      <div class="tool-copy">
+        <p class="section-label">TOOL 02 · NEW</p>
+        <h2 id="under-title">Under X MB</h2>
+        <p>Tell us the maximum file size. We automatically find the best JPEG quality that stays under your limit.</p>
+        <div class="feature-notes">
+          <span>✓ No upload</span>
+          <span>✓ Automatic quality search</span>
+          <span>✓ Best result under your limit</span>
+        </div>
+      </div>
+
+      <div class="tool-card tool-card-light">
+        <label class="drop-zone drop-zone-light" id="compressDropZone" for="compressFileInput">
+          <input id="compressFileInput" type="file" accept="image/jpeg,image/png,image/webp,image/*" hidden />
+          <strong>Drop an image here</strong>
+          <span>JPG, PNG or WebP · processed on your device</span>
+        </label>
+
+        <div class="file-info file-info-dark" id="compressFileInfo" hidden></div>
+
+        <div class="controls controls-light">
+          <label for="targetSize">Maximum file size</label>
+          <div class="size-row">
+            <input id="targetSize" type="number" min="0.05" step="0.05" value="2" />
+            <select id="targetUnit" aria-label="Target size unit">
+              <option value="MB" selected>MB</option>
+              <option value="KB">KB</option>
+            </select>
+          </div>
+          <button id="compressButton" type="button" disabled>Compress to target</button>
+        </div>
+
+        <div class="status-box" id="compressStatus" hidden></div>
+
+        <div class="result result-light" id="compressResult" hidden>
+          <div class="comparison-grid">
+            <div><span>Original</span><strong id="originalSize"></strong></div>
+            <div><span>Result</span><strong id="compressedSize"></strong></div>
+            <div><span>JPEG quality</span><strong id="compressedQuality"></strong></div>
+            <div><span>Dimensions</span><strong id="compressedDimensions"></strong></div>
+          </div>
+          <div class="preview-wrap preview-wrap-light"><img id="compressedPreview" alt="Compressed preview" /></div>
+          <button id="compressDownloadButton" class="download-button download-button-dark" type="button">Download compressed image</button>
+        </div>
+      </div>
+    </section>
   </main>
 
   <footer>
@@ -78,5 +133,6 @@
   </footer>
 
   <script src="js/app.js"></script>
+  <script src="js/tools/under-x-mb.js"></script>
 </body>
 </html>
