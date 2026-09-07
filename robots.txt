@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://samuelpetebro.github.io/creator-tools/sitemap.xml
+Sitemap: https://droopweb.lat/sitemap.xml
