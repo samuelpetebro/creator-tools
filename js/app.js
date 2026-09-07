@@ -15,180 +15,76 @@ const cropCanvas=document.querySelector('#cropPreviewCanvas');
 const cropCtx=cropCanvas.getContext('2d');
 const resetCropButton=document.querySelector('#resetCropButton');
 
-let currentFile=null;
-let currentImage=null;
-let currentObjectUrl=null;
-let focusX=.5;
-let focusY=.5;
-let dragging=false;
-let lastPointer={x:0,y:0};
+let currentFile=null,currentImage=null,currentObjectUrl=null;
+let focusX=.5,focusY=.5,dragging=false,lastPointer={x:0,y:0};
 
-function clamp(value,min,max){return Math.min(max,Math.max(min,value));}
-
+function clamp(v,min,max){return Math.min(max,Math.max(min,v));}
 function getCropRect(img,preset){
-  const sourceRatio=img.width/img.height;
-  const targetRatio=preset.width/preset.height;
-  let sw=img.width,sh=img.height;
-
-  if(sourceRatio>targetRatio){
-    sw=img.height*targetRatio;
-  }else{
-    sh=img.width/targetRatio;
-  }
-
-  const maxX=img.width-sw;
-  const maxY=img.height-sh;
-  const sx=maxX*focusX;
-  const sy=maxY*focusY;
-  return{sx,sy,sw,sh,maxX,maxY};
+  const sourceRatio=img.naturalWidth/img.naturalHeight,targetRatio=preset.width/preset.height;
+  let sw=img.naturalWidth,sh=img.naturalHeight;
+  if(sourceRatio>targetRatio)sw=img.naturalHeight*targetRatio;else sh=img.naturalWidth/targetRatio;
+  const maxX=img.naturalWidth-sw,maxY=img.naturalHeight-sh;
+  return{sx:maxX*focusX,sy:maxY*focusY,sw,sh,maxX,maxY};
 }
-
 function renderCropPreview(){
   if(!currentImage)return;
-  const preset=presets[select.value];
-  const ratio=preset.width/preset.height;
-  const maxWidth=Math.min(760,cropStage.clientWidth||760);
-  const maxHeight=440;
-  let width=maxWidth;
-  let height=width/ratio;
-
-  if(height>maxHeight){
-    height=maxHeight;
-    width=height*ratio;
-  }
-
+  const preset=presets[select.value],ratio=preset.width/preset.height;
+  const maxWidth=Math.max(260,Math.min(760,cropStage.clientWidth||760)),maxHeight=440;
+  let width=maxWidth,height=width/ratio;
+  if(height>maxHeight){height=maxHeight;width=height*ratio;}
   const dpr=Math.min(window.devicePixelRatio||1,2);
-  cropCanvas.width=Math.max(1,Math.round(width*dpr));
-  cropCanvas.height=Math.max(1,Math.round(height*dpr));
-  cropCanvas.style.width=`${Math.round(width)}px`;
-  cropCanvas.style.height=`${Math.round(height)}px`;
-
+  cropCanvas.width=Math.max(1,Math.round(width*dpr));cropCanvas.height=Math.max(1,Math.round(height*dpr));
+  cropCanvas.style.width=`${Math.round(width)}px`;cropCanvas.style.height=`${Math.round(height)}px`;
   const crop=getCropRect(currentImage,preset);
-  cropCtx.setTransform(dpr,0,0,dpr,0,0);
-  cropCtx.clearRect(0,0,width,height);
+  cropCtx.setTransform(dpr,0,0,dpr,0,0);cropCtx.clearRect(0,0,width,height);
   cropCtx.drawImage(currentImage,crop.sx,crop.sy,crop.sw,crop.sh,0,0,width,height);
 }
-
 function loadImage(file){
   if(currentObjectUrl)URL.revokeObjectURL(currentObjectUrl);
   currentObjectUrl=URL.createObjectURL(file);
   const img=new Image();
-  img.onload=()=>{
-    currentImage=img;
-    focusX=.5;
-    focusY=.5;
-    cropEditor.hidden=false;
-    processBtn.disabled=false;
-    result.hidden=true;
-    renderCropPreview();
-  };
+  img.onload=()=>{currentImage=img;focusX=.5;focusY=.5;cropEditor.hidden=false;processBtn.disabled=false;result.hidden=true;requestAnimationFrame(renderCropPreview);};
+  img.onerror=()=>{alert('Could not read this image. Try JPG, PNG or WebP.');processBtn.disabled=true;};
   img.src=currentObjectUrl;
 }
-
 function setFile(file){
-  if(!file||!file.type.startsWith('image/')){
-    alert('Please choose an image file.');
-    return;
-  }
-  currentFile=file;
-  info.hidden=false;
-  info.textContent=`${file.name} · ${(file.size/1024/1024).toFixed(2)} MB`;
-  loadImage(file);
+  if(!file||!file.type.startsWith('image/')){alert('Please choose an image file.');return;}
+  currentFile=file;info.hidden=false;info.textContent=`${file.name} · ${(file.size/1024/1024).toFixed(2)} MB`;loadImage(file);
 }
-
 input.addEventListener('change',e=>setFile(e.target.files[0]));
-
-['dragenter','dragover'].forEach(type=>drop.addEventListener(type,e=>{
-  e.preventDefault();
-  drop.classList.add('dragging');
-}));
-
-['dragleave','drop'].forEach(type=>drop.addEventListener(type,e=>{
-  e.preventDefault();
-  drop.classList.remove('dragging');
-}));
-
+['dragenter','dragover'].forEach(type=>drop.addEventListener(type,e=>{e.preventDefault();drop.classList.add('dragging');}));
+['dragleave','drop'].forEach(type=>drop.addEventListener(type,e=>{e.preventDefault();drop.classList.remove('dragging');}));
 drop.addEventListener('drop',e=>setFile(e.dataTransfer.files[0]));
+select.addEventListener('change',()=>{focusX=.5;focusY=.5;result.hidden=true;renderCropPreview();});
+resetCropButton.addEventListener('click',()=>{focusX=.5;focusY=.5;renderCropPreview();});
 
-select.addEventListener('change',()=>{
-  focusX=.5;
-  focusY=.5;
-  result.hidden=true;
-  renderCropPreview();
-});
-
-resetCropButton.addEventListener('click',()=>{
-  focusX=.5;
-  focusY=.5;
-  renderCropPreview();
-});
-
-cropStage.addEventListener('pointerdown',e=>{
-  if(!currentImage)return;
-  dragging=true;
-  lastPointer={x:e.clientX,y:e.clientY};
-  cropStage.setPointerCapture(e.pointerId);
-  cropStage.classList.add('is-dragging');
-});
-
+cropStage.addEventListener('pointerdown',e=>{if(!currentImage)return;dragging=true;lastPointer={x:e.clientX,y:e.clientY};try{cropStage.setPointerCapture(e.pointerId);}catch(_){}cropStage.classList.add('is-dragging');});
 cropStage.addEventListener('pointermove',e=>{
   if(!dragging||!currentImage)return;
-  const preset=presets[select.value];
-  const crop=getCropRect(currentImage,preset);
-  const rect=cropCanvas.getBoundingClientRect();
-  const dx=e.clientX-lastPointer.x;
-  const dy=e.clientY-lastPointer.y;
-  lastPointer={x:e.clientX,y:e.clientY};
-
-  if(crop.maxX>0){
-    const sourceDx=dx*(crop.sw/rect.width);
-    focusX=clamp(focusX-sourceDx/crop.maxX,0,1);
-  }
-  if(crop.maxY>0){
-    const sourceDy=dy*(crop.sh/rect.height);
-    focusY=clamp(focusY-sourceDy/crop.maxY,0,1);
-  }
+  const crop=getCropRect(currentImage,presets[select.value]),rect=cropCanvas.getBoundingClientRect();
+  if(!rect.width||!rect.height)return;
+  const dx=e.clientX-lastPointer.x,dy=e.clientY-lastPointer.y;lastPointer={x:e.clientX,y:e.clientY};
+  if(crop.maxX>0)focusX=clamp(focusX-(dx*(crop.sw/rect.width))/crop.maxX,0,1);
+  if(crop.maxY>0)focusY=clamp(focusY-(dy*(crop.sh/rect.height))/crop.maxY,0,1);
   renderCropPreview();
 });
+function stopDragging(){dragging=false;cropStage.classList.remove('is-dragging');}
+cropStage.addEventListener('pointerup',stopDragging);cropStage.addEventListener('pointercancel',stopDragging);cropStage.addEventListener('pointerleave',e=>{if(e.buttons===0)stopDragging();});
 
-function stopDragging(e){
-  dragging=false;
-  cropStage.classList.remove('is-dragging');
-  if(e&&cropStage.hasPointerCapture?.(e.pointerId))cropStage.releasePointerCapture(e.pointerId);
-}
-
-cropStage.addEventListener('pointerup',stopDragging);
-cropStage.addEventListener('pointercancel',stopDragging);
-
-processBtn.addEventListener('click',()=>{
-  if(!currentImage)return;
-  const preset=presets[select.value];
-  const crop=getCropRect(currentImage,preset);
-
-  canvas.width=preset.width;
-  canvas.height=preset.height;
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  ctx.drawImage(currentImage,crop.sx,crop.sy,crop.sw,crop.sh,0,0,preset.width,preset.height);
-
+function buildExport(){
+  if(!currentImage)return false;
+  const preset=presets[select.value],crop=getCropRect(currentImage,preset);
+  canvas.width=preset.width;canvas.height=preset.height;
+  ctx.save();ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.drawImage(currentImage,crop.sx,crop.sy,crop.sw,crop.sh,0,0,preset.width,preset.height);ctx.restore();
   document.querySelector('#resultPreset').textContent=preset.name;
   document.querySelector('#resultDimensions').textContent=`${preset.width} × ${preset.height} JPG`;
-  result.hidden=false;
-  result.scrollIntoView({behavior:'smooth',block:'nearest'});
-});
-
+  result.hidden=false;return true;
+}
+processBtn.addEventListener('click',()=>{if(buildExport())requestAnimationFrame(()=>result.scrollIntoView({behavior:'smooth',block:'nearest'}));});
 downloadBtn.addEventListener('click',()=>{
+  if(!buildExport())return;
   const preset=presets[select.value];
-  canvas.toBlob(blob=>{
-    if(!blob)return;
-    const url=URL.createObjectURL(blob);
-    const a=document.createElement('a');
-    a.href=url;
-    a.download=`creatortools-${select.value}-${preset.width}x${preset.height}.jpg`;
-    a.click();
-    setTimeout(()=>URL.revokeObjectURL(url),1000);
-  },'image/jpeg',.92);
+  canvas.toBlob(blob=>{if(!blob){alert('Could not export this image.');return;}const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`creatortools-${select.value}-${preset.width}x${preset.height}.jpg`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);},'image/jpeg',.92);
 });
-
-window.addEventListener('resize',()=>{
-  if(currentImage)renderCropPreview();
-});
+window.addEventListener('resize',()=>{if(currentImage)renderCropPreview();});
