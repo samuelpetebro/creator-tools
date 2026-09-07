@@ -8,8 +8,8 @@ const tools=[
 {cat:'video',icon:'◉',title:'Video Under X MB',desc:'Compress a video toward the maximum size you choose.',href:'video-under-x-mb.html',tag:'Beta'},
 {cat:'video',icon:'✂',title:'Video Trimmer',desc:'Cut out exactly the part of a video you want to keep.',href:'video-trimmer.html',tag:'New'},
 {cat:'audio',icon:'♫',title:'Extract Audio',desc:'Turn a video into an MP3 or WAV file.',href:'extract-audio/',tag:'Stable'},
-{cat:'audio',icon:'⇄',title:'Audio Converter',desc:'Convert common audio formats to MP3 or WAV.',href:'#audio-converter',tag:'Stable'},
-{cat:'audio',icon:'✂',title:'Audio Trimmer',desc:'Trim songs, samples, voice notes and podcast clips.',href:'#audio-trimmer',tag:'New'},
+{cat:'audio',icon:'⇄',title:'Audio Converter',desc:'Convert common audio formats to MP3 or WAV.',href:'audio-converter.html',tag:'Stable'},
+{cat:'audio',icon:'✂',title:'Audio Trimmer',desc:'Trim songs, samples, voice notes and podcast clips.',href:'audio-trimmer.html',tag:'New'},
 {cat:'social',icon:'▣',title:'Social Safe Zones',desc:'Preview where app UI can cover vertical content.',href:'safe-zones.html',tag:'Social'},
 {cat:'image',icon:'◌',title:'Background Remover',desc:'A lighter, safer version is being rebuilt.',href:'#background-remover',tag:'Coming soon',disabled:true}
 ];
