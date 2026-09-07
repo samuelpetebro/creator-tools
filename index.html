@@ -41,9 +41,9 @@
 
     <section class="tool-section" id="make-it-fit" aria-labelledby="tool-title">
       <div class="tool-copy">
-        <p class="section-label">TOOL 01 · CROP V2</p>
+        <p class="section-label">TOOL 01 · STABLE</p>
         <h2 id="tool-title">Make It Fit</h2>
-        <p>Upload one image, choose its destination and position the crop exactly where you want it. Everything happens locally in your browser.</p>
+        <p>Upload one image and choose its destination. CreatorTools crops it from the center and exports the correct dimensions locally in your browser.</p>
       </div>
 
       <div class="tool-card">
@@ -66,23 +66,8 @@
           </select>
         </div>
 
-        <div class="crop-editor" id="cropEditor" hidden>
-          <div class="crop-editor-head">
-            <div>
-              <span>POSITION YOUR CROP</span>
-              <strong>Drag the image to reframe</strong>
-            </div>
-            <button id="resetCropButton" type="button">Reset</button>
-          </div>
-          <div class="crop-stage" id="cropStage">
-            <canvas id="cropPreviewCanvas"></canvas>
-            <div class="crop-grid" aria-hidden="true"></div>
-          </div>
-          <p class="crop-hint">Drag left/right or up/down. The preview is exactly what will be exported.</p>
-        </div>
-
         <div class="controls">
-          <button id="processButton" type="button">Export this crop</button>
+          <button id="processButton" type="button" disabled>Fix my image</button>
         </div>
 
         <div class="result" id="result" hidden>
@@ -150,7 +135,7 @@
     <span>Your files stay on your device.</span>
   </footer>
 
-  <script src="js/tools/make-it-fit-v2.js"></script>
+  <script src="js/tools/make-it-fit-stable.js?v=1"></script>
   <script src="js/tools/under-x-mb.js?v=2"></script>
 </body>
 </html>
