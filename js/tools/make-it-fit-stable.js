@@ -4,7 +4,7 @@
   if (!document.querySelector('link[data-aero-v2]')) {
     const style = document.createElement('link');
     style.rel = 'stylesheet';
-    style.href = 'css/aero-v2.css?v=1';
+    style.href = 'css/aero-v2.css?v=2';
     style.dataset.aeroV2 = 'true';
     document.head.appendChild(style);
   }
