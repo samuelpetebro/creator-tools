@@ -1,16 +1,16 @@
 (()=>{'use strict';
 const tools=[
-{cat:'image',icon:'✦',title:'Make It Fit',desc:'Resize and crop for YouTube, Instagram, Spotify and more.',href:'#make-it-fit',tag:'Popular'},
-{cat:'image',icon:'↓',title:'Under X MB',desc:'Hit a file-size limit automatically without the guesswork.',href:'#under-x-mb',tag:'Smart'},
-{cat:'image',icon:'▦',title:'Release Pack',desc:'Turn one artwork into a complete set of ready-to-post sizes.',href:'#release-pack',tag:'Workflow'},
-{cat:'image',icon:'◇',title:'Metadata Cleaner',desc:'Create a clean copy without common embedded image metadata.',href:'#metadata-cleaner',tag:'Privacy'},
+{cat:'image',icon:'✦',title:'Make It Fit',desc:'Resize and crop for YouTube, Instagram, Spotify and more.',href:'make-it-fit.html',tag:'Popular'},
+{cat:'image',icon:'↓',title:'Under X MB',desc:'Hit a file-size limit automatically without the guesswork.',href:'under-x-mb.html',tag:'Smart'},
+{cat:'image',icon:'▦',title:'Release Pack',desc:'Turn one artwork into a complete set of ready-to-post sizes.',href:'release-pack.html',tag:'Workflow'},
+{cat:'image',icon:'◇',title:'Metadata Cleaner',desc:'Create a clean copy without common embedded image metadata.',href:'metadata-cleaner.html',tag:'Privacy'},
 {cat:'image',icon:'↔',title:'Image Converter',desc:'Convert JPG, PNG and WebP directly in your browser.',href:'image-converter.html',tag:'Stable'},
-{cat:'video',icon:'◉',title:'Video Under X MB',desc:'Compress a video toward the maximum size you choose.',href:'#video-under-x-mb',tag:'Beta'},
+{cat:'video',icon:'◉',title:'Video Under X MB',desc:'Compress a video toward the maximum size you choose.',href:'video-under-x-mb.html',tag:'Beta'},
 {cat:'video',icon:'✂',title:'Video Trimmer',desc:'Cut out exactly the part of a video you want to keep.',href:'video-trimmer.html',tag:'New'},
 {cat:'audio',icon:'♫',title:'Extract Audio',desc:'Turn a video into an MP3 or WAV file.',href:'extract-audio/',tag:'Stable'},
 {cat:'audio',icon:'⇄',title:'Audio Converter',desc:'Convert common audio formats to MP3 or WAV.',href:'#audio-converter',tag:'Stable'},
 {cat:'audio',icon:'✂',title:'Audio Trimmer',desc:'Trim songs, samples, voice notes and podcast clips.',href:'#audio-trimmer',tag:'New'},
-{cat:'social',icon:'▣',title:'Social Safe Zones',desc:'Preview where app UI can cover vertical content.',href:'#safe-zones',tag:'Social'},
+{cat:'social',icon:'▣',title:'Social Safe Zones',desc:'Preview where app UI can cover vertical content.',href:'safe-zones.html',tag:'Social'},
 {cat:'image',icon:'◌',title:'Background Remover',desc:'A lighter, safer version is being rebuilt.',href:'#background-remover',tag:'Coming soon',disabled:true}
 ];
 function init(){const old=document.querySelector('.workflow');if(!old)return;old.id='tool-catalog';old.innerHTML=`<div class="catalog-head"><div><p class="section-label">ALL TOOLS</p><h2>What do you want to make?</h2><p class="catalog-copy">Pick what you're working with. We'll handle the technical stuff.</p></div><div class="catalog-search-wrap"><span>⌕</span><input id="catalogSearch" type="search" placeholder="Search tools…" autocomplete="off"></div></div><div class="catalog-tabs" role="tablist"><button class="active" data-filter="all">All</button><button data-filter="image">Image</button><button data-filter="video">Video</button><button data-filter="audio">Audio</button><button data-filter="social">Social</button></div><div class="catalog-grid" id="catalogGrid"></div><div class="catalog-empty" id="catalogEmpty" hidden>No tools found. Try another search.</div>`;
@@ -18,7 +18,7 @@ const grid=old.querySelector('#catalogGrid'),search=old.querySelector('#catalogS
 function render(){const q=search.value.trim().toLowerCase();const shown=tools.filter(t=>(filter==='all'||t.cat===filter)&&(!q||`${t.title} ${t.desc} ${t.cat}`.toLowerCase().includes(q)));grid.innerHTML=shown.map(t=>`<a class="catalog-card ${t.disabled?'is-disabled':''}" href="${t.href}" data-cat="${t.cat}"><div class="catalog-icon">${t.icon}</div><div class="catalog-card-top"><span class="catalog-category">${t.cat}</span><span class="catalog-tag">${t.tag}</span></div><h3>${t.title}</h3><p>${t.desc}</p><span class="catalog-open">${t.disabled?'Rebuilding':'Open tool'} <b>↗</b></span></a>`).join('');empty.hidden=shown.length>0;}
 tabs.forEach(btn=>btn.addEventListener('click',()=>{filter=btn.dataset.filter;tabs.forEach(x=>x.classList.toggle('active',x===btn));render();}));search.addEventListener('input',render);render();
 const hero=document.querySelector('.hero');if(hero){const copy=hero.querySelector('.hero-copy');if(copy)copy.textContent='Images, video and audio — ready to post without the technical headache. Private, simple, right in your browser.';let actions=hero.querySelector('.hero-actions');if(!actions){actions=document.createElement('div');actions.className='hero-actions';hero.appendChild(actions);}actions.innerHTML='<a class="primary-link" href="#tool-catalog">Explore tools ↓</a><span class="hero-trust">✦ Runs locally · No uploads</span>';}
-const nav=document.querySelector('.top-nav');if(nav)nav.innerHTML='<a href="#tool-catalog">Tools</a><a href="#tool-catalog" data-jump="image">Image</a><a href="#tool-catalog" data-jump="video">Video</a><a href="#tool-catalog" data-jump="audio">Audio</a><a href="#safe-zones">Social</a>';
+const nav=document.querySelector('.top-nav');if(nav)nav.innerHTML='<a href="#tool-catalog">Tools</a><a href="#tool-catalog" data-jump="image">Image</a><a href="#tool-catalog" data-jump="video">Video</a><a href="#tool-catalog" data-jump="audio">Audio</a><a href="safe-zones.html">Social</a>';
 nav?.querySelectorAll('[data-jump]').forEach(a=>a.addEventListener('click',()=>{const b=old.querySelector(`[data-filter="${a.dataset.jump}"]`);setTimeout(()=>b?.click(),80);}));}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
