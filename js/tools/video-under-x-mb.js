@@ -26,7 +26,7 @@ function loadScript(src){return new Promise((resolve,reject)=>{const existing=do
 async function loadFFmpeg(){
   if(ffmpeg)return ffmpeg;
   progressBox.hidden=false;
-  progressBox.textContent='Loading video engine for the first run…';
+  progressBox.textContent='Loading single-thread video engine for the first run…';
   const cdns=[
     'https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.11.6/dist/ffmpeg.min.js',
     'https://unpkg.com/@ffmpeg/ffmpeg@0.11.6/dist/ffmpeg.min.js'
@@ -35,23 +35,22 @@ async function loadFFmpeg(){
   for(const src of cdns){try{await loadScript(src);if(window.FFmpeg&&window.FFmpeg.createFFmpeg){loaded=true;break;}}catch(e){lastErr=e;}}
   if(!loaded)throw lastErr||new Error('FFmpeg library did not initialize in this browser.');
   const {createFFmpeg,fetchFile}=window.FFmpeg;
-  const instance=createFFmpeg({
+  const makeInstance=(corePath)=>createFFmpeg({
     log:false,
-    corePath:'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.11.0/dist/ffmpeg-core.js',
+    corePath,
     progress:({ratio})=>{if(Number.isFinite(ratio)){const pct=Math.max(0,Math.min(100,Math.round(ratio*100)));progressBox.textContent=`Compressing… ${pct}% · keep this tab open`;}}
   });
-  try{await instance.load();}
-  catch(firstError){
-    progressBox.textContent='First engine source failed — trying fallback…';
-    const fallback=createFFmpeg({
-      log:false,
-      corePath:'https://unpkg.com/@ffmpeg/core@0.11.0/dist/ffmpeg-core.js',
-      progress:({ratio})=>{if(Number.isFinite(ratio)){const pct=Math.max(0,Math.min(100,Math.round(ratio*100)));progressBox.textContent=`Compressing… ${pct}% · keep this tab open`;}}
-    });
-    try{await fallback.load();fallback.__fetchFile=fetchFile;ffmpeg=fallback;return fallback;}
-    catch(secondError){throw new Error(`Video engine failed to load. ${cleanError(secondError)}`);}
+  const corePaths=[
+    'https://cdn.jsdelivr.net/npm/@ffmpeg/core-st@0.11.1/dist/ffmpeg-core.js',
+    'https://unpkg.com/@ffmpeg/core-st@0.11.1/dist/ffmpeg-core.js'
+  ];
+  let coreErr=null;
+  for(const corePath of corePaths){
+    const instance=makeInstance(corePath);
+    try{await instance.load();instance.__fetchFile=fetchFile;ffmpeg=instance;return instance;}
+    catch(err){coreErr=err;progressBox.textContent='Engine source failed — trying fallback…';}
   }
-  instance.__fetchFile=fetchFile;ffmpeg=instance;return instance;
+  throw new Error(`Single-thread video engine failed to load. ${cleanError(coreErr)}`);
 }
 
 encodeButton.addEventListener('click',async()=>{if(!file||videoKbps<80)return;encodeButton.disabled=true;downloadButton.hidden=true;progressBox.hidden=false;try{
