@@ -1,7 +1,15 @@
-/* CreatorTools Aero V3 — cleaner hero, purple accents, memorable mark */
+/* droop Aero V4 — commercial Aero identity */
 .site-header{padding:9px 2.7vw;gap:14px}
-.brand{min-width:max-content;display:flex;align-items:center;gap:9px}
-.brand:before{content:"✦";width:29px;height:29px;margin:0;display:grid;place-items:center;border-radius:50%;font-size:14px;color:#fff;background:radial-gradient(circle at 32% 25%,#fff 0 8%,#bfe8ff 16%,#8d76ff 48%,#6547d9 72%,#2e79b7 100%);border:1px solid rgba(83,72,180,.28);box-shadow:inset 0 1px 3px rgba(255,255,255,.9),inset -5px -7px 11px rgba(74,48,151,.24),0 4px 14px rgba(104,72,216,.28);text-shadow:0 1px 3px rgba(54,34,120,.35)}
+.brand{min-width:max-content;display:flex;align-items:center;gap:0;font-weight:800;letter-spacing:-.7px;text-transform:lowercase;color:#263f67;text-decoration:none}
+.brand:before{content:none}
+.brand{font-size:0}
+.brand:after{content:"dr  op";white-space:pre;font-size:21px;line-height:29px;letter-spacing:-.8px}
+.brand{position:relative;padding-right:1px}
+.brand::first-letter{text-transform:lowercase}
+.brand span{display:none}
+/* The first o becomes the signature Aero bubble. Text remains 'droop' in HTML for accessibility/SEO. */
+.brand{--bubble:17px}
+.brand:before{content:"";display:block;position:absolute;width:var(--bubble);height:var(--bubble);left:20px;top:50%;transform:translateY(-43%);border-radius:50%;background:radial-gradient(circle at 31% 24%,#fff 0 8%,#d9f7ff 14%,#73d7f3 32%,#8e75ff 58%,#5b46cc 78%,#2f6fa9 100%);border:1px solid rgba(83,72,180,.25);box-shadow:inset 0 1px 3px rgba(255,255,255,.95),inset -4px -5px 8px rgba(74,48,151,.23),0 3px 9px rgba(104,72,216,.25)}
 .top-nav{order:2;max-width:none;flex:1;justify-content:center;gap:3px;padding:5px 7px;margin:0;background:linear-gradient(180deg,rgba(255,255,255,.52),rgba(239,244,255,.40));border:1px solid rgba(85,104,173,.17);border-radius:16px;box-shadow:inset 0 1px rgba(255,255,255,.88),0 3px 12px rgba(71,75,153,.06);overflow-x:auto}
 .top-nav a{position:relative;display:flex;align-items:center;justify-content:center;min-height:30px;padding:7px 9px;font-size:10px;letter-spacing:-.1px;color:#365673;transition:.16s ease}
 .top-nav a:hover{background:linear-gradient(180deg,rgba(255,255,255,.98),rgba(231,225,255,.9));color:#6547d9;box-shadow:inset 0 1px #fff,0 2px 9px rgba(103,72,190,.12);text-decoration:none}
@@ -12,16 +20,12 @@
 .eyebrow,.section-label{color:#6b54dc}
 .hero-copy{width:min(620px,calc(100vw - 12vw));max-width:620px;margin:0;padding:18px 20px;border:1px solid rgba(89,91,170,.22);border-radius:18px;background:linear-gradient(145deg,rgba(255,255,255,.82),rgba(240,237,255,.56));box-shadow:inset 0 1px rgba(255,255,255,.96),0 12px 34px rgba(77,77,158,.09);backdrop-filter:blur(12px) saturate(135%);font-size:16px;line-height:1.55;color:#49677d}
 .hero-actions{display:none!important}
-.workflow-grid article{position:relative;overflow:hidden}
-.workflow-grid article:before{content:"";position:absolute;left:0;right:0;top:0;height:4px;background:linear-gradient(90deg,#60c7ee,#8d74ff,#b65bd8);opacity:.9}
-.workflow-grid article:hover{border-color:rgba(112,81,207,.28);box-shadow:inset 0 1px #fff,0 18px 42px rgba(93,68,177,.13)}
-.workflow-grid span{color:#6f59da}.workflow-grid h3{color:#263f67}
+.workflow-grid article{position:relative;overflow:hidden}.workflow-grid article:before{content:"";position:absolute;left:0;right:0;top:0;height:4px;background:linear-gradient(90deg,#60c7ee,#8d74ff,#b65bd8);opacity:.9}.workflow-grid article:hover{border-color:rgba(112,81,207,.28);box-shadow:inset 0 1px #fff,0 18px 42px rgba(93,68,177,.13)}.workflow-grid span{color:#6f59da}.workflow-grid h3{color:#263f67}
 .tool-card,.tool-card-light{border-color:rgba(82,97,176,.23);box-shadow:inset 0 1px rgba(255,255,255,.96),0 18px 48px rgba(66,82,153,.11)}
 .drop-zone,.drop-zone-light{border-color:rgba(100,95,184,.38);background:linear-gradient(180deg,rgba(239,249,255,.78),rgba(247,242,255,.58))}.drop-zone:hover,.drop-zone.dragging,.drop-zone-light:hover,.drop-zone-light.dragging{background:linear-gradient(180deg,rgba(224,245,255,.9),rgba(237,228,255,.82));border-color:#785fe0;box-shadow:inset 0 0 30px rgba(108,82,220,.1)}
 .controls select:focus,.controls input:focus{border-color:#725bd7;box-shadow:0 0 0 3px rgba(113,86,215,.12)}
-.controls button,.controls-light button,.download-button{border-color:#5a49bf;background:linear-gradient(180deg,#8e74ff 0%,#6d55df 52%,#4e8fd1 100%);box-shadow:inset 0 1px rgba(255,255,255,.5),0 6px 16px rgba(88,66,190,.22)}
-.controls button:hover,.download-button:hover{filter:saturate(1.15) brightness(1.04)}
+.controls button,.controls-light button,.download-button{border-color:#5a49bf;background:linear-gradient(180deg,#8e74ff 0%,#6d55df 52%,#4e8fd1 100%);box-shadow:inset 0 1px rgba(255,255,255,.5),0 6px 16px rgba(88,66,190,.22)}.controls button:hover,.download-button:hover{filter:saturate(1.15) brightness(1.04)}
 .status-box{border-color:rgba(91,83,173,.22);background:linear-gradient(180deg,rgba(239,247,255,.84),rgba(243,237,255,.78))}
 @media(max-width:1180px){.site-header{padding-inline:2vw}.top-nav a{font-size:9px;padding-inline:7px}.privacy-pill{display:none}}
-@media(max-width:930px){.top-nav{justify-content:flex-start}.site-header{gap:10px}.brand{font-size:18px}.top-nav a[href="#video-under-x-mb"],.top-nav a[href="#extract-audio"],.top-nav a[href="#background-remover"]{margin-left:2px}.top-nav a[href="#video-under-x-mb"]:before,.top-nav a[href="#extract-audio"]:before,.top-nav a[href="#background-remover"]:before{display:none}}
+@media(max-width:930px){.top-nav{justify-content:flex-start}.site-header{gap:10px}.brand:after{font-size:20px}.top-nav a[href="#video-under-x-mb"],.top-nav a[href="#extract-audio"],.top-nav a[href="#background-remover"]{margin-left:2px}.top-nav a[href="#video-under-x-mb"]:before,.top-nav a[href="#extract-audio"]:before,.top-nav a[href="#background-remover"]:before{display:none}}
 @media(max-width:700px){.site-header{min-height:64px}.top-nav{display:none}.hero-copy{width:100%;max-width:100%}}
