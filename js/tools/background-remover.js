@@ -5,7 +5,8 @@ const MODEL_REVISION='4a3c40c36c94093cc1e724d9ea428b8fa4b57dc7';
 const MAX_OUTPUT_EDGE=4096;
 const $=id=>document.getElementById(id);
 const input=$('bgFileInput'),drop=$('bgDropZone'),info=$('bgFileInfo'),button=$('bgProcessButton'),status=$('bgStatus'),progress=$('bgProgress'),progressFill=progress.querySelector('span'),preview=$('bgPreview'),original=$('bgOriginal'),canvas=$('bgCanvas'),download=$('bgDownload'),note=$('bgNote');
-const isEs=()=>((localStorage.getItem('droop-language')||navigator.language||'en').toLowerCase().startsWith('es'));
+const resultDemo=$('bgDemoResult');
+const isEs=()=>((localStorage.getItem('droop-language')||localStorage.getItem('droop-lang')||navigator.language||'en').toLowerCase().startsWith('es'));
 const tr=(en,es)=>isEs()?es:en;
 let file=null,sourceURL=null,model=null,processor=null,isBusy=false,outputReady=false;
 
@@ -20,7 +21,7 @@ function applyLanguage(){
   if(!isEs()) return;
   document.documentElement.lang='es';
   document.title='Quitar fondo de imagen online — droop';
-  document.querySelector('.tool-kicker').textContent='IMAGEN · EXPERIMENTAL';
+  document.querySelector('.tool-kicker').textContent='IMAGEN · NUEVO';
   document.querySelector('.tool-title').textContent='Quitar fondo';
   document.querySelector('.tool-lead').textContent='Quitá el fondo de una imagen en tu dispositivo y exportá un PNG transparente.';
   const chips=[...document.querySelectorAll('.trust-chip')];
@@ -29,11 +30,12 @@ function applyLanguage(){
   button.textContent='Quitar fondo';
   $('bgOriginalLabel').textContent='Original';$('bgResultLabel').textContent='Fondo eliminado';
   download.textContent='Descargar PNG transparente';
-  note.textContent='La primera vez se descarga el modelo de procesamiento local y puede tardar más.';
+  note.textContent='La primera vez puede tardar un poco más mientras se prepara el procesamiento local.';
   const cards=[...document.querySelectorAll('.tool-info .info-card')];
-  const copy=[['Procesamiento privado','Tu imagen queda en tu dispositivo mientras se elimina el fondo.'],['Salida transparente','Exportá un PNG listo para miniaturas, productos y publicaciones.'],['Experimental','Estamos probando esta versión antes de agregarla al catálogo principal.']];
-  cards.forEach((c,i)=>{c.querySelector('h3').textContent=copy[i][0];c.querySelector('p').textContent=copy[i][1]});
+  const copy=[['Procesamiento privado','Tu imagen queda en tu dispositivo mientras se elimina el fondo.'],['Salida transparente','Exportá un PNG listo para miniaturas, productos y publicaciones.'],['Funciona en tu navegador','No necesitás una cuenta ni subir la imagen. Elegí una foto, quitá el fondo y descargá el resultado.']];
+  cards.forEach((c,i)=>{if(!copy[i])return;c.querySelector('h3').textContent=copy[i][0];c.querySelector('p').textContent=copy[i][1]});
   const nav=[...document.querySelectorAll('.top-nav a')];if(nav[0])nav[0].textContent='Todas las herramientas';if(nav[1])nav[1].textContent='Imagen';
+  const crumbs=[...document.querySelectorAll('.tool-breadcrumb *')];if(crumbs[0])crumbs[0].textContent='Todas las herramientas';if(crumbs[2])crumbs[2].textContent='Quitar fondo';
   document.querySelector('.privacy-pill').textContent='Procesamiento local · Sin subidas';
   const foot=[...document.querySelectorAll('footer span')];if(foot[0])foot[0].textContent='droop · Todo lo que necesitás antes de publicar.';if(foot[1])foot[1].textContent='Herramientas privadas desde tu navegador.';
 }
@@ -46,7 +48,9 @@ function sigmoid(x){return 1/(1+Math.exp(-x));}
 function setFile(f){
   if(!f)return;
   if(!validImage(f)){input.value='';alert(tr('Choose a JPG, PNG or WebP image.','Elegí una imagen JPG, PNG o WebP.'));return;}
-  file=f;outputReady=false;download.hidden=true;preview.hidden=true;status.hidden=true;progress.hidden=true;button.disabled=false;
+  file=f;outputReady=false;download.hidden=true;status.hidden=true;progress.hidden=true;button.disabled=false;
+  if(resultDemo)resultDemo.hidden=true;
+  canvas.hidden=false;canvas.width=1;canvas.height=1;
   if(sourceURL)URL.revokeObjectURL(sourceURL);sourceURL=URL.createObjectURL(f);original.src=sourceURL;
   info.hidden=false;info.textContent=`${f.name} · ${prettyBytes(f.size)}`;
 }
@@ -63,7 +67,7 @@ async function ensureModel(){
   for(const a of attempts){
     try{
       const options={device:a.device,dtype:a.dtype,revision:MODEL_REVISION,progress_callback:p=>{
-        if(p?.status==='progress'&&p.total){const ratio=Math.min(1,p.loaded/p.total);setStatus(tr('Preparing local processing…','Preparando procesamiento local…'),Math.round(5+ratio*45));}
+        if(p?.status==='progress'&&p.total){const ratio=Math.min(1,p.loaded/p.total);setStatus(tr('Preparing…','Preparando…'),Math.round(5+ratio*45));}
       }};
       [model,processor]=await Promise.all([
         AutoModel.from_pretrained(MODEL_ID,options),
@@ -97,15 +101,15 @@ async function buildTransparentResult(mask){
 button.addEventListener('click',async()=>{
   if(!file||isBusy)return;isBusy=true;button.disabled=true;download.hidden=true;outputReady=false;
   try{
-    setStatus(tr('Preparing local processing…','Preparando procesamiento local…'),3);
+    setStatus(tr('Preparing…','Preparando…'),3);
     await ensureModel();
-    setStatus(tr('Preparing your image…','Preparando tu imagen…'),58);
+    setStatus(tr('Preparing image…','Preparando imagen…'),58);
     const raw=await RawImage.read(sourceURL);const {pixel_values}=await processor(raw);
     setStatus(tr('Removing background…','Quitando fondo…'),72);
     const outputs=await model({input_image:pixel_values});const logits=outputs.logits||outputs.output||Object.values(outputs)[0];
     if(!logits?.data)throw new Error('BAD_OUTPUT');
     const mask=Float32Array.from(logits.data,sigmoid);
-    setStatus(tr('Finishing edges…','Terminando bordes…'),90);
+    setStatus(tr('Almost done…','Casi listo…'),90);
     await buildTransparentResult(mask);
     preview.hidden=false;download.hidden=false;outputReady=true;setStatus(tr('Ready ✓','Listo ✓'),100);
     preview.scrollIntoView({behavior:'smooth',block:'nearest'});
