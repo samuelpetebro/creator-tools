@@ -1,16 +1,17 @@
 import { AutoModel, AutoProcessor, RawImage, env } from 'https://cdn.jsdelivr.net/npm/@huggingface/transformers@4.2.0';
 
-const MODEL_ID='studioludens/birefnet-lite-512';
-const MODEL_REVISION='4a3c40c36c94093cc1e724d9ea428b8fa4b57dc7';
+const DESKTOP_MODEL_ID='studioludens/birefnet-lite-512';
+const DESKTOP_MODEL_REVISION='4a3c40c36c94093cc1e724d9ea428b8fa4b57dc7';
+const MOBILE_MODEL_ID='Xenova/modnet';
 const IS_MOBILE=/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)||Math.min(screen.width||9999,screen.height||9999)<820;
 const IS_IOS=/iPhone|iPad|iPod/i.test(navigator.userAgent);
-const MAX_OUTPUT_EDGE=IS_MOBILE?2560:4096;
+const MAX_OUTPUT_EDGE=IS_MOBILE?2048:4096;
 const $=id=>document.getElementById(id);
 const input=$('bgFileInput'),drop=$('bgDropZone'),info=$('bgFileInfo'),button=$('bgProcessButton'),status=$('bgStatus'),progress=$('bgProgress'),progressFill=progress.querySelector('span'),preview=$('bgPreview'),original=$('bgOriginal'),canvas=$('bgCanvas'),download=$('bgDownload'),note=$('bgNote');
 const resultDemo=$('bgDemoResult'),langSwitch=$('bgLangSwitch');
 const isEs=()=>((localStorage.getItem('droop-language')||localStorage.getItem('droop-lang')||navigator.language||'en').toLowerCase().startsWith('es'));
 const tr=(en,es)=>isEs()?es:en;
-let file=null,sourceURL=null,model=null,processor=null,isBusy=false,outputReady=false,stage='idle';
+let file=null,sourceURL=null,model=null,processor=null,isBusy=false,outputReady=false,stage='idle',modelKind=null;
 
 env.allowLocalModels=false;
 env.allowRemoteModels=true;
@@ -71,19 +72,35 @@ input.addEventListener('change',e=>setFile(e.target.files[0]));
 ['dragleave','drop'].forEach(t=>drop.addEventListener(t,e=>{e.preventDefault();drop.classList.remove('dragging')}));
 drop.addEventListener('drop',e=>setFile(e.dataTransfer.files[0]));
 
-async function loadAttempt(a){
-  const options={device:a.device,dtype:a.dtype,revision:MODEL_REVISION,progress_callback:p=>{
+async function loadDesktopAttempt(a){
+  const options={device:a.device,dtype:a.dtype,revision:DESKTOP_MODEL_REVISION,progress_callback:p=>{
     if(p?.status==='progress'&&p.total){const ratio=Math.min(1,p.loaded/p.total);setStatus(tr('Preparing…','Preparando…'),Math.round(5+ratio*45));}
   }};
   const loaded=await Promise.all([
-    AutoModel.from_pretrained(MODEL_ID,options),
-    AutoProcessor.from_pretrained(MODEL_ID,{revision:MODEL_REVISION})
+    AutoModel.from_pretrained(DESKTOP_MODEL_ID,options),
+    AutoProcessor.from_pretrained(DESKTOP_MODEL_ID,{revision:DESKTOP_MODEL_REVISION})
   ]);
-  model=loaded[0];processor=loaded[1];
+  model=loaded[0];processor=loaded[1];modelKind='desktop';
+}
+
+async function loadMobileModel(){
+  const options={device:'wasm',dtype:'fp32',progress_callback:p=>{
+    if(p?.status==='progress'&&p.total){const ratio=Math.min(1,p.loaded/p.total);setStatus(tr('Preparing…','Preparando…'),Math.round(5+ratio*45));}
+  }};
+  const loaded=await Promise.all([
+    AutoModel.from_pretrained(MOBILE_MODEL_ID,options),
+    AutoProcessor.from_pretrained(MOBILE_MODEL_ID)
+  ]);
+  model=loaded[0];processor=loaded[1];modelKind='mobile';
 }
 
 async function ensureModel(){
   if(model&&processor)return;
+  if(IS_MOBILE){
+    stage='load-mobile';
+    await loadMobileModel();
+    return;
+  }
   const attempts=[];
   if(navigator.gpu&&!IS_IOS)attempts.push({device:'webgpu',dtype:'fp16'});
   attempts.push({device:'wasm',dtype:'fp16'});
@@ -92,10 +109,10 @@ async function ensureModel(){
   for(const a of attempts){
     try{
       stage=`load-${a.device}-${a.dtype}`;
-      await loadAttempt(a);
+      await loadDesktopAttempt(a);
       return;
     }catch(err){
-      lastError=err;model=null;processor=null;
+      lastError=err;model=null;processor=null;modelKind=null;
       console.warn('[droop background removal] processing fallback',a.device,a.dtype,err);
     }
   }
@@ -104,16 +121,16 @@ async function ensureModel(){
 
 function loadHtmlImage(url){return new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>resolve(im);im.onerror=reject;im.src=url;});}
 
-async function buildTransparentResult(mask){
+async function buildTransparentResult(mask,maskW=512,maskH=512){
   stage='compose';
   const image=await loadHtmlImage(sourceURL);
   const scale=Math.min(1,MAX_OUTPUT_EDGE/Math.max(image.naturalWidth,image.naturalHeight));
   const w=Math.max(1,Math.round(image.naturalWidth*scale)),h=Math.max(1,Math.round(image.naturalHeight*scale));
   const sourceCanvas=document.createElement('canvas');sourceCanvas.width=w;sourceCanvas.height=h;
   const sctx=sourceCanvas.getContext('2d',{willReadFrequently:true});if(!sctx)throw new Error('NO_CANVAS');sctx.drawImage(image,0,0,w,h);
-  const maskCanvas=document.createElement('canvas');maskCanvas.width=512;maskCanvas.height=512;
-  const mctx=maskCanvas.getContext('2d');if(!mctx)throw new Error('NO_MASK_CANVAS');const maskImage=mctx.createImageData(512,512);
-  for(let i=0;i<512*512;i++){const a=Math.max(0,Math.min(255,Math.round(mask[i]*255))),j=i*4;maskImage.data[j]=a;maskImage.data[j+1]=a;maskImage.data[j+2]=a;maskImage.data[j+3]=255;}
+  const maskCanvas=document.createElement('canvas');maskCanvas.width=maskW;maskCanvas.height=maskH;
+  const mctx=maskCanvas.getContext('2d');if(!mctx)throw new Error('NO_MASK_CANVAS');const maskImage=mctx.createImageData(maskW,maskH);
+  for(let i=0;i<maskW*maskH;i++){const a=Math.max(0,Math.min(255,Math.round(mask[i]*255))),j=i*4;maskImage.data[j]=a;maskImage.data[j+1]=a;maskImage.data[j+2]=a;maskImage.data[j+3]=255;}
   mctx.putImageData(maskImage,0,0);
   const scaledMask=document.createElement('canvas');scaledMask.width=w;scaledMask.height=h;
   const smctx=scaledMask.getContext('2d',{willReadFrequently:true});if(!smctx)throw new Error('NO_SCALE_CANVAS');smctx.imageSmoothingEnabled=true;smctx.imageSmoothingQuality='high';smctx.drawImage(maskCanvas,0,0,w,h);
@@ -130,11 +147,22 @@ button.addEventListener('click',async()=>{
     stage='decode';setStatus(tr('Preparing image…','Preparando imagen…'),58);
     const raw=await RawImage.read(sourceURL);const {pixel_values}=await processor(raw);
     stage='inference';setStatus(tr('Removing background…','Quitando fondo…'),72);
-    const outputs=await model({input_image:pixel_values});const logits=outputs.logits||outputs.output||Object.values(outputs)[0];
-    if(!logits?.data)throw new Error('BAD_OUTPUT');
-    const mask=Float32Array.from(logits.data,sigmoid);
+    let tensor,mask,maskW=512,maskH=512;
+    if(modelKind==='mobile'){
+      const outputs=await model({input:pixel_values});
+      tensor=outputs.output||Object.values(outputs)[0];
+      if(!tensor?.data)throw new Error('BAD_OUTPUT');
+      const dims=tensor.dims||[];maskW=dims[dims.length-1]||512;maskH=dims[dims.length-2]||512;
+      mask=Float32Array.from(tensor.data,x=>Math.max(0,Math.min(1,x)));
+    }else{
+      const outputs=await model({input_image:pixel_values});
+      tensor=outputs.logits||outputs.output||Object.values(outputs)[0];
+      if(!tensor?.data)throw new Error('BAD_OUTPUT');
+      const dims=tensor.dims||[];maskW=dims[dims.length-1]||512;maskH=dims[dims.length-2]||512;
+      mask=Float32Array.from(tensor.data,sigmoid);
+    }
     setStatus(tr('Almost done…','Casi listo…'),90);
-    await buildTransparentResult(mask);
+    await buildTransparentResult(mask,maskW,maskH);
     preview.hidden=false;download.hidden=false;outputReady=true;stage='ready';setStatus(tr('Ready ✓','Listo ✓'),100);
     preview.scrollIntoView({behavior:'smooth',block:'nearest'});
   }catch(err){
