@@ -2,18 +2,20 @@ import { AutoModel, AutoProcessor, RawImage, env } from 'https://cdn.jsdelivr.ne
 
 const MODEL_ID='studioludens/birefnet-lite-512';
 const MODEL_REVISION='4a3c40c36c94093cc1e724d9ea428b8fa4b57dc7';
-const MAX_OUTPUT_EDGE=4096;
+const IS_MOBILE=/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)||Math.min(screen.width||9999,screen.height||9999)<820;
+const IS_IOS=/iPhone|iPad|iPod/i.test(navigator.userAgent);
+const MAX_OUTPUT_EDGE=IS_MOBILE?2560:4096;
 const $=id=>document.getElementById(id);
 const input=$('bgFileInput'),drop=$('bgDropZone'),info=$('bgFileInfo'),button=$('bgProcessButton'),status=$('bgStatus'),progress=$('bgProgress'),progressFill=progress.querySelector('span'),preview=$('bgPreview'),original=$('bgOriginal'),canvas=$('bgCanvas'),download=$('bgDownload'),note=$('bgNote');
 const resultDemo=$('bgDemoResult'),langSwitch=$('bgLangSwitch');
 const isEs=()=>((localStorage.getItem('droop-language')||localStorage.getItem('droop-lang')||navigator.language||'en').toLowerCase().startsWith('es'));
 const tr=(en,es)=>isEs()?es:en;
-let file=null,sourceURL=null,model=null,processor=null,isBusy=false,outputReady=false;
+let file=null,sourceURL=null,model=null,processor=null,isBusy=false,outputReady=false,stage='idle';
 
 env.allowLocalModels=false;
 env.allowRemoteModels=true;
 env.useBrowserCache=true;
-if(env.backends?.onnx?.wasm) env.backends.onnx.wasm.numThreads=Math.min(4,navigator.hardwareConcurrency||4);
+if(env.backends?.onnx?.wasm) env.backends.onnx.wasm.numThreads=IS_MOBILE?1:Math.min(4,navigator.hardwareConcurrency||4);
 
 applyLanguage();
 if(langSwitch){
@@ -39,7 +41,7 @@ function applyLanguage(){
   button.textContent='Quitar fondo';
   $('bgOriginalLabel').textContent='Original';$('bgResultLabel').textContent='Fondo eliminado';
   download.textContent='Descargar PNG transparente';
-  note.textContent='La primera vez puede tardar un poco más mientras se prepara el procesamiento local.';
+  note.textContent=IS_MOBILE?'En teléfono, la primera vez puede tardar un poco más mientras se prepara el procesamiento.':'La primera vez puede tardar un poco más mientras se prepara el procesamiento local.';
   const cards=[...document.querySelectorAll('.tool-info .info-card')];
   const copy=[['Procesamiento privado','Tu imagen queda en tu dispositivo mientras se elimina el fondo.'],['Salida transparente','Exportá un PNG listo para miniaturas, productos y publicaciones.'],['Funciona en tu navegador','No necesitás una cuenta ni subir la imagen. Elegí una foto, quitá el fondo y descargá el resultado.']];
   cards.forEach((c,i)=>{if(!copy[i])return;c.querySelector('h3').textContent=copy[i][0];c.querySelector('p').textContent=copy[i][1]});
@@ -69,21 +71,33 @@ input.addEventListener('change',e=>setFile(e.target.files[0]));
 ['dragleave','drop'].forEach(t=>drop.addEventListener(t,e=>{e.preventDefault();drop.classList.remove('dragging')}));
 drop.addEventListener('drop',e=>setFile(e.dataTransfer.files[0]));
 
+async function loadAttempt(a){
+  const options={device:a.device,dtype:a.dtype,revision:MODEL_REVISION,progress_callback:p=>{
+    if(p?.status==='progress'&&p.total){const ratio=Math.min(1,p.loaded/p.total);setStatus(tr('Preparing…','Preparando…'),Math.round(5+ratio*45));}
+  }};
+  const loaded=await Promise.all([
+    AutoModel.from_pretrained(MODEL_ID,options),
+    AutoProcessor.from_pretrained(MODEL_ID,{revision:MODEL_REVISION})
+  ]);
+  model=loaded[0];processor=loaded[1];
+}
+
 async function ensureModel(){
   if(model&&processor)return;
-  const attempts=navigator.gpu?[{device:'webgpu',dtype:'fp16'},{device:'wasm',dtype:'fp32'}]:[{device:'wasm',dtype:'fp32'}];
+  const attempts=[];
+  if(navigator.gpu&&!IS_IOS)attempts.push({device:'webgpu',dtype:'fp16'});
+  attempts.push({device:'wasm',dtype:'fp16'});
+  attempts.push({device:'wasm',dtype:'fp32'});
   let lastError;
   for(const a of attempts){
     try{
-      const options={device:a.device,dtype:a.dtype,revision:MODEL_REVISION,progress_callback:p=>{
-        if(p?.status==='progress'&&p.total){const ratio=Math.min(1,p.loaded/p.total);setStatus(tr('Preparing…','Preparando…'),Math.round(5+ratio*45));}
-      }};
-      [model,processor]=await Promise.all([
-        AutoModel.from_pretrained(MODEL_ID,options),
-        AutoProcessor.from_pretrained(MODEL_ID,{revision:MODEL_REVISION})
-      ]);
+      stage=`load-${a.device}-${a.dtype}`;
+      await loadAttempt(a);
       return;
-    }catch(err){lastError=err;model=null;processor=null;}
+    }catch(err){
+      lastError=err;model=null;processor=null;
+      console.warn('[droop background removal] processing fallback',a.device,a.dtype,err);
+    }
   }
   throw lastError||new Error('LOAD_FAILED');
 }
@@ -91,38 +105,43 @@ async function ensureModel(){
 function loadHtmlImage(url){return new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>resolve(im);im.onerror=reject;im.src=url;});}
 
 async function buildTransparentResult(mask){
+  stage='compose';
   const image=await loadHtmlImage(sourceURL);
   const scale=Math.min(1,MAX_OUTPUT_EDGE/Math.max(image.naturalWidth,image.naturalHeight));
   const w=Math.max(1,Math.round(image.naturalWidth*scale)),h=Math.max(1,Math.round(image.naturalHeight*scale));
   const sourceCanvas=document.createElement('canvas');sourceCanvas.width=w;sourceCanvas.height=h;
-  const sctx=sourceCanvas.getContext('2d',{willReadFrequently:true});sctx.drawImage(image,0,0,w,h);
+  const sctx=sourceCanvas.getContext('2d',{willReadFrequently:true});if(!sctx)throw new Error('NO_CANVAS');sctx.drawImage(image,0,0,w,h);
   const maskCanvas=document.createElement('canvas');maskCanvas.width=512;maskCanvas.height=512;
-  const mctx=maskCanvas.getContext('2d');const maskImage=mctx.createImageData(512,512);
+  const mctx=maskCanvas.getContext('2d');if(!mctx)throw new Error('NO_MASK_CANVAS');const maskImage=mctx.createImageData(512,512);
   for(let i=0;i<512*512;i++){const a=Math.max(0,Math.min(255,Math.round(mask[i]*255))),j=i*4;maskImage.data[j]=a;maskImage.data[j+1]=a;maskImage.data[j+2]=a;maskImage.data[j+3]=255;}
   mctx.putImageData(maskImage,0,0);
   const scaledMask=document.createElement('canvas');scaledMask.width=w;scaledMask.height=h;
-  const smctx=scaledMask.getContext('2d',{willReadFrequently:true});smctx.imageSmoothingEnabled=true;smctx.imageSmoothingQuality='high';smctx.drawImage(maskCanvas,0,0,w,h);
+  const smctx=scaledMask.getContext('2d',{willReadFrequently:true});if(!smctx)throw new Error('NO_SCALE_CANVAS');smctx.imageSmoothingEnabled=true;smctx.imageSmoothingQuality='high';smctx.drawImage(maskCanvas,0,0,w,h);
   const src=sctx.getImageData(0,0,w,h),alpha=smctx.getImageData(0,0,w,h).data;
   for(let i=0;i<src.data.length;i+=4)src.data[i+3]=Math.round(src.data[i+3]*(alpha[i]/255));
-  canvas.width=w;canvas.height=h;canvas.getContext('2d').putImageData(src,0,0);
+  canvas.width=w;canvas.height=h;const out=canvas.getContext('2d');if(!out)throw new Error('NO_OUTPUT_CANVAS');out.putImageData(src,0,0);
 }
 
 button.addEventListener('click',async()=>{
   if(!file||isBusy)return;isBusy=true;button.disabled=true;download.hidden=true;outputReady=false;
   try{
-    setStatus(tr('Preparing…','Preparando…'),3);
+    stage='prepare';setStatus(tr('Preparing…','Preparando…'),3);
     await ensureModel();
-    setStatus(tr('Preparing image…','Preparando imagen…'),58);
+    stage='decode';setStatus(tr('Preparing image…','Preparando imagen…'),58);
     const raw=await RawImage.read(sourceURL);const {pixel_values}=await processor(raw);
-    setStatus(tr('Removing background…','Quitando fondo…'),72);
+    stage='inference';setStatus(tr('Removing background…','Quitando fondo…'),72);
     const outputs=await model({input_image:pixel_values});const logits=outputs.logits||outputs.output||Object.values(outputs)[0];
     if(!logits?.data)throw new Error('BAD_OUTPUT');
     const mask=Float32Array.from(logits.data,sigmoid);
     setStatus(tr('Almost done…','Casi listo…'),90);
     await buildTransparentResult(mask);
-    preview.hidden=false;download.hidden=false;outputReady=true;setStatus(tr('Ready ✓','Listo ✓'),100);
+    preview.hidden=false;download.hidden=false;outputReady=true;stage='ready';setStatus(tr('Ready ✓','Listo ✓'),100);
     preview.scrollIntoView({behavior:'smooth',block:'nearest'});
-  }catch(err){console.error('[droop background removal]',err);setStatus(tr('Could not process this image. Try a smaller JPG, PNG or WebP.','No se pudo procesar esta imagen. Probá con un JPG, PNG o WebP más chico.'),0,true);
+  }catch(err){
+    console.error('[droop background removal]',{stage,mobile:IS_MOBILE,ios:IS_IOS,error:err});
+    const mobileMsg=tr('This phone could not finish the image. Close other tabs and try again, or use a smaller image.','Este teléfono no pudo terminar la imagen. Cerrá otras pestañas y probá de nuevo, o usá una imagen más chica.');
+    const desktopMsg=tr('Could not process this image. Try a smaller JPG, PNG or WebP.','No se pudo procesar esta imagen. Probá con un JPG, PNG o WebP más chico.');
+    setStatus(IS_MOBILE?mobileMsg:desktopMsg,0,true);
   }finally{isBusy=false;button.disabled=!file;}
 });
 
