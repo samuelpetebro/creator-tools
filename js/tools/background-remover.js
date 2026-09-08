@@ -5,7 +5,7 @@ const MODEL_REVISION='4a3c40c36c94093cc1e724d9ea428b8fa4b57dc7';
 const MAX_OUTPUT_EDGE=4096;
 const $=id=>document.getElementById(id);
 const input=$('bgFileInput'),drop=$('bgDropZone'),info=$('bgFileInfo'),button=$('bgProcessButton'),status=$('bgStatus'),progress=$('bgProgress'),progressFill=progress.querySelector('span'),preview=$('bgPreview'),original=$('bgOriginal'),canvas=$('bgCanvas'),download=$('bgDownload'),note=$('bgNote');
-const resultDemo=$('bgDemoResult');
+const resultDemo=$('bgDemoResult'),langSwitch=$('bgLangSwitch');
 const isEs=()=>((localStorage.getItem('droop-language')||localStorage.getItem('droop-lang')||navigator.language||'en').toLowerCase().startsWith('es'));
 const tr=(en,es)=>isEs()?es:en;
 let file=null,sourceURL=null,model=null,processor=null,isBusy=false,outputReady=false;
@@ -16,6 +16,15 @@ env.useBrowserCache=true;
 if(env.backends?.onnx?.wasm) env.backends.onnx.wasm.numThreads=Math.min(4,navigator.hardwareConcurrency||4);
 
 applyLanguage();
+if(langSwitch){
+  langSwitch.textContent=isEs()?'EN':'ES';
+  langSwitch.setAttribute('aria-label',isEs()?'Switch to English':'Cambiar a español');
+  langSwitch.addEventListener('click',()=>{
+    localStorage.setItem('droop-language',isEs()?'en':'es');
+    localStorage.removeItem('droop-lang');
+    location.reload();
+  });
+}
 
 function applyLanguage(){
   if(!isEs()) return;
