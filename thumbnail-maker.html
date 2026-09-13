@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>YouTube Thumbnail Maker — droop</title>
+<meta name="description" content="Make a YouTube thumbnail from an image or a video frame. Add a title, choose a style and download a JPG under 2 MB, right in your browser.">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="canonical" href="https://droopweb.lat/thumbnail-maker.html">
+<meta property="og:type" content="website"><meta property="og:site_name" content="droop"><meta property="og:title" content="YouTube Thumbnail Maker — droop"><meta property="og:description" content="A photo or video frame. Your title. A thumbnail ready to post."><meta property="og:url" content="https://droopweb.lat/thumbnail-maker.html"><meta property="og:image" content="https://droopweb.lat/social-preview.png">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="YouTube Thumbnail Maker — droop"><meta name="twitter:description" content="Create a thumbnail locally from an image or video."><meta name="twitter:image" content="https://droopweb.lat/social-preview.png">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="css/styles.css?v=6"><link rel="stylesheet" href="css/aero-v2.css?v=5"><link rel="stylesheet" href="css/tool-page.css?v=2"><link rel="stylesheet" href="css/catalog.css?v=5"><link rel="stylesheet" href="css/thumbnail-maker.css?v=1">
+</head>
+<body class="tool-page thumb-page">
+<header class="site-header"><a class="brand" href="./">droop</a><nav class="top-nav"><a href="./#tool-catalog" data-copy="all">All tools</a><a href="image-converter.html" data-copy="image">Image</a><a href="video-cropper.html">Video</a></nav><span class="privacy-pill" data-copy="privacy">Local processing · No uploads</span><button class="lang-switch" id="thumbLang" type="button" aria-label="Switch to Spanish">ES</button></header>
+<main>
+<section class="tool-shell">
+<div class="tool-breadcrumb"><a href="./#tool-catalog" data-copy="all">All tools</a><span>›</span><span data-copy="name">Thumbnail Maker</span></div>
+<div class="tool-hero">
+<div class="tool-intro"><p class="tool-kicker" data-copy="kicker">SOCIAL · NEW</p><h1 class="tool-title" data-copy="headline">Your next video.<br>A better first impression.</h1><p class="tool-lead" data-copy="lead">Start with a photo or a moment from your video. Add your title and make a YouTube thumbnail in a few clicks.</p><div class="trust-row"><span class="trust-chip" data-copy="local">✦ Made on your device</span><span class="trust-chip">YouTube · 16:9</span><span class="trust-chip" data-copy="noAccount">No account needed</span></div></div>
+<div class="tool-panel">
+<label class="drop-zone drop-zone-light" id="thumbDrop" for="thumbInput"><input id="thumbInput" type="file" accept="image/jpeg,image/png,image/webp,video/mp4,video/quicktime,video/webm,.jpg,.jpeg,.png,.webp,.mp4,.mov,.m4v,.webm" hidden><strong data-copy="drop">Drop a photo or video here</strong><span data-copy="choose">or tap to choose a file</span><small>JPG · PNG · WebP · MP4 · MOV · WebM</small></label>
+<p id="thumbFile" class="thumb-file" hidden></p>
+<div id="thumbEditor" hidden>
+<div class="thumb-preview"><canvas id="thumbCanvas" width="1280" height="720" role="img" aria-label="Thumbnail preview"></canvas><span class="thumb-preview-badge">YouTube · 1280 × 720</span></div>
+<fieldset id="thumbControls">
+<div id="thumbFrameGroup" class="thumb-field" hidden><label for="thumbFrame" data-copy="frame">Pick a moment</label><input id="thumbFrame" type="range" min="0" max="1" step="0.01" value="0"><output id="thumbTime" for="thumbFrame">0:00</output><small data-copy="frameHelp">Move the slider to choose the frame for your thumbnail.</small></div>
+<div class="thumb-field"><label for="thumbTitle" data-copy="titleLabel">Your title</label><textarea id="thumbTitle" maxlength="100" rows="2" placeholder="Make them want to watch"></textarea><small data-copy="titleHelp">Optional. Short titles work best. Line breaks are welcome.</small></div>
+<div class="thumb-field"><span class="thumb-label" id="thumbStyleLabel" data-copy="style">Choose a style</span><div class="thumb-styles" role="group" aria-labelledby="thumbStyleLabel"><button type="button" data-style="bold" aria-pressed="true" data-copy="bold">Bold</button><button type="button" data-style="clean" aria-pressed="false" data-copy="clean">Clean</button><button type="button" data-style="frame" aria-pressed="false" data-copy="border">Framed</button></div></div>
+<div class="thumb-row"><div class="thumb-field"><label for="thumbPlacement" data-copy="placement">Text position</label><select id="thumbPlacement"><option value="bottom" data-copy="bottom">Bottom</option><option value="center" data-copy="center">Center</option><option value="top" data-copy="top">Top</option></select></div><div class="thumb-field"><label for="thumbColor" data-copy="accent">Accent color</label><input id="thumbColor" type="color" value="#c8ff45"></div></div>
+<div class="thumb-field"><label for="thumbPosition" data-copy="crop">Reposition your image</label><input id="thumbPosition" type="range" min="0" max="100" value="50"><small id="thumbCropHelp"></small></div>
+</fieldset>
+<button id="thumbExport" class="download-button download-button-dark" type="button" data-copy="export">Create my thumbnail</button>
+<p class="thumb-export-note" data-copy="output">JPG · 1280 × 720 · Under 2 MB</p>
+</div>
+<p id="thumbStatus" class="status-box" role="status" aria-live="polite" hidden></p>
+<div id="thumbResult" class="thumb-result" hidden><p id="thumbResultInfo"></p><a id="thumbDownload" class="download-button download-button-dark" data-copy="download">Download thumbnail</a><small data-copy="editAgain">You can keep editing and create another version.</small></div>
+</div></div></section>
+<section class="tool-info">
+<article class="info-card"><h2 data-copy="info1h">Find your starting point</h2><p data-copy="info1p">Use a JPG, PNG or WebP photo, or pick a frame from a video your browser can play. Nothing is uploaded.</p></article>
+<article class="info-card"><h2 data-copy="info2h">Make the title readable</h2><p data-copy="info2p">Pick a style and move the text away from the subject. Your title automatically fits inside the thumbnail.</p></article>
+<article class="info-card"><h2 data-copy="info3h">Take it to YouTube</h2><p data-copy="info3p">Download a 16:9 JPG under 2 MB. This lightweight version exports at 1280 × 720 and works without an account.</p></article>
+</section>
+<section class="related"><h2 data-copy="related">Keep getting ready to post</h2><div class="related-grid"><a href="background-remover.html" data-copy="remove">Remove a background</a><a href="under-x-mb.html" data-copy="compress">Compress an image</a><a href="video-cropper.html" data-copy="videoCrop">Crop a video for social</a></div></section>
+</main><footer><span data-copy="footer">droop · Everything you need before you post.</span><span data-copy="footerPrivacy">Private browser-based tools.</span></footer>
+<script src="js/tools/thumbnail-layout.js?v=1"></script><script src="js/tools/thumbnail-maker.js?v=1"></script>
+</body></html>
