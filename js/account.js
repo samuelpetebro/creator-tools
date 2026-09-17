@@ -1,0 +1,11 @@
+(()=>{'use strict';
+const cfg=window.DroopSupabaseConfig||{};const ui={form:document.querySelector('#auth-form'),email:document.querySelector('#auth-email'),password:document.querySelector('#auth-password'),submit:document.querySelector('#auth-submit'),switcher:document.querySelector('#auth-switch'),mode:document.querySelector('#auth-mode'),status:document.querySelector('#auth-status'),signed:document.querySelector('#signed-in'),identity:document.querySelector('#account-email'),signout:document.querySelector('#signout'),guest:document.querySelector('#guest-view')};
+if(!ui.form||!window.supabase||!cfg.url||!cfg.anonKey){if(ui.status)ui.status.textContent='Account setup is unavailable right now.';return;}
+const client=window.supabase.createClient(cfg.url,cfg.anonKey);let signup=false;
+const say=(msg,error=false)=>{ui.status.textContent=msg;ui.status.dataset.state=error?'error':'ok';};
+const render=session=>{const on=!!session;ui.guest.hidden=on;ui.signed.hidden=!on;if(on)ui.identity.textContent=session.user.email||'Droop creator';};
+ui.switcher.addEventListener('click',()=>{signup=!signup;ui.mode.textContent=signup?'Create account':'Sign in';ui.submit.textContent=signup?'Create account':'Sign in';ui.switcher.textContent=signup?'Already have an account? Sign in':'New to Droop? Create an account';say('');});
+ui.form.addEventListener('submit',async e=>{e.preventDefault();ui.submit.disabled=true;say('Working…');const email=ui.email.value.trim();const password=ui.password.value;if(password.length<8){say('Use at least 8 characters for your password.',true);ui.submit.disabled=false;return;}const result=signup?await client.auth.signUp({email,password,options:{emailRedirectTo:location.origin+'/account.html'}}):await client.auth.signInWithPassword({email,password});if(result.error){say(result.error.message,true);}else if(signup&&!result.data.session){say('Check your email to confirm your Droop account.');}else{say('You are signed in.');render(result.data.session);}ui.submit.disabled=false;});
+ui.signout.addEventListener('click',async()=>{await client.auth.signOut();say('Signed out.');render(null);});
+client.auth.getSession().then(({data})=>render(data.session));client.auth.onAuthStateChange((_event,session)=>render(session));
+})();
