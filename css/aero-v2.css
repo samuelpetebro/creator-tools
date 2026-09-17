@@ -11,7 +11,7 @@
 .hero:after{background:radial-gradient(circle at 32% 28%,rgba(255,255,255,.75),rgba(203,190,255,.33) 40%,rgba(138,105,237,.16) 72%,rgba(255,255,255,.12));border-color:rgba(255,255,255,.76);box-shadow:inset 0 0 40px rgba(255,255,255,.7),0 18px 48px rgba(103,72,190,.16)}
 .eyebrow,.section-label{color:#6b54dc}
 .hero-copy{width:min(620px,calc(100vw - 12vw));max-width:620px;margin:0;padding:18px 20px;border:1px solid rgba(89,91,170,.22);border-radius:18px;background:linear-gradient(145deg,rgba(255,255,255,.82),rgba(240,237,255,.56));box-shadow:inset 0 1px rgba(255,255,255,.96),0 12px 34px rgba(77,77,158,.09);backdrop-filter:blur(12px) saturate(135%);font-size:16px;line-height:1.55;color:#49677d}
-.hero-actions{display:none!important}
+.hero-actions{display:flex!important}
 .workflow-grid article{position:relative;overflow:hidden}
 .workflow-grid article:before{content:"";position:absolute;left:0;right:0;top:0;height:4px;background:linear-gradient(90deg,#60c7ee,#8d74ff,#b65bd8);opacity:.9}
 .workflow-grid article:hover{border-color:rgba(112,81,207,.28);box-shadow:inset 0 1px #fff,0 18px 42px rgba(93,68,177,.13)}
