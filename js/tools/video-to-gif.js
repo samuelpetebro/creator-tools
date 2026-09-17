@@ -35,18 +35,18 @@ async function load(job){
  }
  throw error;
 }
-$('gifCancel').onclick=()=>{const job=active;if(!job)return;active=null;job.controller.abort();if(job.engine)job.engine.terminate();status('canceled');controls();};
+$('gifCancel').onclick=()=>{const job=active;if(!job)return;active=null;job.controller.abort();if(job.engine)job.engine.terminate();window.DroopAnalytics?.finish('cancel');status('canceled');controls();};
 $('gifCreate').onclick=async()=>{
  if(active||!file)return;let r;try{r=range();}catch(_){status('range');return;}
  const snapshot=file,dim=GifSettings.size(video.videoWidth,video.videoHeight,+$('gifSize').value),fps=+$('gifMotion').value;
- const job={controller:new AbortController(),engine:null};active=job;video.pause();previewEnd=null;clear();status('preparing');controls();
+ const job={controller:new AbortController(),engine:null};active=job;window.DroopAnalytics?.start();video.pause();previewEnd=null;clear();status('preparing');controls();
  try{const engine=await load(job);check(job);const data=new Uint8Array(await snapshot.arrayBuffer());check(job);await engine.writeFile('input',data);check(job);
  const commands=GifSettings.commands(r.start,r.length,dim.w,dim.h,fps);
  status('colors');if(await engine.exec(commands[0])!==0)throw Error('PALETTE_FAILED');check(job);
  status('processing');if(await engine.exec(commands[1])!==0)throw Error('GIF_FAILED');check(job);
  const output=await engine.readFile('output.gif');check(job);if(!(output instanceof Uint8Array)||output.length<14)throw Error('EMPTY_OUTPUT');
- const blob=new Blob([output],{type:'image/gif'});outputURL=URL.createObjectURL(blob);$('gifOutput').src=outputURL;$('gifDownload').href=outputURL;$('gifDownload').download=`${snapshot.name.replace(/\.[^.]+$/,'').replace(/[<>:"/\\|?*\u0000-\u001F]/g,'-').slice(0,100)}.gif`;$('gifResultInfo').textContent=`GIF · ${dim.w} × ${dim.h} · ${bytes(blob.size)}`;$('gifResult').hidden=false;status('ready');
- }catch(e){if(active===job){console.error('[droop gif]',e);status('failed');}}
+ const blob=new Blob([output],{type:'image/gif'});outputURL=URL.createObjectURL(blob);$('gifOutput').src=outputURL;$('gifDownload').href=outputURL;$('gifDownload').download=`${snapshot.name.replace(/\.[^.]+$/,'').replace(/[<>:"/\\|?*\u0000-\u001F]/g,'-').slice(0,100)}.gif`;$('gifResultInfo').textContent=`GIF · ${dim.w} × ${dim.h} · ${bytes(blob.size)}`;$('gifResult').hidden=false;window.DroopAnalytics?.finish('complete');status('ready');
+ }catch(e){if(active===job){console.error('[droop gif]',e);window.DroopAnalytics?.finish('error');status('failed');}}
  finally{if(job.engine)job.engine.terminate();if(active===job){active=null;controls();}}
 };
 language();controls();

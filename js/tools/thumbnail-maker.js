@@ -113,7 +113,7 @@
   document.querySelectorAll('[data-style]').forEach(button=>button.onclick=()=>{style=button.dataset.style;document.querySelectorAll('[data-style]').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));invalidate();render();});
   $('thumbExport').onclick=async()=>{
     if(!source||!frameReady||exporting)return;
-    exporting=true;updateControls();invalidate();status('working');
+    exporting=true;window.DroopAnalytics?.start();updateControls();invalidate();status('working');
     try{
       render();let blob;
       for(const quality of [.94,.88,.8,.7,.6,.45,.3]){
@@ -122,8 +122,8 @@
       }
       if(!blob||blob.size>=2000000)throw new Error('Output unavailable');
       outputURL=URL.createObjectURL(blob);$('thumbDownload').href=outputURL;$('thumbDownload').download=`${filename}-youtube-thumbnail.jpg`;
-      $('thumbResultInfo').textContent=`JPG · 1280 × 720 · ${bytes(blob.size)}`;$('thumbResult').hidden=false;status('ready');
-    }catch(e){console.error('[droop thumbnail]',e);status('exportFailed');}
+      $('thumbResultInfo').textContent=`JPG · 1280 × 720 · ${bytes(blob.size)}`;$('thumbResult').hidden=false;window.DroopAnalytics?.finish('complete');status('ready');
+    }catch(e){console.error('[droop thumbnail]',e);window.DroopAnalytics?.finish('error');status('exportFailed');}
     finally{exporting=false;updateControls();}
   };
   window.addEventListener('pagehide',()=>{generation++;dispose();invalidate();frameReady=false;$('thumbEditor').hidden=true;updateControls();});
