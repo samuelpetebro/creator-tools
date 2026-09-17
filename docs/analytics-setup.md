@@ -1,4 +1,4 @@
-# Analytics setup — prepared, NOT active
+# Analytics setup — configured for Umami Cloud
 
 ## Choice
 
@@ -11,14 +11,11 @@ Official references checked 2026-09-17:
 - https://docs.umami.is/docs/tracker-configuration
 - https://docs.umami.is/docs/tracker-functions
 
-## Owner action required
+## Configuration
 
-1. Create/sign into your own Umami Cloud account and choose the free Hobby option.
-2. Websites → Add website: name `droop`, domain `droopweb.lat`.
-3. Open the website's Tracking code section. Supply that public script snippet, or its `src` and `data-website-id`. No account password or API key is needed.
-4. Copy the website ID and script URL into `js/analytics-config.js`, bump its query version in HTML and verify the real provider before merging/deploying this draft.
+The owner supplied the public tracking snippet on 2026-09-17. `js/analytics-config.js` contains website ID `7e08700b-c174-41fd-8464-831ffad9c4d2` and `https://cloud.umami.is/script.js`. HTML uses config version 2.
 
-Do not put an example ID in production. Empty configuration currently makes the adapter return without loading a provider, registering analytics listeners or sending requests. The adapter also returns on localhost, unknown routes, DNT, GPC, local opt-out, or unavailable localStorage.
+Empty configuration disables collection. The adapter also returns on localhost, unknown routes, DNT, GPC, local opt-out, or unavailable localStorage. No account credentials or API keys are stored.
 
 ## Coverage
 
@@ -38,10 +35,12 @@ Manual tracking only; automatic collection is disabled. The payload filter build
 - external referring origin (no path/query/hash);
 - an allowlisted event name and static tool ID.
 
-No file name, file size, media bytes, caption text, search text, dynamic page title, URL query/hash, raw error or arbitrary event properties are forwarded. The third-party service still receives ordinary network metadata such as IP/user agent; this is not a claim of zero personal-data processing. A bilingual public description and browser opt-out are prepared in privacy.html, linked from the home and tool footers. Optional local opt-out: `localStorage.setItem('droop-analytics-disabled','1')` then reload. Clearing that key restores the configured behavior.
+No file name, file size, media bytes, caption text, search text, dynamic page title, URL query/hash, raw error or arbitrary event properties are forwarded. The third-party service still receives ordinary network metadata such as IP/user agent; this is not a claim of zero personal-data processing. A bilingual public description and browser opt-out are available in privacy.html, linked from the home and tool footers. Optional local opt-out: `localStorage.setItem('droop-analytics-disabled','1')` then reload. Clearing that key restores the configured behavior.
 
 ## Validation and final activation gate
 
 Automated VM tests passed for empty config, off-domain pages, DNT/GPC, local opt-out, payload filtering, duplicate completion prevention, event ordering during script load, script errors and throwing providers. Metadata source-race tests still pass; modified JS syntax checks pass.
 
-These use a fake provider. They do not establish successful delivery to Umami Cloud. Once the owner's snippet is supplied, verify its tracker version/API, inspect actual outgoing payloads in a controlled test, verify one pageview + one successful export in the owner's dashboard, and check the published opt-out/privacy information before considering analytics live.
+The actual Cloud tracker downloaded on 2026-09-17 is additionally exercised by `node tests/analytics-provider.cjs /path/to/script.js`: this checks serialized requests through a mocked fetch, manual-only tracking, sanitized pageview and lifecycle payloads, and opt-out after loading. It does not send test events to production.
+
+Deployment and browser smoke checks are recorded in PR #8. The owner's authenticated dashboard is not accessible from this workspace: event visibility there remains an owner-side check, distinct from tracker compatibility and deployment verification.
