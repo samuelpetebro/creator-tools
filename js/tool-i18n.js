@@ -34,5 +34,28 @@ if(k==='audio-converter'){txt('.controls label',p.labels[0]);setOptions('#audioC
 if(k==='audio-trimmer'){const labs=$$('.trim-time-grid label');p.times.forEach((v,i)=>labelText(labs[i],v));setOptions('.trim-marker-buttons button',p.markers);txt('.controls label',p.labels[0]);txt('#audioTrimButton',p.button);setOptions('#audioTrimResult .comparison-grid span',p.result);txt('#audioTrimResult .comparison-grid div:nth-child(3) strong',c.local);txt('#audioTrimResult .comparison-grid div:nth-child(4) strong',c.download);txt('#audioTrimDownload',p.download);}
 setInfo(p);}
 function apply(){const l=getLang(),c=common[l],k=key(),p=pages[k]?.[l];document.documentElement.lang=l;const nav=$$('.top-nav a');[c.all,c.image,c.video,c.audio].forEach((v,i)=>txt(nav[i],v));txt('.privacy-pill',c.privacy);txt('.tool-breadcrumb a',c.all);const foot=$$('footer span');txt(foot[0],c.footer);txt(foot[1],c.footer2);let sw=$('.lang-switch');if(!sw){sw=document.createElement('button');sw.className='lang-switch';sw.type='button';$('.site-header')?.appendChild(sw);}txt(sw,l==='es'?'EN':'ES');sw.onclick=()=>{const next=l==='es'?'en':'es';localStorage.setItem('droop-language',next);localStorage.removeItem('droop-lang');location.reload();};if(p)applyPage(k,p,l,c);}
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',apply);else apply();
+
+function loadDroopCloud(){
+  const self=[...document.scripts].find(s=>s.src.includes('/js/tool-i18n.js'));
+  const base=self?self.src.replace(/js\/tool-i18n\.js.*$/,''):'./';
+  if(!document.querySelector('link[data-droop-cloud]')){
+    const link=document.createElement('link');
+    link.rel='stylesheet';
+    link.href=base+'css/cloud.css?v=1';
+    link.dataset.droopCloud='1';
+    document.head.appendChild(link);
+  }
+  const add=(src,onload)=>{
+    const existing=[...document.scripts].find(s=>s.src.startsWith(src));
+    if(existing){if(onload)existing.addEventListener('load',onload,{once:true});else return;return;}
+    const script=document.createElement('script');
+    script.src=src;
+    if(onload)script.onload=onload;
+    document.body.appendChild(script);
+  };
+  const cfg=base+'js/supabase-config.js?v=1';
+  const cloud=base+'js/cloud.js?v=1';
+  add(cfg,()=>add(cloud));
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>{apply();loadDroopCloud();});else{apply();loadDroopCloud();}
 })();
