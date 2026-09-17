@@ -21,7 +21,13 @@ const ui={
   recovery:document.querySelector('#recovery-view'),
   recoveryForm:document.querySelector('#recovery-form'),
   recoveryPassword:document.querySelector('#recovery-password'),
-  recoveryStatus:document.querySelector('#recovery-status')
+  recoveryStatus:document.querySelector('#recovery-status'),
+  profileForm:document.querySelector('#profile-form'),
+  displayName:document.querySelector('#display-name'),
+  profileStatus:document.querySelector('#profile-status'),
+  passwordForm:document.querySelector('#password-form'),
+  newPassword:document.querySelector('#new-password'),
+  passwordStatus:document.querySelector('#password-status')
 };
 
 if(!ui.form||!window.supabase||!cfg.url||!cfg.anonKey){
@@ -42,6 +48,8 @@ const accountSay=(msg,error=false)=>{
   ui.accountStatus.textContent=msg||'';
   ui.accountStatus.dataset.state=error?'error':'ok';
 };
+const profileSay=(msg,error=false)=>{ui.profileStatus.textContent=msg||'';ui.profileStatus.dataset.state=error?'error':'ok';};
+const passwordSay=(msg,error=false)=>{ui.passwordStatus.textContent=msg||'';ui.passwordStatus.dataset.state=error?'error':'ok';};
 const recoverySay=(msg,error=false)=>{
   ui.recoveryStatus.textContent=msg||'';
   ui.recoveryStatus.dataset.state=error?'error':'ok';
@@ -56,7 +64,7 @@ async function loadAccount(session){
   accountSay('Loading your workspace…');
 
   const [{data:profile,error:profileError},{data:presets,error:presetError}]=await Promise.all([
-    client.from('profiles').select('plan,email').eq('id',session.user.id).single(),
+    client.from('profiles').select('plan,email,display_name').eq('id',session.user.id).single(),
     client.from('presets').select('id,tool_slug,name,updated_at').eq('user_id',session.user.id).order('updated_at',{ascending:false})
   ]);
 
@@ -64,6 +72,7 @@ async function loadAccount(session){
   if(presetError){accountSay(presetError.message,true);return;}
 
   const plan=profile?.plan==='pro'?'pro':'free';
+  ui.displayName.value=profile?.display_name||'';
   const items=presets||[];
   ui.plan.textContent=plan.toUpperCase();
   ui.usage.textContent=`${items.length} / ${LIMITS[plan]}`;
@@ -127,6 +136,8 @@ ui.form.addEventListener('submit',async e=>{
   ui.submit.disabled=false;
 });
 
+ui.profileForm.addEventListener('submit',async e=>{e.preventDefault();const name=ui.displayName.value.trim();if(name.length>60){profileSay('Use at most 60 characters.',true);return;}const button=ui.profileForm.querySelector('button');button.disabled=true;profileSay('Saving…');const {error}=await client.from('profiles').update({display_name:name}).eq('id',(await client.auth.getUser()).data.user.id);if(error)profileSay(error.message,true);else profileSay('Account name saved.');button.disabled=false;});
+ui.passwordForm.addEventListener('submit',async e=>{e.preventDefault();const password=ui.newPassword.value;if(password.length<8){passwordSay('Use at least 8 characters.',true);return;}const button=ui.passwordForm.querySelector('button');button.disabled=true;passwordSay('Updating…');const {error}=await client.auth.updateUser({password});if(error)passwordSay(error.message,true);else{ui.newPassword.value='';passwordSay('Password updated.');}button.disabled=false;});
 ui.forgot.addEventListener('click',async()=>{
   const email=ui.email.value.trim();
   if(!email){say('Enter your email first, then choose Forgot password.',true);return;}
