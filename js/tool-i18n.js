@@ -55,7 +55,7 @@ function loadDroopCloud(){
   };
   const cfg=base+'js/supabase-config.js?v=1';
   const cloud=base+'js/cloud.js?v=1';
-  add(cfg,()=>add(cloud));
+  if(window.DroopSupabaseConfig)add(cloud);else add(cfg,()=>add(cloud));
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>{apply();loadDroopCloud();});else{apply();loadDroopCloud();}
 })();
