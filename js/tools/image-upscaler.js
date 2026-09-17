@@ -12,7 +12,7 @@ function language(){document.documentElement.lang=lang;document.title=t('name')+
 $('upLang').onclick=()=>{lang=lang==='es'?'en':'es';try{localStorage.setItem('droop-language',lang);}catch(_){}language();};
 function controls(){$('upInput').disabled=!!job;$('upRun').disabled=!!job||opening||!source;$('upCancel').hidden=!job;$('upDrop').setAttribute('aria-disabled',String(!!job));}
 function clearResult(){$('upResult').hidden=true;$('upAfter').removeAttribute('src');$('upCompareBefore').removeAttribute('src');$('upDownload').removeAttribute('href');if(outputURL)URL.revokeObjectURL(outputURL);outputURL=null;}
-function stop(reason){if(!job)return;job.worker?.terminate();clearTimeout(job.timer);job=null;$('upProgress').hidden=true;status(reason);controls();}
+function stop(reason){if(!job)return;window.DroopAnalytics?.finish(reason==='ready'?'complete':reason==='canceled'?'cancel':'error');job.worker?.terminate();clearTimeout(job.timer);job=null;$('upProgress').hidden=true;status(reason);controls();}
 async function open(file){
  if(!file||job)return;const ticket=++generation;source=null;opening=true;clearResult();$('upEditor').hidden=true;$('upBefore').removeAttribute('src');if(inputURL)URL.revokeObjectURL(inputURL);inputURL=null;controls();status('loading');let url;
  try{if(file.size>5000000)throw Error('invalid');const size=DroopImageDimensions(await file.arrayBuffer());if(ticket!==generation)return;if(size.width<1||size.height<1)throw Error('invalid');if(size.width>512||size.height>512)throw Error('large');url=URL.createObjectURL(file);const img=new Image();img.src=url;await img.decode();if(ticket!==generation)return;if(img.naturalWidth>512||img.naturalHeight>512)throw Error('large');
@@ -23,7 +23,7 @@ async function open(file){
 }
 $('upInput').onclick=()=>{$('upInput').value='';};$('upInput').onchange=e=>open(e.target.files[0]);['dragenter','dragover'].forEach(type=>$('upDrop').addEventListener(type,e=>e.preventDefault()));$('upDrop').addEventListener('drop',e=>{e.preventDefault();open(e.dataTransfer.files[0]);});$('upCancel').onclick=()=>stop('canceled');
 $('upRun').onclick=()=>{
- if(!source||job||opening)return;clearResult();const current={worker:null,timer:null};job=current;controls();status('preparing');$('upProgress').value=0;$('upProgress').hidden=false;
+ if(!source||job||opening)return;clearResult();const current={worker:null,timer:null};job=current;window.DroopAnalytics?.start();controls();status('preparing');$('upProgress').value=0;$('upProgress').hidden=false;
  try{
   const {canvas,name}=source,rgba=canvas.getContext('2d').getImageData(0,0,canvas.width,canvas.height).data,rgb=new Uint8Array(canvas.width*canvas.height*3);for(let i=0,j=0;i<rgba.length;i+=4){rgb[j++]=rgba[i];rgb[j++]=rgba[i+1];rgb[j++]=rgba[i+2];}
   const worker=new Worker(new URL('js/tools/image-upscaler-worker.js?v=1',document.baseURI));current.worker=worker;current.timer=setTimeout(()=>{if(job===current)stop('timeout');},180000);
