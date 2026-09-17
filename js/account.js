@@ -133,7 +133,7 @@ ui.forgot.addEventListener('click',async()=>{
   ui.forgot.disabled=true;
   say('Sending password reset email…');
   const {error}=await client.auth.resetPasswordForEmail(email,{
-    redirectTo:location.origin+'/account.html?recovery=1'
+    redirectTo:location.origin+'/account.html'
   });
   if(error)say(error.message,true);
   else say('Password reset email sent. Check your inbox.');
