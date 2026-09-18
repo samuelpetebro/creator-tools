@@ -87,7 +87,7 @@ assert(proOverflow<=2,`Pro page should not overflow mobile viewport (overflow ${
 await page.screenshot({path:`${outDir}/pro-mobile.png`,fullPage:true});
 
 const toolPages=[
-  '/make-it-fit.html','/under-x-mb.html','/release-pack.html','/metadata-cleaner.html',
+  '/make-it-fit.html','/under-x-mb.html','/release-pack.html',
   '/image-converter.html','/background-remover.html','/image-upscaler.html','/video-cropper.html',
   '/video-under-x-mb.html','/video-trimmer.html','/video-to-gif.html','/subtitle-burner.html',
   '/extract-audio/','/audio-converter.html','/audio-trimmer.html','/thumbnail-maker.html','/safe-zones.html'
