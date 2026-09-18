@@ -2,3 +2,5 @@
 /* Visually concealed native file pickers stay keyboard/screen-reader accessible. */
 input.file-picker-accessible{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;clip-path:inset(50%)!important;white-space:nowrap!important;border:0!important}
 label:focus-within{outline:3px solid #7957d9;outline-offset:3px}
+
+.site-footer-links{display:inline-flex;align-items:center;gap:14px;flex-wrap:wrap}.site-footer-links a{font-weight:800;color:#5d4fc2;text-decoration:none}.site-footer-links a:hover{text-decoration:underline}@media(max-width:520px){.site-footer-links{gap:10px}}
