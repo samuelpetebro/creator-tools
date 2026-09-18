@@ -9,7 +9,7 @@ const processingTools=[
 for(const file of processingTools){
  const source=fs.readFileSync(file,'utf8');
  assert(source.includes('DroopAnalytics?.start'),file+' must emit process_start');
- assert(source.includes("DroopAnalytics?.finish('complete')")||source.includes("DroopAnalytics?.finish(ok ? 'complete' : 'error')")||source.includes("DroopAnalytics?.finish(reason==='ready'?'complete'"),file+' must emit process_complete');
- assert(source.includes("DroopAnalytics?.finish('error')")||source.includes("DroopAnalytics?.finish(ok ? 'complete' : 'error')")||source.includes("DroopAnalytics?.finish(reason==='ready'?'complete'"),file+' must emit process_error');
+ assert(source.includes("DroopAnalytics?.finish('complete')")||/DroopAnalytics\?\.finish\(ok\s*\?\s*'complete'\s*:\s*'error'\)/.test(source)||source.includes("DroopAnalytics?.finish(reason==='ready'?'complete'"),file+' must emit process_complete');
+ assert(source.includes("DroopAnalytics?.finish('error')")||/DroopAnalytics\?\.finish\(ok\s*\?\s*'complete'\s*:\s*'error'\)/.test(source)||source.includes("DroopAnalytics?.finish(reason==='ready'?'complete'"),file+' must emit process_error');
 }
 console.log('analytics processing coverage: ok');
