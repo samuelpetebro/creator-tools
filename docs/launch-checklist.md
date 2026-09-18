@@ -38,7 +38,7 @@ This file distinguishes **code present**, **deployed**, and **behavior actually 
 ## Analytics
 
 - [x] Pageviews confirmed in the Umami dashboard after the tracker configuration update. Owner-observed 24h baseline on 2026-09-18: 11 visitors, 17 visits, 94 views, 47% bounce rate and 7m 41s visit duration. Treat this as mixed development/test traffic, not a clean acquisition baseline.
-- [ ] Confirm `process_start`, `process_complete`, `process_error`, `download_click`, `signup_success` and `login_success` arrive in Umami. `cta_account` and `cta_plans` are already visible. Processing lifecycle instrumentation is now deployed across 15 active processing tools with regression coverage.
+- [ ] Confirm `process_start`, `process_complete`, `process_error`, `download_click`, `signup_success` and `login_success` arrive in Umami. `cta_account` and `cta_plans` are already visible. Processing lifecycle instrumentation is deployed across 15 active processing tools, and `download_click` now records trusted user clicks on both download links and download buttons without counting synthetic anchor clicks.
 - [ ] Treat CTA events as intent, not completed conversion.
 - [ ] Performance/Core Web Vitals tracking is **not claimed as enabled** until a privacy-compatible implementation is tested in the Umami dashboard.
 
