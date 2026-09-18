@@ -25,6 +25,7 @@ This file distinguishes **code present**, **deployed**, and **behavior actually 
 - [x] Account page is bilingual (EN/ES) and uses the shared `droop-language` preference.
 - [x] Explicit “Create free account” CTAs open account signup mode directly.
 - [x] Basic user flow previously confirmed: sign in → save preset → reload → load preset → delete preset.
+- [x] Saved-preset UI now mounts only on tools with reusable settings and covers 12 tools; Video to GIF stores only size/motion, Subtitle Burner stores only style/position/size, and clip timing/subtitle content stays out of presets.
 - [ ] Fresh registration test with a second account remains pending.
 - [x] Existing account is email-confirmed and has completed at least one successful sign-in; auth user/profile counts are aligned.
 - [x] Browser automation covers forgot-password request, recovery-mode password update, signed-in password update and post-recovery return to the account workspace.
