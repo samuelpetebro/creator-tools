@@ -217,6 +217,7 @@ const mountPresetWidget=async()=>{
       await savePreset(input.value,settings,slug);
       input.value='';
       await reload();
+      window.DroopAnalytics?.track?.('preset_save');
       say('Preset saved.');
     }catch(err){
       say(err.message||'Could not save preset.',true);
@@ -227,6 +228,7 @@ const mountPresetWidget=async()=>{
     const chosen=current.find(p=>p.id===select.value);
     if(!chosen){say('Choose a preset first.',true);return;}
     applySettings(chosen.settings,panel);
+    window.DroopAnalytics?.track?.('preset_load');
     say(`${chosen.name} loaded.`);
   });
 
@@ -237,6 +239,7 @@ const mountPresetWidget=async()=>{
     try{
       await deletePreset(chosen.id);
       await reload();
+      window.DroopAnalytics?.track?.('preset_delete');
       say('Preset deleted.');
     }catch(err){
       say(err.message||'Could not delete preset.',true);
