@@ -61,7 +61,7 @@ This file distinguishes **code present**, **deployed**, and **behavior actually 
 
 ## Billing / Pro — do not go live yet
 
-- [ ] Decide the first paid benefit that is already deliverable.
+- [x] First paid benefit decided: Pro raises saved presets from 5 to 100. The limit already exists in the database and account UI; batch/history features remain roadmap items.
 - [ ] Agree price and billing interval.
 - [x] Lemon Squeezy test store/product/variant identified: store 477243, product 1371942, actual Pro variant 2143724.
 - [x] Webhook hardened and deployed with store/variant/test-mode validation, persisted subscription ownership, idempotency and stale-event protection.
@@ -83,5 +83,5 @@ This file distinguishes **code present**, **deployed**, and **behavior actually 
 
 ## Licensing / future sale
 
-- [ ] Review the current MIT license before promising exclusivity to a future buyer. Existing MIT grants cannot simply be revoked from copies already distributed.
-- [ ] Keep a service/dependency inventory and record real costs/revenue.
+- [x] MIT sale/licensing review recorded in `docs/licensing-and-sale.md`: existing distributed copies retain MIT rights, so do not promise exclusivity over those copies.
+- [x] Initial service/dependency inventory created in `docs/service-inventory.md`; unknown recurring amounts are intentionally left for receipt/account-plan verification instead of being guessed.
