@@ -1,9 +1,11 @@
 name: Production smoke checks
 
 on:
-  push:
-    branches:
-      - main
+  workflow_run:
+    workflows:
+      - pages build and deployment
+    types:
+      - completed
   workflow_dispatch:
 
 permissions:
@@ -15,14 +17,17 @@ concurrency:
 
 jobs:
   smoke:
+    if: github.event_name == 'workflow_dispatch' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main')
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || 'main' }}
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
-      - name: Wait for Pages and test production
+      - name: Verify deployed production
         env:
           DROOP_BASE_URL: https://droopweb.lat
         run: node tests/production-smoke.mjs
