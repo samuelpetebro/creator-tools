@@ -6,8 +6,7 @@ This file distinguishes **code present**, **deployed**, and **behavior actually 
 
 ## Critical owner action
 
-- [x] **Verify the Namecheap registrant contact for `droopweb.lat` before 2026-09-22.** User confirmed the verification link was completed on 2026-09-17.
-- [x] Namecheap registrant contact verification confirmed complete by the user on 2026-09-17.
+- [x] Namecheap registrant contact for `droopweb.lat` verified successfully before the 2026-09-22 deadline.
 
 ## Public site / GitHub Pages
 
@@ -38,6 +37,8 @@ This file distinguishes **code present**, **deployed**, and **behavior actually 
 
 ## SEO
 
+- [x] Sitemap source cleaned so it contains valid XML line breaks rather than literal `\\n` text.
+- [x] FAQ metadata / social preview tags / structured FAQ copy aligned with current account and Pro status.
 - [ ] Submit/re-check `https://droopweb.lat/sitemap.xml` in Search Console.
 - [ ] Inspect homepage, FAQ, Pro and the highest-value tool URLs.
 - [ ] Treat “Page with redirect” as informational until the redirect target is checked.

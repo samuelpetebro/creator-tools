@@ -1,0 +1,22 @@
+const fs=require('fs'),assert=require('assert');
+const sitemap=fs.readFileSync('sitemap.xml','utf8');
+const faq=fs.readFileSync('faq.html','utf8');
+const robots=fs.readFileSync('robots.txt','utf8');
+const account=fs.readFileSync('account.html','utf8');
+const notFound=fs.readFileSync('404.html','utf8');
+
+assert(sitemap.startsWith('<?xml version="1.0" encoding="UTF-8"?>'),'sitemap must declare UTF-8 XML');
+assert(!sitemap.includes('\\n'),'sitemap must not contain literal backslash-n text');
+assert(sitemap.includes('<loc>https://droopweb.lat/faq.html</loc>'),'FAQ must be in sitemap');
+assert(sitemap.includes('<loc>https://droopweb.lat/pro.html</loc>'),'Pro must be in sitemap');
+assert(!sitemap.includes('account.html'),'noindex account page must not be in sitemap');
+assert(!sitemap.includes('404.html'),'404 must not be in sitemap');
+assert(robots.includes('Sitemap: https://droopweb.lat/sitemap.xml'),'robots must advertise the sitemap');
+assert(faq.includes('max-image-preview:large'),'FAQ should allow large image previews');
+assert(faq.includes('"@type":"FAQPage"'),'FAQ structured data must remain present');
+assert(faq.includes('"name":"What is Droop Pro?"'),'visible Pro FAQ must match structured data');
+assert(faq.includes('js/analytics.js?v=3'),'FAQ must use current analytics adapter');
+assert(faq.includes('account.html?mode=signup'),'FAQ create-account CTA must open signup mode');
+assert(account.includes('noindex,follow'),'account must remain noindex');
+assert(notFound.includes('noindex,follow'),'404 must remain noindex');
+console.log('seo static checks: ok');
