@@ -8,6 +8,8 @@ await fs.mkdir(outDir,{recursive:true});
 const browser=await chromium.launch({headless:true});
 const context=await browser.newContext({viewport:{width:390,height:844},deviceScaleFactor:1});
 const page=await context.newPage();
+let runtimeErrors=[];
+page.on('pageerror',error=>runtimeErrors.push(error.message||String(error)));
 
 const supabaseStub=`
 window.supabase={
@@ -33,6 +35,14 @@ window.supabase={
 
 await page.route('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2',route=>
   route.fulfill({status:200,contentType:'application/javascript',body:supabaseStub})
+);
+
+await page.route('https://cdn.jsdelivr.net/npm/@huggingface/transformers@4.2.0',route=>
+  route.fulfill({
+    status:200,
+    contentType:'application/javascript',
+    body:'export const env={}; export const AutoModel={}; export const AutoProcessor={}; export const RawImage={};'
+  })
 );
 
 function assert(condition,message){
@@ -76,11 +86,33 @@ const proOverflow=await page.evaluate(()=>document.documentElement.scrollWidth-w
 assert(proOverflow<=2,`Pro page should not overflow mobile viewport (overflow ${proOverflow}px)`);
 await page.screenshot({path:`${outDir}/pro-mobile.png`,fullPage:true});
 
-await page.goto(base+'/image-converter.html',{waitUntil:'domcontentloaded'});
-await page.waitForSelector('.tool-page .top-nav');
-assert(await page.locator('.tool-page .top-nav').isVisible(),'tool-page navigation must be visible on mobile');
-const toolOverflow=await page.evaluate(()=>document.documentElement.scrollWidth-window.innerWidth);
-assert(toolOverflow<=2,`tool page should not overflow mobile viewport (overflow ${toolOverflow}px)`);
+const toolPages=[
+  '/make-it-fit.html','/under-x-mb.html','/release-pack.html','/metadata-cleaner.html',
+  '/image-converter.html','/background-remover.html','/image-upscaler.html','/video-cropper.html',
+  '/video-under-x-mb.html','/video-trimmer.html','/video-to-gif.html','/subtitle-burner.html',
+  '/extract-audio/','/audio-converter.html','/audio-trimmer.html','/thumbnail-maker.html','/safe-zones.html'
+];
+const presetTools=new Set([
+  '/make-it-fit.html','/under-x-mb.html','/release-pack.html','/metadata-cleaner.html',
+  '/image-converter.html','/video-under-x-mb.html','/video-trimmer.html','/extract-audio/',
+  '/audio-converter.html','/audio-trimmer.html','/safe-zones.html'
+]);
+
+for(const toolPath of toolPages){
+  runtimeErrors=[];
+  await page.goto(base+toolPath,{waitUntil:'domcontentloaded'});
+  await page.waitForSelector('.tool-panel');
+  await page.waitForTimeout(75);
+  assert(runtimeErrors.length===0,`${toolPath} must load without page errors: ${runtimeErrors.join(' | ')}`);
+  const nav=page.locator('.tool-page .top-nav');
+  assert(await nav.isVisible(),`${toolPath} navigation must be visible on mobile`);
+  const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-window.innerWidth);
+  assert(overflow<=2,`${toolPath} should not overflow mobile viewport (overflow ${overflow}px)`);
+  if(presetTools.has(toolPath)){
+    await page.waitForSelector('.droop-presets',{timeout:2500});
+    assert(await page.locator('.droop-presets-signin').isVisible(),`${toolPath} must mount the guest preset/account widget`);
+  }
+}
 
 await page.setViewportSize({width:1365,height:900});
 await page.goto(base+'/',{waitUntil:'domcontentloaded'});
