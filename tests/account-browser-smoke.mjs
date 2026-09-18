@@ -1,0 +1,137 @@
+import { chromium } from 'playwright';
+import fs from 'node:fs/promises';
+
+const base=process.env.DROOP_LOCAL_URL||'http://127.0.0.1:4173';
+const outDir=process.env.DROOP_SCREENSHOT_DIR||'artifacts/browser-smoke';
+await fs.mkdir(outDir,{recursive:true});
+
+const browser=await chromium.launch({headless:true});
+
+function assert(condition,message){
+  if(!condition)throw new Error(message);
+}
+
+const accountStub=`
+window.__droopTest={rpcCalls:[],updateUserCalls:[],resetCalls:[],deletes:[],signedOut:false,presetDeleted:false};
+const session={user:{id:'user-test-1',email:'creator@example.test'}};
+window.supabase={
+  createClient(){
+    return {
+      auth:{
+        getSession:async()=>({data:{session},error:null}),
+        getUser:async()=>({data:{user:session.user},error:null}),
+        updateUser:async(payload)=>{window.__droopTest.updateUserCalls.push(payload);return {data:{user:session.user},error:null};},
+        signOut:async()=>{window.__droopTest.signedOut=true;return {error:null};},
+        resetPasswordForEmail:async(email,options)=>{window.__droopTest.resetCalls.push({email,options});return {data:{},error:null};},
+        onAuthStateChange(callback){window.__droopTest.authCallback=callback;return {data:{subscription:{unsubscribe(){}}}};}
+      },
+      from(table){
+        let action='select';
+        const filters={};
+        const q={
+          select(){action='select';return q;},
+          delete(){action='delete';return q;},
+          eq(key,value){filters[key]=value;return q;},
+          order(){return q;},
+          single:async()=>{
+            if(table==='profiles')return {data:{id:session.user.id,email:session.user.email,display_name:'Samu Test',plan:'free',updated_at:'2026-09-18T00:00:00Z'},error:null};
+            return {data:null,error:null};
+          },
+          maybeSingle:async()=>({data:null,error:null}),
+          then(resolve,reject){
+            let result;
+            if(table==='presets'&&action==='delete'){
+              window.__droopTest.presetDeleted=true;
+              window.__droopTest.deletes.push({...filters});
+              result={data:null,error:null};
+            }else if(table==='presets'){
+              result={data:window.__droopTest.presetDeleted?[]:[{id:'preset-1',user_id:session.user.id,tool_slug:'image-converter',name:'WebP 80',settings:{format:'webp'},created_at:'2026-09-18T00:00:00Z',updated_at:'2026-09-18T00:00:00Z'}],error:null};
+            }else{
+              result={data:null,error:null};
+            }
+            return Promise.resolve(result).then(resolve,reject);
+          }
+        };
+        return q;
+      },
+      rpc:async(name,args)=>{window.__droopTest.rpcCalls.push({name,args});return {data:args?.p_display_name??null,error:null};}
+    };
+  }
+};`;
+
+const ctx=await browser.newContext({viewport:{width:390,height:844}});
+const page=await ctx.newPage();
+await page.addInitScript(()=>localStorage.setItem('droop-language','es'));
+await page.route('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2',route=>
+  route.fulfill({status:200,contentType:'application/javascript',body:accountStub})
+);
+
+await page.goto(base+'/account.html',{waitUntil:'domcontentloaded'});
+await page.waitForSelector('#signed-in:not([hidden])');
+assert(await page.locator('#guest-view').isHidden(),'signed-in account must hide guest auth form');
+assert((await page.locator('#account-plan').innerText()).trim()==='FREE','signed-in account should show Free plan');
+assert((await page.locator('#account-usage').innerText()).trim()==='1 / 5','signed-in account should show preset usage');
+assert(await page.locator('#display-name').inputValue()==='Samu Test','display name should load from profile');
+assert((await page.locator('#account-presets').innerText()).includes('WebP 80'),'saved preset should render');
+
+await page.locator('#display-name').fill('Samu Browser');
+await page.locator('#profile-form button[type="submit"]').click();
+await page.waitForFunction(()=>window.__droopTest.rpcCalls.length===1);
+const rpc=await page.evaluate(()=>window.__droopTest.rpcCalls[0]);
+assert(rpc.name==='set_my_display_name','display name UI must use the secure RPC');
+assert(rpc.args.p_display_name==='Samu Browser','display name RPC should receive the edited name');
+assert((await page.locator('#profile-status').innerText()).includes('guardado'),'display name success state should render');
+
+await page.locator('#new-password').fill('NuevaClave123');
+await page.locator('#password-form button[type="submit"]').click();
+await page.waitForFunction(()=>window.__droopTest.updateUserCalls.length===1);
+const pw=await page.evaluate(()=>window.__droopTest.updateUserCalls[0]);
+assert(pw.password==='NuevaClave123','password form should call Auth updateUser');
+
+page.once('dialog',dialog=>dialog.accept());
+await page.locator('[data-delete="preset-1"]').click();
+await page.waitForFunction(()=>window.__droopTest.presetDeleted===true);
+await page.waitForFunction(()=>document.querySelector('#account-usage')?.textContent.trim()==='0 / 5');
+assert((await page.locator('#account-presets').innerText()).includes('Todavía no guardaste presets'),'preset delete should refresh account state');
+
+const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-window.innerWidth);
+assert(overflow<=2,`signed-in account should not overflow mobile viewport (overflow ${overflow}px)`);
+await page.screenshot({path:`${outDir}/account-signed-in-mobile.png`,fullPage:true});
+await ctx.close();
+
+const recoveryCtx=await browser.newContext({viewport:{width:390,height:844}});
+const recovery=await recoveryCtx.newPage();
+await recovery.addInitScript(()=>localStorage.setItem('droop-language','es'));
+await recovery.route('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2',route=>
+  route.fulfill({status:200,contentType:'application/javascript',body:accountStub})
+);
+await recovery.goto(base+'/account.html?recovery=1',{waitUntil:'domcontentloaded'});
+await recovery.waitForSelector('#recovery-view:not([hidden])');
+assert(await recovery.locator('#guest-view').isHidden(),'recovery mode must hide guest login');
+assert(await recovery.locator('#signed-in').isHidden(),'recovery mode must hide normal account workspace');
+await recovery.locator('#recovery-password').fill('Recuperada123');
+await recovery.locator('#recovery-form button[type="submit"]').click();
+await recovery.waitForFunction(()=>window.__droopTest.updateUserCalls.length===1);
+const recoveryUpdate=await recovery.evaluate(()=>window.__droopTest.updateUserCalls[0]);
+assert(recoveryUpdate.password==='Recuperada123','recovery form should update the password');
+await recovery.waitForSelector('#signed-in:not([hidden])');
+await recovery.screenshot({path:`${outDir}/account-recovery-mobile.png`,fullPage:true});
+await recoveryCtx.close();
+
+const resetCtx=await browser.newContext({viewport:{width:390,height:844}});
+const reset=await resetCtx.newPage();
+const resetStub=accountStub.replace("getSession:async()=>({data:{session},error:null})","getSession:async()=>({data:{session:null},error:null})");
+await reset.route('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2',route=>
+  route.fulfill({status:200,contentType:'application/javascript',body:resetStub})
+);
+await reset.goto(base+'/account.html',{waitUntil:'domcontentloaded'});
+await reset.locator('#auth-email').fill('creator@example.test');
+await reset.locator('#forgot-password').click();
+await reset.waitForFunction(()=>window.__droopTest.resetCalls.length===1);
+const resetCall=await reset.evaluate(()=>window.__droopTest.resetCalls[0]);
+assert(resetCall.email==='creator@example.test','forgot-password should use the entered email');
+assert(resetCall.options.redirectTo.endsWith('/account.html'),'password reset should return to the account page');
+await resetCtx.close();
+
+await browser.close();
+console.log('account browser smoke checks: ok');
