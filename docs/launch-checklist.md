@@ -6,7 +6,7 @@ This file distinguishes **code present**, **deployed**, and **behavior actually 
 
 ## Critical owner action
 
-- [ ] **Verify the Namecheap registrant contact for `droopweb.lat` before 2026-09-22.** Namecheap has warned that the domain can be suspended if verification is not completed.
+- [x] **Verify the Namecheap registrant contact for `droopweb.lat` before 2026-09-22.** User confirmed the verification link was completed on 2026-09-17.
 - [ ] Confirm the Namecheap dashboard shows the registrant contact as verified.
 
 ## Public site / GitHub Pages
