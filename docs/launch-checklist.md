@@ -13,7 +13,7 @@ This file distinguishes **code present**, **deployed**, and **behavior actually 
 - [x] Production smoke workflow now runs only after GitHub Pages reports a successful deployment, then checks core pages, manifest, icons, sitemap and custom 404.
 - [x] Shared tool translation selectors fixed so tool i18n and cloud preset loading do not abort at runtime.
 - [x] Latest `main` analytics coverage commit deployed successfully to GitHub Pages and passed the matching production smoke workflow.
-- [x] Automated Chromium smoke test covers desktop catalog rendering plus mobile homepage/search/language/account-signup/Pro/tool navigation.
+- [x] Automated Chromium smoke test covers desktop catalog rendering plus mobile homepage/search/language/account-signup/Pro navigation, all 17 active tool pages, runtime page errors, horizontal overflow, and guest preset-widget mounting on supported tools.
 - [ ] Manual phone visual smoke test remains pending; automated 390×844 Chromium layout checks and screenshots now run in CI.
 - [x] All HTML entry points use `viewport-fit=cover` and expose the iOS home-screen icon.
 - [x] Automated production smoke verifies a nested missing URL returns the custom 404 page.
