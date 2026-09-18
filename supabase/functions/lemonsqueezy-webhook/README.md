@@ -35,13 +35,13 @@ Checkout:
 - `LEMON_SQUEEZY_API_KEY`
 - `LEMON_SQUEEZY_CHECKOUT_TEST_MODE` = `true` or `false`
 - `DROOP_APP_URL` = `https://droopweb.lat`
-- `SUPABASE_ANON_KEY`
+- `SUPABASE_PUBLISHABLE_KEYS` (preferred; legacy `SUPABASE_ANON_KEY` is accepted as fallback)
 
 Webhook:
 
 - `LEMON_SQUEEZY_WEBHOOK_SECRET`
 - `LEMON_SQUEEZY_EXPECT_TEST_MODE` = `true` or `false`
-- `SUPABASE_SERVICE_ROLE_KEY`
+- `SUPABASE_SECRET_KEYS` (preferred; legacy `SUPABASE_SERVICE_ROLE_KEY` is accepted as fallback)
 
 Never place the API key, webhook secret or service-role key in browser JavaScript.
 
