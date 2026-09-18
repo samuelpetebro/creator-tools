@@ -12,6 +12,16 @@ function requiredEnv(name:string){
   return value;
 }
 
+function supabaseSecretKey(){
+  const modern=Deno.env.get('SUPABASE_SECRET_KEYS');
+  if(modern){
+    try{const parsed=JSON.parse(modern);if(parsed?.default)return String(parsed.default);}catch{}
+  }
+  const legacy=Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+  if(legacy)return legacy;
+  throw new Error('Supabase secret key is missing');
+}
+
 function toHex(bytes:ArrayBuffer){
   return [...new Uint8Array(bytes)].map(byte=>byte.toString(16).padStart(2,'0')).join('');
 }
@@ -84,8 +94,9 @@ Deno.serve(async request=>{
   if(sub.testMode!==expectedTestMode)return json({error:'Unexpected test mode'},400);
 
   const supabaseUrl=Deno.env.get('SUPABASE_URL');
-  const serviceKey=Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
-  if(!supabaseUrl||!serviceKey)return json({error:'Supabase server configuration is missing'},500);
+  let serviceKey:string;
+  try{serviceKey=supabaseSecretKey();}catch(error){console.error(error);return json({error:'Supabase server configuration is missing'},500);}
+  if(!supabaseUrl)return json({error:'Supabase server configuration is missing'},500);
 
   const eventHash=await sha256Hex(rawBody);
   const rpc=await fetch(`${supabaseUrl}/rest/v1/rpc/apply_lemon_subscription_event`,{
