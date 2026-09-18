@@ -140,7 +140,7 @@ async function buildTransparentResult(mask,maskW=512,maskH=512){
 }
 
 button.addEventListener('click',async()=>{
-  if(!file||isBusy)return;isBusy=true;button.disabled=true;download.hidden=true;outputReady=false;
+  if(!file||isBusy)return;window.DroopAnalytics?.start();isBusy=true;button.disabled=true;download.hidden=true;outputReady=false;
   try{
     stage='prepare';setStatus(tr('Preparing…','Preparando…'),3);
     await ensureModel();
@@ -163,10 +163,10 @@ button.addEventListener('click',async()=>{
     }
     setStatus(tr('Almost done…','Casi listo…'),90);
     await buildTransparentResult(mask,maskW,maskH);
-    preview.hidden=false;download.hidden=false;outputReady=true;stage='ready';setStatus(tr('Ready ✓','Listo ✓'),100);
+    preview.hidden=false;download.hidden=false;outputReady=true;stage='ready';setStatus(tr('Ready ✓','Listo ✓'),100);window.DroopAnalytics?.finish('complete');
     preview.scrollIntoView({behavior:'smooth',block:'nearest'});
   }catch(err){
-    console.error('[droop background removal]',{stage,mobile:IS_MOBILE,ios:IS_IOS,error:err});
+    console.error('[droop background removal]',{stage,mobile:IS_MOBILE,ios:IS_IOS,error:err});window.DroopAnalytics?.finish('error');
     const mobileMsg=tr('This phone could not finish the image. Close other tabs and try again, or use a smaller image.','Este teléfono no pudo terminar la imagen. Cerrá otras pestañas y probá de nuevo, o usá una imagen más chica.');
     const desktopMsg=tr('Could not process this image. Try a smaller JPG, PNG or WebP.','No se pudo procesar esta imagen. Probá con un JPG, PNG o WebP más chico.');
     setStatus(IS_MOBILE?mobileMsg:desktopMsg,0,true);

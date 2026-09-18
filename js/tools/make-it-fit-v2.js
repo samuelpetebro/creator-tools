@@ -294,10 +294,12 @@
   });
 
   processBtn.addEventListener('click', async () => {
+    window.DroopAnalytics?.start();
     processBtn.disabled = true;
     processBtn.textContent = 'Exporting…';
 
     const ok = await buildExport();
+    window.DroopAnalytics?.finish(ok ? 'complete' : 'error');
 
     processBtn.disabled = false;
     processBtn.textContent = 'Export this crop';
