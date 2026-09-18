@@ -32,6 +32,7 @@ This file distinguishes **code present**, **deployed**, and **behavior actually 
 - [x] Verified in a rollback-safe database test that Free stops at 5 presets and the sixth insert is rejected.
 - [x] Verified authenticated clients have no direct UPDATE privilege on `profiles` and no SELECT access to server-only billing tables.
 - [x] Reconfirmed after the migration that authenticated users cannot directly update `profiles.plan`; unrelated authenticated user IDs see zero profile/preset rows.
+- [x] Browser roles were stripped of unnecessary `TRUNCATE`, `REFERENCES` and `TRIGGER` privileges on account/preset/billing tables; row-level app access remains unchanged.
 - [ ] Physical-phone account/preset smoke test remains pending; automated 390×844 signed-in account coverage now includes profile, password and preset deletion flows.
 
 ## Analytics
