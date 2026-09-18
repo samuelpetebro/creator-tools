@@ -41,7 +41,10 @@ assert(accountJs.includes("currentPlan!=='pro'"),'preset backup actions must req
 assert(accountJs.includes("payload?.version!==1"),'preset restore must validate the backup format');
 assert(accountJs.includes("file.size>262144"),'preset restore must reject oversized backup payloads');
 assert(accountJs.includes("new Set(Object.keys(toolNames))"),'preset restore must allowlist tool slugs');
-assert(accountJs.includes("onConflict:'user_id,tool_slug,name'"),'preset restore must update matching presets instead of duplicating them');
+assert(accountJs.includes("select('id,tool_slug,name')"),'preset restore must identify matching presets before writing');
+assert(accountJs.includes("update({settings:row.settings})"),'preset restore must update existing presets without re-triggering insert limits');
+assert(accountJs.includes("insert(inserts)"),'preset restore must insert only genuinely new presets');
+assert(!accountJs.includes("from('presets').upsert(rows"),'preset restore must not upsert through the preset insert-limit trigger');
 assert(analytics.includes("'pro_batch_use'")&&analytics.includes("'pro_backup_export'")&&analytics.includes("'pro_backup_import'"),'Pro feature events must remain analytics-allowlisted');
 assert(pricing.includes('USD 5/month'),'accepted Pro price must stay documented');
 
