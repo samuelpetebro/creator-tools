@@ -28,7 +28,7 @@ jobs:
       - name: Wait for matching GitHub Pages deployment
         if: github.event_name == 'push'
         env:
-          GH_TOKEN: \${{ github.token }}
+          GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           set -euo pipefail
