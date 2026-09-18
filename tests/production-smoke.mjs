@@ -11,6 +11,13 @@ async function get(path){
   return {response,type,body,url};
 }
 function text(body){return typeof body==='string'?body:body.toString('utf8');}
+function pngDimensions(body){
+  if(!Buffer.isBuffer(body)||body.length<24)throw Error('invalid PNG payload');
+  const signature='89504e470d0a1a0a';
+  if(body.subarray(0,8).toString('hex')!==signature)throw Error('invalid PNG signature');
+  if(body.subarray(12,16).toString('ascii')!=='IHDR')throw Error('PNG missing IHDR');
+  return {width:body.readUInt32BE(16),height:body.readUInt32BE(20)};
+}
 async function check(){
   const home=await get('/');
   if(home.response.status!==200||!text(home.body).includes('Everything you need'))throw Error('homepage not ready');
@@ -29,13 +36,24 @@ async function check(){
   const manifestRes=await get('/site.webmanifest');
   if(manifestRes.response.status!==200)throw Error('manifest unavailable');
   const manifest=JSON.parse(text(manifestRes.body));
-  if(manifest.display!=='standalone'||manifest.start_url!=='/')throw Error('manifest install fields missing');
-  if(!(manifest.icons||[]).some(x=>x.sizes==='192x192')||!(manifest.icons||[]).some(x=>x.sizes==='512x512'))throw Error('manifest raster icons missing');
+  if(manifest.id!=='/'||manifest.start_url!=='/'||manifest.scope!=='/'||manifest.display!=='standalone')throw Error('manifest install fields missing');
+  if(!manifest.name||!manifest.short_name||manifest.prefer_related_applications!==false)throw Error('manifest identity fields missing');
+  if(!(manifest.icons||[]).some(x=>x.sizes==='192x192'&&x.purpose==='any'))throw Error('manifest 192px icon missing');
+  if(!(manifest.icons||[]).some(x=>x.sizes==='512x512'&&x.purpose==='any'))throw Error('manifest 512px icon missing');
+  if(!(manifest.icons||[]).some(x=>x.sizes==='512x512'&&String(x.purpose||'').split(/\\s+/).includes('maskable')))throw Error('manifest maskable icon missing');
 
-  for(const path of ['/icons/icon-192.png','/icons/icon-512.png','/icons/icon-maskable-512.png','/icons/apple-touch-icon.png']){
+  for(const [path,width,height] of [
+    ['/icons/icon-192.png',192,192],
+    ['/icons/icon-512.png',512,512],
+    ['/icons/icon-maskable-512.png',512,512]
+  ]){
     const r=await get(path);
     if(r.response.status!==200||!r.type.includes('image/png')||r.body.length<1000)throw Error(`${path} is not a valid deployed PNG`);
+    const size=pngDimensions(r.body);
+    if(size.width!==width||size.height!==height)throw Error(`${path} has unexpected dimensions ${size.width}x${size.height}`);
   }
+  const apple=await get('/icons/apple-touch-icon.png');
+  if(apple.response.status!==200||!apple.type.includes('image/png')||apple.body.length<1000)throw Error('apple touch icon is not a valid deployed PNG');
 
   const missing=await get(`/smoke-missing-${stamp()}/nested/page`);
   if(missing.response.status!==404||!text(missing.body).includes('That page'))throw Error('custom 404 failed');
