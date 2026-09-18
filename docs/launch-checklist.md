@@ -36,7 +36,7 @@ This file distinguishes **code present**, **deployed**, and **behavior actually 
 
 ## Analytics
 
-- [ ] Confirm pageviews arrive in Umami after the tracker configuration update.
+- [x] Pageviews confirmed in the Umami dashboard after the tracker configuration update. Owner-observed 24h baseline on 2026-09-18: 11 visitors, 17 visits, 94 views, 47% bounce rate and 7m 41s visit duration. Treat this as mixed development/test traffic, not a clean acquisition baseline.
 - [ ] Confirm `process_start`, `process_complete`, `process_error`, `download_click`, `cta_account`, `cta_plans`, `signup_success` and `login_success` arrive.
 - [ ] Treat CTA events as intent, not completed conversion.
 - [ ] Performance/Core Web Vitals tracking is **not claimed as enabled** until a privacy-compatible implementation is tested in the Umami dashboard.
