@@ -1,5 +1,7 @@
 # droop / creator-tools
 
+![Static regression checks](https://github.com/samuelpetebro/creator-tools/actions/workflows/tests.yml/badge.svg)
+
 Droop is a static collection of browser-based creator tools for images, video, audio and social content.
 
 Production: https://droopweb.lat/
@@ -12,7 +14,7 @@ Production: https://droopweb.lat/
 - **Account data:** Supabase Postgres with Row Level Security.
 - **Saved presets:** settings only; media files are not stored with presets.
 - **Analytics:** Umami Cloud through the privacy-focused adapter in `js/analytics.js`.
-- **Billing:** Lemon Squeezy is planned. The webhook source exists in `supabase/functions/lemonsqueezy-webhook/` but is intentionally not production-ready or deployed yet.
+- **Billing:** Lemon Squeezy is planned. Hardened checkout/webhook source and billing persistence are in the repository, but the Edge Functions are intentionally not deployed until Lemon test-mode onboarding is complete.
 
 ## Important files
 
@@ -23,12 +25,14 @@ Production: https://droopweb.lat/
 - `js/cloud.js` — saved preset client.
 - `js/analytics.js` — allowlisted analytics adapter.
 - `supabase/001_profiles_presets.sql` — account/preset schema.
-- `supabase/functions/lemonsqueezy-webhook/` — billing webhook draft.
+- `supabase/003_billing_subscriptions.sql` — server-only subscription persistence and webhook idempotency.
+- `supabase/functions/lemonsqueezy-checkout/` — authenticated checkout creation.
+- `supabase/functions/lemonsqueezy-webhook/` — signed subscription webhook handler.
 - `docs/launch-checklist.md` — pre-launch source of truth.
 
 ## Local checks
 
-There is no build step for the static site. The repository includes Node-based checks in `tests/`.
+There is no build step for the static site. The repository includes Node-based checks in `tests/`, and GitHub Actions runs the whole suite on pull requests and pushes to `main`.
 
 On macOS/Linux:
 
