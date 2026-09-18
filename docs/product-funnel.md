@@ -32,7 +32,8 @@ This defines what to measure before adding more product complexity.
    - `preset_delete`
 
 8. **Show paid-plan intent**
-   - `cta_plans`
+   - `cta_plans` — opened the plan comparison path
+   - `cta_pro_early_access` — explicitly clicked “I’m interested in Pro” on the Pro page
 
 9. **Become paid**
    - source of truth: Lemon live subscription + Supabase `profiles.plan = pro`
@@ -63,7 +64,8 @@ Once traffic is no longer dominated by owner/development testing, review:
 - account-intent rate: `cta_account / tool visitors`
 - signup rate
 - preset activation: users who save or load at least one preset
-- plans intent
+- plans intent (`cta_plans`)
+- explicit Pro interest (`cta_pro_early_access`)
 - live paid subscribers from Lemon/Supabase
 
 Do not optimize from single-digit impressions or a handful of development sessions.
