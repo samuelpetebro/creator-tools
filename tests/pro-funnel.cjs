@@ -10,6 +10,8 @@ assert(/js\/pro\.js\?v=\d+/.test(pro),'Pro page must load versioned dedicated be
 assert(pro.includes('account.html?mode=signup'),'Free CTA must deep-link to signup');
 assert(pro.includes('Checkout not live yet'),'Pro page must not imply live billing');
 assert(pro.includes('Not announced yet'),'Pro page must not invent a price');
+assert(pro.includes('Up to 100 saved presets'),'first ready Pro benefit must be explicit');
+assert(!pro.includes('Prepared for up to 100 saved presets'),'implemented preset benefit must not be described as merely prepared');
 assert(pro.includes('data-i18n="rowPrice"'),'comparison table must be translated');
 assert(js.includes("localStorage.setItem('droop-language',lang)"),'Pro language choice must persist');
 assert(js.includes("select('plan')"),'Pro page should reflect signed-in account state');
