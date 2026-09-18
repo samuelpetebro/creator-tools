@@ -95,7 +95,8 @@ const toolPages=[
 const presetTools=new Set([
   '/make-it-fit.html','/under-x-mb.html','/release-pack.html','/metadata-cleaner.html',
   '/image-converter.html','/video-under-x-mb.html','/video-trimmer.html','/extract-audio/',
-  '/audio-converter.html','/audio-trimmer.html','/safe-zones.html','/video-to-gif.html','/subtitle-burner.html'
+  '/audio-converter.html','/audio-trimmer.html','/safe-zones.html','/video-to-gif.html','/subtitle-burner.html',
+  '/video-cropper.html','/thumbnail-maker.html'
 ]);
 
 for(const toolPath of toolPages){
