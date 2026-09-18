@@ -123,6 +123,11 @@ for(const toolPath of toolPages){
   const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-window.innerWidth);
   assert(overflow<=2,`${toolPath} should not overflow mobile viewport (overflow ${overflow}px)`);
   if(toolPath==='/metadata-cleaner.html')assert(await page.locator('.droop-presets').count()===0,'metadata cleaner should not mount an empty preset widget');
+  if(toolPath==='/image-converter.html'||toolPath==='/metadata-cleaner.html'){
+    await page.waitForSelector('[data-pro-feature]');
+    assert(await page.locator('[data-pro-locked]').isVisible(),`${toolPath} must show the Pro batch upsell to guests`);
+    assert(await page.locator('[data-pro-content]').isHidden(),`${toolPath} must keep Pro batch controls hidden for guests`);
+  }
   if(presetTools.has(toolPath)){
     await page.waitForSelector('.droop-presets',{timeout:2500});
     assert(await page.locator('.droop-presets-signin').isVisible(),`${toolPath} must mount the guest preset/account widget`);
