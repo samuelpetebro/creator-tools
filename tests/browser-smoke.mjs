@@ -65,6 +65,13 @@ assert(overflow<=2,`homepage should not overflow mobile viewport (overflow ${ove
 await page.locator('.lang-switch').click();
 assert(await page.locator('html').getAttribute('lang')==='es','homepage language switch should change html lang');
 assert((await page.locator('#hero-title').innerText()).includes('Todo lo que necesitás'),'homepage Spanish hero should render');
+const cdp=await context.newCDPSession(page);
+await cdp.send('Page.enable');
+const appManifest=await cdp.send('Page.getAppManifest');
+assert((appManifest.url||'').endsWith('/site.webmanifest'),'Chromium must discover the Droop web app manifest');
+const installability=await cdp.send('Page.getInstallabilityErrors');
+assert((installability.installabilityErrors||[]).length===0,`Chromium installability errors: ${(installability.installabilityErrors||[]).map(x=>x.errorId).join(', ')}`);
+
 await page.screenshot({path:`${outDir}/home-mobile.png`,fullPage:true});
 
 await page.addInitScript(()=>localStorage.setItem('droop-language','es'));
@@ -92,14 +99,14 @@ const proOverflow=await page.evaluate(()=>document.documentElement.scrollWidth-w
 assert(proOverflow<=2,`Pro page should not overflow mobile viewport (overflow ${proOverflow}px)`);
 await page.screenshot({path:`${outDir}/pro-mobile.png`,fullPage:true});
 
-const toolPages=[
-  '/make-it-fit.html','/under-x-mb.html','/release-pack.html',
-  '/image-converter.html','/background-remover.html','/image-upscaler.html','/video-cropper.html',
-  '/video-under-x-mb.html','/video-trimmer.html','/video-to-gif.html','/subtitle-burner.html',
-  '/extract-audio/','/audio-converter.html','/audio-trimmer.html','/thumbnail-maker.html','/safe-zones.html'
-];
+await page.goto(base+'/',{waitUntil:'domcontentloaded'});
+await page.waitForSelector('#catalogGrid .catalog-card');
+const toolPages=await page.locator('#catalogGrid .catalog-card').evaluateAll(nodes=>nodes.map(node=>new URL(node.href).pathname));
+assert(toolPages.length===17,`catalog should expose all 17 active tools, got ${toolPages.length}`);
+assert(new Set(toolPages).size===toolPages.length,'catalog tool routes must be unique');
+
 const presetTools=new Set([
-  '/make-it-fit.html','/under-x-mb.html','/release-pack.html','/metadata-cleaner.html',
+  '/make-it-fit.html','/under-x-mb.html','/release-pack.html',
   '/image-converter.html','/video-under-x-mb.html','/video-trimmer.html','/extract-audio/',
   '/audio-converter.html','/audio-trimmer.html','/safe-zones.html','/video-to-gif.html','/subtitle-burner.html',
   '/video-cropper.html','/thumbnail-maker.html'
