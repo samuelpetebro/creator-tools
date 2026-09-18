@@ -63,6 +63,7 @@ Ready launch benefits:
 - up to 100 saved presets (Free remains at 5)
 - batch Image Converter for up to 20 files
 - batch Metadata Cleaner for up to 20 files
+- batch Under X MB for up to 10 files under one shared target
 - local ZIP download for those batch results
 - preset library backup and restore
 
