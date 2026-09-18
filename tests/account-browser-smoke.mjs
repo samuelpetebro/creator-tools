@@ -12,7 +12,7 @@ function assert(condition,message){
 }
 
 const accountStub=`
-window.__droopTest={rpcCalls:[],updateUserCalls:[],resetCalls:[],deletes:[],signedOut:false,presetDeleted:false};
+window.__droopTest={rpcCalls:[],updateUserCalls:[],resetCalls:[],checkoutCalls:[],deletes:[],signedOut:false,presetDeleted:false};
 const session={user:{id:'user-test-1',email:'creator@example.test'}};
 window.supabase={
   createClient(){
@@ -54,7 +54,8 @@ window.supabase={
         };
         return q;
       },
-      rpc:async(name,args)=>{window.__droopTest.rpcCalls.push({name,args});return {data:args?.p_display_name??null,error:null};}
+      rpc:async(name,args)=>{window.__droopTest.rpcCalls.push({name,args});return {data:args?.p_display_name??null,error:null};},
+      functions:{invoke:async(name,options)=>{window.__droopTest.checkoutCalls.push({name,options});return {data:{url:'https://app.lemonsqueezy.com/checkout/test-droop'},error:null};}}
     };
   }
 };`;
@@ -132,6 +133,36 @@ const resetCall=await reset.evaluate(()=>window.__droopTest.resetCalls[0]);
 assert(resetCall.email==='creator@example.test','forgot-password should use the entered email');
 assert(resetCall.options.redirectTo.endsWith('/account.html'),'password reset should return to the account page');
 await resetCtx.close();
+
+const billingCtx=await browser.newContext({viewport:{width:390,height:844}});
+const billing=await billingCtx.newPage();
+await billing.addInitScript(()=>localStorage.setItem('droop-language','es'));
+await billing.route('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2',route=>
+  route.fulfill({status:200,contentType:'application/javascript',body:accountStub})
+);
+await billing.route('https://app.lemonsqueezy.com/**',route=>route.fulfill({status:200,contentType:'text/html',body:'<title>Lemon test</title>'}));
+await billing.goto(base+'/account.html?billing_test=1',{waitUntil:'domcontentloaded'});
+await billing.waitForSelector('#billing-test-panel:not([hidden])');
+assert((await billing.locator('#billing-test-checkout').innerText()).includes('prueba'),'billing test CTA should render in Spanish');
+await Promise.all([
+  billing.waitForURL('https://app.lemonsqueezy.com/**'),
+  billing.locator('#billing-test-checkout').click()
+]);
+const checkoutCall=await billing.evaluate(()=>window.__droopTest.checkoutCalls[0]);
+assert(checkoutCall.name==='lemonsqueezy-checkout','billing test CTA must invoke the checkout Edge Function');
+await billingCtx.close();
+
+const returnCtx=await browser.newContext({viewport:{width:390,height:844}});
+const returned=await returnCtx.newPage();
+await returned.addInitScript(()=>localStorage.setItem('droop-language','es'));
+await returned.route('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2',route=>
+  route.fulfill({status:200,contentType:'application/javascript',body:accountStub})
+);
+await returned.goto(base+'/account.html?billing=success',{waitUntil:'domcontentloaded'});
+await returned.waitForSelector('#billing-test-panel:not([hidden])');
+assert((await returned.locator('#billing-test-status').innerText()).includes('sigue en FREE'),'test checkout return must explain that production plan stays Free');
+assert(await returned.locator('#billing-test-checkout').isHidden(),'return state should hide the test checkout button');
+await returnCtx.close();
 
 await browser.close();
 console.log('account browser smoke checks: ok');
