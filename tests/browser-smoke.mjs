@@ -103,7 +103,7 @@ assert(toolPages.length===17,`catalog should expose all 17 active tools, got ${t
 assert(new Set(toolPages).size===toolPages.length,'catalog tool routes must be unique');
 
 const presetTools=new Set([
-  '/make-it-fit.html','/under-x-mb.html','/release-pack.html','/metadata-cleaner.html',
+  '/make-it-fit.html','/under-x-mb.html','/release-pack.html',
   '/image-converter.html','/video-under-x-mb.html','/video-trimmer.html','/extract-audio/',
   '/audio-converter.html','/audio-trimmer.html','/safe-zones.html','/video-to-gif.html','/subtitle-burner.html',
   '/video-cropper.html','/thumbnail-maker.html'
