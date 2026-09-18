@@ -1,0 +1,17 @@
+name: Temporary Lemon diagnostics
+
+on:
+  push:
+    branches:
+      - debug/lemon-diagnostics
+
+permissions:
+  contents: read
+
+jobs:
+  diag:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Call temporary diagnostics
+        run: curl -fsSL https://qbzqiiinugidkdxcpdln.supabase.co/functions/v1/billing-diagnostics-temp
