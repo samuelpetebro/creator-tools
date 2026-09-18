@@ -27,7 +27,7 @@ for(const [key,value] of Object.entries({'data-website-id':config.websiteId,'dat
 const timeout=setTimeout(()=>{failed=true;queue=[];},10000);
 script.onload=()=>{clearTimeout(timeout);if(failed||typeof window.umami?.track!=='function'){failed=true;queue=[];return;}loaded=true;send();const pending=queue;queue=[];pending.forEach(send);};
 script.onerror=()=>{clearTimeout(timeout);failed=true;queue=[];};
-document.addEventListener('click',event=>{const link=event.target.closest?.('a[download]');if(link&&/^(blob:|data:image\/|data:audio\/|data:video\/)/.test(link.getAttribute('href')||''))send('download_click');},true);
+document.addEventListener('click',event=>{if(event.isTrusted===false)return;const target=event.target.closest?.('a[download],.download-button');if(!target)return;if(target.matches?.('a[download]')&&!/^(blob:|data:image\/|data:audio\/|data:video\/)/.test(target.getAttribute('href')||''))return;send('download_click');},true);
 document.addEventListener('click',event=>{const target=event.target.closest?.('[data-droop-event]');const name=target?.getAttribute('data-droop-event');if(name&&names.has(name))send(name);},true);
 document.head.appendChild(script);
 })();
