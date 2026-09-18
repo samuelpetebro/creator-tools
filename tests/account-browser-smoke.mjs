@@ -13,7 +13,7 @@ function assert(condition,message){
 
 const accountStub=`
 window.__droopTest={rpcCalls:[],updateUserCalls:[],resetCalls:[],checkoutCalls:[],deletes:[],signedOut:false,presetDeleted:false};
-const session={user:{id:'user-test-1',email:'creator@example.test'}};
+const session={access_token:'test-user-jwt',user:{id:'user-test-1',email:'creator@example.test'}};
 window.supabase={
   createClient(){
     return {
@@ -55,7 +55,7 @@ window.supabase={
         return q;
       },
       rpc:async(name,args)=>{window.__droopTest.rpcCalls.push({name,args});return {data:args?.p_display_name??null,error:null};},
-      functions:{invoke:async(name,options)=>{window.__droopTest.checkoutCalls.push({name,options});return {data:{url:'https://app.lemonsqueezy.com/checkout/test-droop'},error:null};}}
+      functions:{}
     };
   }
 };`;
@@ -140,6 +140,11 @@ await billing.addInitScript(()=>localStorage.setItem('droop-language','es'));
 await billing.route('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2',route=>
   route.fulfill({status:200,contentType:'application/javascript',body:accountStub})
 );
+let checkoutRequestHeaders=null;
+await billing.route('https://qbzqiiinugidkdxcpdln.supabase.co/functions/v1/lemonsqueezy-checkout',async route=>{
+  checkoutRequestHeaders=await route.request().allHeaders();
+  await route.fulfill({status:200,contentType:'application/json',headers:{'access-control-allow-origin':base},body:JSON.stringify({url:'https://app.lemonsqueezy.com/checkout/test-droop'})});
+});
 await billing.route('https://app.lemonsqueezy.com/**',route=>route.fulfill({status:200,contentType:'text/html',body:'<title>Lemon test</title>'}));
 await billing.goto(base+'/account.html?billing_test=1',{waitUntil:'domcontentloaded'});
 await billing.waitForSelector('#billing-test-panel:not([hidden])');
@@ -148,6 +153,8 @@ await Promise.all([
   billing.waitForURL('https://app.lemonsqueezy.com/**'),
   billing.locator('#billing-test-checkout').click()
 ]);
+assert(checkoutRequestHeaders?.authorization==='Bearer test-user-jwt','billing checkout request must send the signed-in JWT explicitly');
+assert(checkoutRequestHeaders?.apikey,'billing checkout request must send the public API key');
 await billingCtx.close();
 
 const returnCtx=await browser.newContext({viewport:{width:390,height:844}});
