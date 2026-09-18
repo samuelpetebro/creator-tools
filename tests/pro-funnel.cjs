@@ -16,6 +16,7 @@ assert(pro.includes('data-i18n="rowPrice"'),'comparison table must be translated
 assert(pro.includes('data-droop-event="cta_pro_early_access"'),'Pro page must expose an anonymous early-interest event');
 assert(pro.includes('id="pro-interest"'),'Pro interest CTA must be a real button');
 assert(js.includes("interestThanks"),'Pro interest click must render bilingual feedback');
+assert(js.includes("droop-pro-interest"),'explicit Pro interest should persist locally to avoid repeat intent clicks');
 assert(js.includes("localStorage.setItem('droop-language',lang)"),'Pro language choice must persist');
 assert(js.includes("select('plan')"),'Pro page should reflect signed-in account state');
 assert(css.includes('.pro-plan-grid'),'Pro page must have responsive plan layout');

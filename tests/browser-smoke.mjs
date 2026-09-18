@@ -85,6 +85,9 @@ assert((await page.locator('#pro-title').innerText()).includes('Repetí menos'),
 await page.locator('#pro-interest').click();
 assert((await page.locator('#pro-interest-status').innerText()).includes('Interés registrado'),'Pro interest CTA should render Spanish acknowledgement');
 assert(await page.locator('#pro-interest').isDisabled(),'Pro interest CTA should disable after one click');
+await page.reload({waitUntil:'domcontentloaded'});
+assert(await page.locator('#pro-interest').isDisabled(),'Pro interest CTA should remain disabled after reload on the same browser');
+assert((await page.locator('#pro-interest-status').innerText()).includes('Interés registrado'),'persisted Pro interest should keep the acknowledgement visible');
 const proOverflow=await page.evaluate(()=>document.documentElement.scrollWidth-window.innerWidth);
 assert(proOverflow<=2,`Pro page should not overflow mobile viewport (overflow ${proOverflow}px)`);
 await page.screenshot({path:`${outDir}/pro-mobile.png`,fullPage:true});
