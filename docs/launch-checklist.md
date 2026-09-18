@@ -13,7 +13,7 @@ This file distinguishes **code present**, **deployed**, and **behavior actually 
 - [x] Production smoke workflow now runs only after GitHub Pages reports a successful deployment, then checks core pages, manifest, icons, sitemap and custom 404.
 - [x] Shared tool translation selectors fixed so tool i18n and cloud preset loading do not abort at runtime.
 - [x] Latest `main` analytics coverage commit deployed successfully to GitHub Pages and passed the matching production smoke workflow.
-- [x] Automated Chromium smoke test covers desktop catalog rendering plus mobile homepage/search/language/account-signup/Pro navigation, all 17 active tool pages, runtime page errors, horizontal overflow, and guest preset-widget mounting on supported tools.
+- [x] Automated Chromium smoke derives tool routes from the rendered catalog and covers desktop catalog rendering plus mobile homepage/search/language/account-signup/Pro navigation, all 17 active tool pages, runtime page errors, horizontal overflow, and guest preset-widget mounting on supported tools.
 - [ ] Manual phone visual smoke test remains pending; automated 390×844 Chromium layout checks and screenshots now run in CI.
 - [x] All HTML entry points use `viewport-fit=cover` and expose the iOS home-screen icon.
 - [x] Automated production smoke verifies a nested missing URL returns the custom 404 page.
@@ -26,7 +26,7 @@ This file distinguishes **code present**, **deployed**, and **behavior actually 
 - [x] Explicit “Create free account” CTAs open account signup mode directly.
 - [x] Basic user flow previously confirmed: sign in → save preset → reload → load preset → delete preset.
 - [x] Saved-preset UI now mounts only on tools with reusable settings and covers 14 tools; Video to GIF stores only size/motion, Subtitle Burner stores only style/position/size, Video Cropper stores crop position, and Thumbnail Maker stores placement/color/position while title text and source-frame timing stay out of presets.
-- [ ] Fresh registration test with a second account remains pending.
+- [ ] Fresh registration test with a second real account remains pending. The full signup + email-confirmation UI path and successful login path are now covered with browser-level Supabase stubs in CI.
 - [x] Existing account is email-confirmed and has completed at least one successful sign-in; auth user/profile counts are aligned.
 - [x] Browser automation covers forgot-password request, recovery-mode password update, signed-in password update and post-recovery return to the account workspace.
 - [x] Display-name database path tested in a rollback-safe transaction and browser automation verifies the signed-in UI calls the dedicated RPC.
@@ -55,7 +55,8 @@ This file distinguishes **code present**, **deployed**, and **behavior actually 
 ## Privacy / PWA
 
 - [x] Privacy page documents local media processing, Umami and Supabase account/preset data.
-- [ ] Test installability in Chrome/Edge Android/desktop after deployment.
+- [x] Chromium DevTools installability diagnostics report no blockers in CI, and the browser discovers the deployed-shape manifest configuration.
+- [ ] Physical install test in Chrome/Edge Android/desktop after deployment remains pending.
 - [x] Added non-transparent 192px/512px raster icons, maskable 512px icon and iOS touch icon.
 - [x] Manifest now includes stable `id`, standalone display, raster icons and shortcuts.
 - [ ] Do not claim offline support; no service worker exists.
