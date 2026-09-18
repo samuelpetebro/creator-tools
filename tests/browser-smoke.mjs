@@ -82,7 +82,7 @@ assert(await page.locator('.tool-page .top-nav').isVisible(),'tool-page navigati
 const toolOverflow=await page.evaluate(()=>document.documentElement.scrollWidth-window.innerWidth);
 assert(toolOverflow<=2,`tool page should not overflow mobile viewport (overflow ${toolOverflow}px)`);
 
-await context.setViewportSize({width:1365,height:900});
+await page.setViewportSize({width:1365,height:900});
 await page.goto(base+'/',{waitUntil:'domcontentloaded'});
 await page.waitForSelector('#catalogGrid .catalog-card');
 assert(await page.locator('#catalogGrid .catalog-card').count()>=15,'desktop catalog should render full tool set');
