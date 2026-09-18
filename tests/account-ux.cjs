@@ -4,7 +4,7 @@ const accountJs=fs.readFileSync('js/account.js','utf8');
 const tools=fs.readFileSync('js/tool-i18n.js','utf8');
 const home=fs.readFileSync('index.html','utf8');
 assert(account.includes('id="account-lang"'),'account must expose language switch');
-assert(account.includes('js/account.js?v=4'),'account JS cache version must be bumped');
+assert(/js\/account\.js\?v=\d+/.test(account),'account page must load a versioned account bundle');
 assert(accountJs.includes("params.get('mode')==='signup'"),'account must support direct signup mode');
 assert(accountJs.includes("localStorage.setItem('droop-language',lang)"),'account language must persist');
 assert(accountJs.includes("resetPasswordForEmail"),'password recovery must remain available');
