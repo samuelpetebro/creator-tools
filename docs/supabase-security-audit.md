@@ -26,6 +26,7 @@ Validated as the `authenticated` role:
 - only `profiles.display_name` has a column-level browser UPDATE grant
 - display-name updates are still restricted by owner RLS
 - `billing_subscriptions` and `billing_webhook_events` are not readable by authenticated browser clients
+- browser roles no longer have `TRUNCATE`, `REFERENCES` or `TRIGGER` privileges on `profiles`, `presets` or billing tables; only the row-level app operations they actually need remain
 
 ## Display-name update path
 
@@ -55,6 +56,11 @@ The Free-plan limit was tested in a rollback-safe transaction:
 Billing persistence tables are intentionally server-only.
 
 Supabase's advisor reports `RLS enabled, no policy` as an informational notice for those two tables. This is expected because browser privileges are revoked and they are not intended to expose user-facing rows directly.
+
+## Advisor status after privilege hardening
+
+- performance advisor: no findings
+- billing tables still show the expected informational `RLS enabled, no policy` notice because they are intentionally server-only
 
 ## Remaining advisor warning
 
