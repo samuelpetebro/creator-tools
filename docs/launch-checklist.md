@@ -62,10 +62,10 @@ This file distinguishes **code present**, **deployed**, and **behavior actually 
 
 - [ ] Decide the first paid benefit that is already deliverable.
 - [ ] Agree price and billing interval.
-- [x] Lemon Squeezy test store/product/variant identified: store 477243, Pro variant 1371942.
+- [x] Lemon Squeezy test store/product/variant identified: store 477243, product 1371942, actual Pro variant 2143724.
 - [x] Webhook hardened and deployed with store/variant/test-mode validation, persisted subscription ownership, idempotency and stale-event protection.
 - [x] Lemon webhook Edge Function deployed with JWT verification disabled; HMAC signature validation remains inside the function.
-- [x] Authenticated checkout Edge Function deployed; temporary account test UI invokes it only from a signed-in session and never accepts a browser-provided plan.
+- [x] Checkout Edge Function authenticates the bearer token inside the handler; browser checkout sends the current user JWT and publishable key explicitly and never accepts a browser-provided plan.
 - [ ] Perform the first real Lemon test-mode checkout and verify persisted webhook/subscription rows; then exercise lifecycle/duplicate/out-of-order events.
 - [ ] Only then enable live checkout.
 
