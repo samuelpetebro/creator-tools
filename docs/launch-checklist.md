@@ -17,6 +17,7 @@ This file distinguishes **code present**, **deployed**, and **behavior actually 
 - [ ] Manual phone visual smoke test remains pending; automated 390×844 Chromium layout checks and screenshots now run in CI.
 - [x] All HTML entry points use `viewport-fit=cover` and expose the iOS home-screen icon.
 - [x] Automated production smoke verifies a nested missing URL returns the custom 404 page.
+- [x] Fixed the nested `/extract-audio/` page to use root-relative production assets/navigation instead of resolving CSS/JS/links under `/extract-audio/`.
 - [x] Browser smoke verifies `/?q=image` pre-fills the search and only returns image-category catalog cards.
 
 ## Accounts / presets
