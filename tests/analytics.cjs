@@ -15,8 +15,14 @@ const beforeSynthetic=b.requests.length;
 const syntheticDownload={isTrusted:false,target:trustedDownload.target};
 for(const listener of b.listeners.click||[])listener(syntheticDownload);
 assert.equal(b.requests.length,beforeSynthetic);
+const trustedCta={isTrusted:true,target:{closest:selector=>selector.includes('[data-droop-event]')?{getAttribute:key=>key==='data-droop-event'?'cta_pro_early_access':null}:null}};
+for(const listener of b.listeners.click||[])listener(trustedCta);
+assert.equal(b.requests.at(-1).name,'cta_pro_early_access');
+const beforeSyntheticCta=b.requests.length;
+for(const listener of b.listeners.click||[])listener({...trustedCta,isTrusted:false});
+assert.equal(b.requests.length,beforeSyntheticCta);
 for(const name of ['preset_save','preset_load','preset_delete']){b.window.DroopAnalytics.track(name);assert.equal(b.requests.at(-1).name,name);}
 const p=b.window.droopAnalyticsBeforeSend('event',{name:'process_complete',url:'?secret',data:{filename:'private.mov',caption:'personal text'}});assert.equal(p.url,'/subtitle-burner.html');assert.equal(p.referrer,'https://search.example');assert.deepEqual(Object.keys(p.data),['tool']);assert(!JSON.stringify(p).includes('private'));assert.equal(b.window.droopAnalyticsBeforeSend('identify',{}),false);assert.equal(b.window.droopAnalyticsBeforeSend('event',{name:'personal text'}),false);
 b.window.umami.track=()=>{throw Error('blocked')};assert.doesNotThrow(()=>{b.window.DroopAnalytics.start();b.window.DroopAnalytics.finish('error');});
 const failed=boot();failed.scripts[0].onerror();failed.window.DroopAnalytics.start();assert.equal(failed.requests.length,0);
-console.log('PASS disabled defaults, privacy signals, manual pageviews, payload allowlist, trusted download clicks, synthetic click suppression, queued event order, deduplication, provider failure isolation');
+console.log('PASS disabled defaults, privacy signals, manual pageviews, payload allowlist, trusted download/CTA clicks, synthetic click suppression, queued event order, deduplication, provider failure isolation');
