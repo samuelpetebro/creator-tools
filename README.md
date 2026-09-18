@@ -46,7 +46,7 @@ On PowerShell:
 Get-ChildItem tests/*.cjs | ForEach-Object { node $_.FullName; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE } }
 ```
 
-After shared CSS/JS changes, also smoke-test the public site on desktop and mobile.
+`tests/analytics-provider.cjs` is an optional provider-contract test and requires a separately downloaded official Umami tracker file as its argument, so CI intentionally skips that one file.\n\nAfter shared CSS/JS changes, also smoke-test the public site on desktop and mobile.
 
 ## Security rules
 
