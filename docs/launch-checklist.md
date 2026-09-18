@@ -11,6 +11,7 @@ This file distinguishes **code present**, **deployed**, and **behavior actually 
 
 ## Public site / GitHub Pages
 
+- [x] Shared tool translation selectors fixed so tool i18n and cloud preset loading do not abort at runtime.
 - [ ] Confirm the latest `main` commit is the GitHub Pages deployment currently serving `droopweb.lat`.
 - [ ] Desktop smoke test: homepage, catalog search/filter, language switch, FAQ, Pro, account.
 - [ ] Mobile smoke test: navigation remains accessible, catalog scrolls correctly, account/plan links are reachable.
@@ -19,6 +20,8 @@ This file distinguishes **code present**, **deployed**, and **behavior actually 
 
 ## Accounts / presets
 
+- [x] Account page is bilingual (EN/ES) and uses the shared `droop-language` preference.
+- [x] Explicit “Create free account” CTAs open account signup mode directly.
 - [x] Basic user flow previously confirmed: sign in → save preset → reload → load preset → delete preset.
 - [ ] Fresh registration test with email confirmation as currently configured.
 - [ ] Password reset/recovery test.
