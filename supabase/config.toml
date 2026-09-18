@@ -4,3 +4,7 @@ verify_jwt = false
 [functions.lemonsqueezy-checkout]
 # The handler performs its own user JWT verification against Supabase Auth.
 verify_jwt = false
+
+[functions.lemonsqueezy-portal]
+# The handler validates the signed-in Supabase user itself.
+verify_jwt = false
