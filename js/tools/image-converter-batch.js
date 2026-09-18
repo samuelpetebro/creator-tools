@@ -4,7 +4,7 @@ const root=document.querySelector('[data-pro-feature="image-converter-batch"]');
 if(!root)return;
 const input=root.querySelector('#converterBatchInput'),button=root.querySelector('#converterBatchButton'),download=root.querySelector('#converterBatchDownload'),status=root.querySelector('#converterBatchStatus'),list=root.querySelector('#converterBatchList');
 const format=document.querySelector('#converterFormat'),quality=document.querySelector('#converterQuality');
-const MAX=20;
+const MAX=20,MAX_BYTES=200*1024*1024;
 let files=[],entries=[];
 
 const isEs=()=>{try{return (localStorage.getItem('droop-language')||navigator.language||'en').toLowerCase().startsWith('es');}catch(_){return false;}};
@@ -33,6 +33,7 @@ input.addEventListener('change',()=>{
   if(!selected.length){files=[];button.disabled=true;say('');return;}
   if(selected.length>MAX){files=[];input.value='';button.disabled=true;say(tr(`Choose up to ${MAX} images per batch.`,`Elegí hasta ${MAX} imágenes por lote.`),true);return;}
   if(selected.some(file=>!file.type.startsWith('image/'))){files=[];input.value='';button.disabled=true;say(tr('Every batch file must be an image.','Todos los archivos del lote deben ser imágenes.'),true);return;}
+  if(selected.reduce((sum,file)=>sum+file.size,0)>MAX_BYTES){files=[];input.value='';button.disabled=true;say(tr('Keep each batch under 200 MB total.','Mantené cada lote por debajo de 200 MB en total.'),true);return;}
   files=selected;button.disabled=false;say(tr(`${files.length} images ready.`,`${files.length} imágenes listas.`));
 });
 
