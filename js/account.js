@@ -128,8 +128,10 @@ ui.form.addEventListener('submit',async e=>{
   if(result.error){
     say(result.error.message,true);
   }else if(signup&&!result.data.session){
+    window.DroopAnalytics?.track?.('signup_success');
     say('Check your email to confirm your Droop account.');
   }else{
+    window.DroopAnalytics?.track?.(signup?'signup_success':'login_success');
     say('You are signed in.');
     await render(result.data.session);
   }
