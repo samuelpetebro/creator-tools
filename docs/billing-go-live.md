@@ -55,18 +55,22 @@ Lemon allows test checkout and webhook testing before activation, but real sales
 12. After expiration (or a controlled test of the DB entitlement path), confirm the account returns to Free.
 13. Only after those checks, replace the public “Checkout not live yet” CTA with the production checkout action.
 
-## Product decisions still required
+## Product decisions
 
-The first day-one Pro benefit is decided: **up to 100 saved presets**, while Free remains at 5. The database limit and account UI already support that distinction.
+Accepted launch price: **USD 5/month**, monthly-only for v1.
 
-The USD 5/month value used so far is a test price, not a committed public price.
+Ready launch benefits:
+- up to 100 saved presets (Free remains at 5)
+- batch Image Converter for up to 20 files
+- batch Metadata Cleaner for up to 20 files
+- local ZIP download for those batch results
+- preset library backup and restore
 
-A conservative launch proposal is documented in `docs/pricing-proposal.md`; it remains internal until accepted.
+The database-enforced preset allowance is a hard entitlement. The local batch UI is intentionally client-side because media stays on the user's device; it is a product entitlement, not a cryptographic DRM boundary.
 
-Before public launch, decide:
-- final monthly price
-- whether an annual option exists
-- whether paused subscriptions keep Pro access; current logic does
-- dunning policy for unpaid subscriptions
+Still intentionally deferred:
+- annual billing
+- history / repeat-export workflows
+- additional batch-enabled tools
 
-Do not advertise batch workflows or history as current paid features until they actually exist.
+Current entitlement policy keeps Pro for paused/past-due/cancelled-with-grace states and removes it for unpaid/expired. Revisit dunning only if real payment data shows a reason to change it.
