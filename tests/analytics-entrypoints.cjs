@@ -5,7 +5,7 @@ const pages=[
   'image-converter.html','background-remover.html','video-under-x-mb.html','video-trimmer.html',
   'extract-audio/index.html','audio-converter.html','audio-trimmer.html','safe-zones.html',
   'video-cropper.html','thumbnail-maker.html','video-to-gif.html','subtitle-burner.html',
-  'image-upscaler.html','pro.html','account.html','404.html'
+  'image-upscaler.html','pro.html','account.html','faq.html','404.html'
 ];
 
 const versions=new Map();
