@@ -30,6 +30,8 @@ for(const [name,html,slug,script] of [
 }
 assert(imageBatch.includes('const MAX=20'),'image batch must cap one run at 20 files');
 assert(metaBatch.includes('const MAX=20'),'metadata batch must cap one run at 20 files');
+assert(imageBatch.includes('MAX_BYTES=200*1024*1024'),'image batch must cap total input size');
+assert(metaBatch.includes('MAX_BYTES=200*1024*1024'),'metadata batch must cap total input size');
 assert(imageBatch.includes("access?.isPro"),'image batch processing must require Pro at execution time');
 assert(metaBatch.includes("access?.isPro"),'metadata batch processing must require Pro at execution time');
 assert(imageBatch.includes("track?.('pro_batch_use')"),'image batch must record privacy-safe Pro activation');
