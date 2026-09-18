@@ -61,6 +61,8 @@ The first day-one Pro benefit is decided: **up to 100 saved presets**, while Fre
 
 The USD 5/month value used so far is a test price, not a committed public price.
 
+A conservative launch proposal is documented in `docs/pricing-proposal.md`; it remains internal until accepted.
+
 Before public launch, decide:
 - final monthly price
 - whether an annual option exists
