@@ -77,6 +77,8 @@ assert((await page.locator('#account-plan').innerText()).trim()==='FREE','signed
 assert((await page.locator('#account-usage').innerText()).trim()==='1 / 5','signed-in account should show preset usage');
 assert(await page.locator('#display-name').inputValue()==='Samu Test','display name should load from profile');
 assert((await page.locator('#account-presets').innerText()).includes('WebP 80'),'saved preset should render');
+assert(await page.locator('#account-pro-backup [data-pro-locked]').isVisible(),'Free plan should show the Pro backup upsell');
+assert(await page.locator('#account-pro-backup [data-pro-content]').isHidden(),'Free plan should hide Pro backup controls');
 
 await page.locator('#display-name').fill('Samu Browser');
 await page.locator('#profile-form button[type="submit"]').click();
