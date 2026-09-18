@@ -4,6 +4,7 @@ const cloud=fs.readFileSync('js/cloud.js','utf8');
 const gif=fs.readFileSync('video-to-gif.html','utf8');
 const sub=fs.readFileSync('subtitle-burner.html','utf8');
 
+assert.doesNotThrow(()=>new Function(cloud),'preset client must remain valid JavaScript');
 assert(cloud.includes('[data-droop-preset]'),'preset client must capture explicit reusable settings');
 assert(cloud.includes("!reusableControls(panel).length"),'tools without reusable settings should not show an empty preset widget');
 
