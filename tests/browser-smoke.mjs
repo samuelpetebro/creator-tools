@@ -95,7 +95,7 @@ const toolPages=[
 const presetTools=new Set([
   '/make-it-fit.html','/under-x-mb.html','/release-pack.html','/metadata-cleaner.html',
   '/image-converter.html','/video-under-x-mb.html','/video-trimmer.html','/extract-audio/',
-  '/audio-converter.html','/audio-trimmer.html','/safe-zones.html'
+  '/audio-converter.html','/audio-trimmer.html','/safe-zones.html','/video-to-gif.html','/subtitle-burner.html'
 ]);
 
 for(const toolPath of toolPages){
@@ -111,6 +111,7 @@ for(const toolPath of toolPages){
   if(presetTools.has(toolPath)){
     await page.waitForSelector('.droop-presets',{timeout:2500});
     assert(await page.locator('.droop-presets-signin').isVisible(),`${toolPath} must mount the guest preset/account widget`);
+    if(toolPath==='/image-converter.html')assert((await page.locator('.droop-presets-signin').innerText()).includes('Iniciá sesión'),'preset widget should respect the saved Spanish language');
   }
 }
 
