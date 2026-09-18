@@ -18,7 +18,7 @@ assert(analytics.includes("'data-auto-pageview':'false'"),'Umami manual pageview
 assert(!analytics.includes("'data-auto-track':'false'"),'data-auto-track=false disables current Umami tracker initialization');
 assert(!analytics.includes("'data-performance':'true'"),'performance tracking must not be claimed until tested');
 assert(analytics.includes("'signup_success'")&&analytics.includes("'login_success'"),'account success events must be allowlisted');
-assert(account.includes('js/analytics.js?v=3'),'account page must load analytics adapter');
+assert(/js\/analytics\.js\?v=\d+/.test(account),'account page must load a versioned analytics adapter');
 assert(privacy.includes('Supabase stores authentication data'),'privacy page must disclose account data');
 assert(notFound.includes('href="/css/styles.css?v=7"')&&notFound.includes('href="/#tool-catalog"'),'404 assets/navigation must be root-relative');
 assert(catalog.includes('.site-header .top-nav{display:flex!important'),'mobile site nav must remain visible');

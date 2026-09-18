@@ -32,12 +32,13 @@ This file distinguishes **code present**, **deployed**, and **behavior actually 
 - [x] Verified in a rollback-safe database test that Free stops at 5 presets and the sixth insert is rejected.
 - [x] Verified authenticated clients have no direct UPDATE privilege on `profiles` and no SELECT access to server-only billing tables.
 - [x] Reconfirmed after the migration that authenticated users cannot directly update `profiles.plan`; unrelated authenticated user IDs see zero profile/preset rows.
+- [x] Browser roles were stripped of unnecessary `TRUNCATE`, `REFERENCES` and `TRIGGER` privileges on account/preset/billing tables; row-level app access remains unchanged.
 - [ ] Physical-phone account/preset smoke test remains pending; automated 390×844 signed-in account coverage now includes profile, password and preset deletion flows.
 
 ## Analytics
 
 - [x] Pageviews confirmed in the Umami dashboard after the tracker configuration update. Owner-observed 24h baseline on 2026-09-18: 11 visitors, 17 visits, 94 views, 47% bounce rate and 7m 41s visit duration. Treat this as mixed development/test traffic, not a clean acquisition baseline.
-- [ ] Confirm `process_start`, `process_complete`, `process_error`, `download_click`, `signup_success` and `login_success` arrive in Umami. `cta_account` and `cta_plans` are already visible. Processing lifecycle instrumentation is now deployed across 15 active processing tools with regression coverage.
+- [ ] Confirm `process_start`, `process_complete`, `process_error`, `download_click`, `signup_success` and `login_success` arrive in Umami. `cta_account` and `cta_plans` are already visible. Processing lifecycle instrumentation is deployed across 15 active processing tools, and `download_click` now records trusted user clicks on both download links and download buttons without counting synthetic anchor clicks.
 - [ ] Treat CTA events as intent, not completed conversion.
 - [ ] Performance/Core Web Vitals tracking is **not claimed as enabled** until a privacy-compatible implementation is tested in the Umami dashboard.
 
