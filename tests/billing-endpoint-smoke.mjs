@@ -20,6 +20,10 @@ if(checkout.status!==401){
   throw new Error(`Checkout auth gate check failed: ${checkout.status} ${checkoutBody.slice(0,200)}`);
 }
 
+const portal=await fetch(base+'/lemonsqueezy-portal',{method:'POST',headers:{'content-type':'application/json','origin':'https://droopweb.lat'},body:'{}'});
+if(portal.status!==401){throw new Error(`Portal auth gate check failed: ${portal.status} ${(await portal.text()).slice(0,200)}`);}
+
 console.log('billing endpoint smoke: ok');
 console.log('webhook rejected unsigned request after loading its required configuration');
 console.log('checkout rejected unauthenticated request');
+console.log('customer portal rejected unauthenticated request');
