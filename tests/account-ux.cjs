@@ -9,6 +9,8 @@ assert(accountJs.includes("params.get('mode')==='signup'"),'account must support
 assert(accountJs.includes("localStorage.setItem('droop-language',lang)"),'account language must persist');
 assert(accountJs.includes("resetPasswordForEmail"),'password recovery must remain available');
 assert(accountJs.includes("PASSWORD_RECOVERY"),'recovery event handling must remain available');
+assert(accountJs.includes("signup_success"),'successful signup must emit signup_success analytics');
+assert(accountJs.includes("login_success"),'successful login must emit login_success analytics');
 assert(tools.includes("const foot=$$('footer span')"),'tool translator must use querySelectorAll for footer spans');
 assert(tools.includes("$$('a[href*=\"account.html\"]')"),'tool translator must iterate account links safely');
 assert(home.includes('account.html?mode=signup'),'explicit create-account CTAs must open signup mode');
