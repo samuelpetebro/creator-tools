@@ -1,18 +1,21 @@
-# Droop Pro pricing proposal
+# Droop Pro pricing decision
 
 Updated: 2026-09-18
 
-This is an internal launch proposal, not public pricing. Do not expose a real-money checkout or advertise this price until the Lemon store is activated and the owner accepts the proposal.
+Owner decision on 2026-09-18: launch Droop Pro at **USD 5/month**, monthly-only for v1. The price can be shown publicly now; real-money checkout stays disabled until the Lemon store is activated and Live Mode is configured.
 
 ## Current product reality
 
 Free keeps all current browser tools and up to 5 saved presets.
 
-The first ready Pro benefit is deliberately narrow:
+The launch Pro value pack now includes:
 
 - up to 100 saved presets
-- same current browser tools
-- batch workflows remain planned
+- batch Image Converter for up to 20 images at once
+- batch Metadata Cleaner for up to 20 images at once
+- one-click local ZIP download for those batch results
+- preset library backup and restore through the account workspace
+- same current browser tools and privacy-first local processing
 - history / repeat-export workflows remain planned
 
 That means Droop should launch below mature creator suites rather than price as if the roadmap were already shipped.
@@ -30,15 +33,15 @@ Checked 2026-09-18 against official pricing pages:
 
 These are reference points, not a claim that Droop is feature-equivalent.
 
-## Recommended v1 launch test
+## Accepted v1 launch price
 
 **USD 5/month, monthly only.**
 
 Why this is a sensible first test:
 
-- the ready paid benefit is useful but still small
+- the launch value now includes multiple concrete workflow benefits instead of only a higher preset limit
 - it keeps a large gap below mature editing suites
-- it matches the price already used during Lemon test-mode validation
+- it matches the price already used during Lemon test-mode validation and keeps launch operations simple
 - monthly-only keeps the first real billing rollout simpler
 - Droop can add annual billing later after retention is measurable instead of guessing a discount now
 

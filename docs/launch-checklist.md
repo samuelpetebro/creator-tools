@@ -63,8 +63,8 @@ This file distinguishes **code present**, **deployed**, and **behavior actually 
 
 ## Billing / Pro — do not go live yet
 
-- [x] First paid benefit decided: Pro raises saved presets from 5 to 100. The limit already exists in the database and account UI; batch/history features remain roadmap items.
-- [ ] Agree price and billing interval. Internal proposal recorded in `docs/pricing-proposal.md`: USD 5/month, monthly-only for v1; do not publish it until accepted and Lemon Live Mode is ready.
+- [x] Pro launch value pack prepared: 100 saved presets, batch Image Converter (20 files), batch Metadata Cleaner (20 files), local ZIP batch download, and preset backup/restore. History and additional batch workflows remain roadmap items.
+- [x] Owner accepted USD 5/month, monthly-only for v1 on 2026-09-18. Public Pro copy may show the price; real-money checkout stays disabled until Lemon Live Mode is ready.
 - [x] Lemon Squeezy test store/product/variant identified: store 477243, product 1371942, actual Pro variant 2143724.
 - [x] Webhook hardened and deployed with store/variant/test-mode validation, persisted subscription ownership, idempotency and stale-event protection.
 - [x] Lemon webhook Edge Function deployed with JWT verification disabled; HMAC signature validation remains inside the function.
@@ -78,10 +78,10 @@ This file distinguishes **code present**, **deployed**, and **behavior actually 
 ## Product / acquisition
 
 - [x] Free → account → plans funnel links are in place, with direct signup entry and a dedicated bilingual Pro comparison page.
-- [x] Pro page clearly separates current Free features from planned Pro features and does not invent a price or live checkout.
+- [x] Pro page clearly separates Free, ready Pro benefits, and planned features; public launch price is USD 5/month while checkout remains disabled until Lemon Live Mode.
 - [ ] Use real Umami data to identify the most-used tools.
 - [x] Added a privacy-safe Pro interest button that emits only the allowlisted `cta_pro_early_access` event (tool/page slug only; no email or free text).
-- [ ] Measure visit → tool use → account → preset engagement → Pro intent → payment using the definitions in `docs/product-funnel.md`.
+- [ ] Measure visit → tool use → account → preset engagement → Pro intent → Pro feature use → payment using the definitions in `docs/product-funnel.md`.
 - [ ] Create demos/content around the strongest tools instead of adding metadata indefinitely.
 
 ## Licensing / future sale

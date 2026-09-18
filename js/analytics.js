@@ -3,7 +3,7 @@
 'use strict';
 const noop=()=>{};window.DroopAnalytics=Object.freeze({start:noop,finish:noop,track:noop});
 const config=window.DroopAnalyticsConfig||{};
-const paths=['/','/index.html','/make-it-fit.html','/under-x-mb.html','/release-pack.html','/metadata-cleaner.html','/image-converter.html','/background-remover.html','/video-under-x-mb.html','/video-trimmer.html','/extract-audio/','/extract-audio/index.html','/audio-converter.html','/audio-trimmer.html','/safe-zones.html','/video-cropper.html','/thumbnail-maker.html','/video-to-gif.html','/subtitle-burner.html','/image-upscaler.html','/pro.html','/account.html','/404.html'];
+const paths=['/','/index.html','/make-it-fit.html','/under-x-mb.html','/release-pack.html','/metadata-cleaner.html','/image-converter.html','/background-remover.html','/video-under-x-mb.html','/video-trimmer.html','/extract-audio/','/extract-audio/index.html','/audio-converter.html','/audio-trimmer.html','/safe-zones.html','/video-cropper.html','/thumbnail-maker.html','/video-to-gif.html','/subtitle-burner.html','/image-upscaler.html','/pro.html','/account.html','/faq.html','/404.html'];
 const isNotFound=!!document.querySelector('#not-found-title');if(location.hostname!=='droopweb.lat'||(!paths.includes(location.pathname)&&!isNotFound)||navigator.doNotTrack==='1'||navigator.globalPrivacyControl===true)return;
 if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(config.websiteId||''))return;
 let trackerURL;try{trackerURL=new URL(config.scriptUrl);if(trackerURL.protocol!=='https:'||trackerURL.username||trackerURL.password||trackerURL.search||trackerURL.hash)return;}catch(_){return;}
@@ -11,7 +11,7 @@ function permitted(){try{return navigator.doNotTrack!=='1'&&navigator.globalPriv
 if(!permitted())return;
 const path=isNotFound?'/404.html':location.pathname==='/index.html'?'/':location.pathname.replace('/extract-audio/index.html','/extract-audio/');
 const tool=path==='/'?'home':path.split('/').filter(Boolean)[0].replace('.html','');
-const names=new Set(['process_start','process_complete','process_error','process_cancel','download_click','cta_account','cta_plans','cta_pro_early_access','signup_success','login_success','preset_save','preset_load','preset_delete']);
+const names=new Set(['process_start','process_complete','process_error','process_cancel','download_click','cta_account','cta_plans','cta_pro_early_access','signup_success','login_success','preset_save','preset_load','preset_delete','pro_batch_use','pro_backup_export','pro_backup_import']);
 let loaded=false,failed=false,running=false,queue=[];
 const payload=name=>{
  let referrer='';try{const u=new URL(document.referrer);if(/^https?:$/.test(u.protocol)&&u.hostname!==location.hostname)referrer=u.origin;}catch(_){}
