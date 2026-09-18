@@ -30,8 +30,9 @@ const refresh=async()=>{
   return state;
 };
 
+const isEs=()=>{try{return (localStorage.getItem('droop-language')||navigator.language||'en').toLowerCase().startsWith('es');}catch(_){return false;}};
 const copy=()=>{
-  let es=false;try{es=(localStorage.getItem('droop-language')||navigator.language||'en').toLowerCase().startsWith('es');}catch(_){}
+  const es=isEs();
   return es?{
     locked:'Esta función está incluida en Droop Pro.',
     guest:'Iniciá sesión para comprobar tu acceso Pro.',
@@ -50,7 +51,8 @@ const render=async(root)=>{
   const locked=root.querySelector('[data-pro-locked]');
   const content=root.querySelector('[data-pro-content]');
   const note=root.querySelector('[data-pro-note]');
-  const c=copy();
+  const c=copy(),es=isEs();
+  root.querySelectorAll('[data-pro-en][data-pro-es]').forEach(el=>{el.textContent=es?el.dataset.proEs:el.dataset.proEn;});
   root.dataset.proState=current.isPro?'pro':current.authenticated?'free':'guest';
   if(locked)locked.hidden=current.isPro;
   if(content)content.hidden=!current.isPro;
