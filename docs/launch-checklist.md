@@ -26,8 +26,10 @@ This file distinguishes **code present**, **deployed**, and **behavior actually 
 - [x] Basic user flow previously confirmed: sign in → save preset → reload → load preset → delete preset.
 - [ ] Fresh registration test with email confirmation as currently configured.
 - [ ] Password reset/recovery test.
-- [ ] Display-name update test.
-- [ ] Verify Free stops at 5 presets and cannot change its own `plan`.
+- [ ] Display-name update browser test. Database path is now a dedicated authenticated RPC; direct profile UPDATE remains revoked.
+- [x] Verified in a rollback-safe database test that Free stops at 5 presets and the sixth insert is rejected.
+- [x] Verified authenticated clients have no direct UPDATE privilege on `profiles` and no SELECT access to server-only billing tables.
+- [ ] Reconfirm plan protection after the display-name RPC migration.
 - [ ] Repeat the account/preset smoke test on a phone.
 
 ## Analytics
