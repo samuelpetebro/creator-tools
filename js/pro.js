@@ -9,11 +9,12 @@ function apply(){document.documentElement.lang=lang;document.title=t('title');co
 const sw=document.querySelector('#pro-lang');sw?.addEventListener('click',()=>{lang=lang==='es'?'en':'es';try{localStorage.setItem('droop-language',lang);}catch(_){}apply();refreshAccountState();});
 apply();
 const interest=document.querySelector('#pro-interest');
+const interestStatus=document.querySelector('#pro-interest-status');
+const markInterest=()=>{if(!interest)return;interest.disabled=true;interest.textContent='✓';if(interestStatus)interestStatus.textContent=t('interestThanks');};
+try{if(localStorage.getItem('droop-pro-interest')==='1')markInterest();}catch(_){}
 interest?.addEventListener('click',()=>{
-  const status=document.querySelector('#pro-interest-status');
-  interest.disabled=true;
-  interest.textContent='✓';
-  if(status)status.textContent=t('interestThanks');
+  try{localStorage.setItem('droop-pro-interest','1');}catch(_){}
+  markInterest();
 });
 async function refreshAccountState(){const state=document.querySelector('#pro-user-state'),cta=document.querySelector('#pro-primary-cta');if(!state||!cta)return;const cfg=window.DroopSupabaseConfig||{};if(!window.supabase||!cfg.url||!cfg.anonKey){state.textContent=t('guestState');return;}try{const client=window.supabase.createClient(cfg.url,cfg.anonKey);const {data}=await client.auth.getSession();const session=data?.session;if(!session){state.textContent=t('guestState');cta.href='account.html?mode=signup';cta.textContent=t('primaryCta');return;}const {data:profile}=await client.from('profiles').select('plan').eq('id',session.user.id).maybeSingle();state.textContent=profile?.plan==='pro'?t('signedPro'):t('signedFree');cta.href='account.html';cta.textContent=t('openAccount');cta.dataset.droopEvent='cta_account';}catch(_){state.textContent=t('guestState');}}
 refreshAccountState();
