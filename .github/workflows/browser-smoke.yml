@@ -45,7 +45,9 @@ jobs:
         env:
           DROOP_LOCAL_URL: http://127.0.0.1:4173
           DROOP_SCREENSHOT_DIR: artifacts/browser-smoke
-        run: node tests/browser-smoke.mjs
+        run: |
+          node tests/browser-smoke.mjs
+          node tests/account-browser-smoke.mjs
 
       - name: Upload browser screenshots
         if: always()
