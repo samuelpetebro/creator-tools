@@ -15,7 +15,7 @@ Production: https://droopweb.lat/
 - **Saved presets:** settings only; media files are not stored with presets.
 - **Analytics:** Umami Cloud through the privacy-focused adapter in `js/analytics.js`.
 - **PWA shell:** manifest + raster icons + standalone display metadata. Droop does not currently claim offline support.
-- **Billing:** Lemon Squeezy is planned. Hardened checkout/webhook source and billing persistence are in the repository, but the Edge Functions are intentionally not deployed until Lemon test-mode onboarding is complete.
+- **Billing:** Lemon Squeezy checkout, signed webhooks, server-side subscription persistence and the customer-portal bridge are deployed in test mode. The full test lifecycle passed; real-money checkout remains disabled until the Lemon store is activated and live credentials are configured.
 
 ## Important files
 
@@ -56,7 +56,7 @@ Get-ChildItem tests/*.cjs | ForEach-Object { node $_.FullName; if ($LASTEXITCODE
 - Never commit a Supabase `service_role` key, Lemon Squeezy webhook secret or other server credential.
 - Browser code may contain the Supabase publishable key; access control must be enforced by RLS.
 - A user's `plan` must only be changed by trusted server-side code.
-- Do not deploy the current Lemon Squeezy webhook until the billing checklist is completed.
+- Keep Lemon billing in test mode until the store is activated and the live-mode checklist in `docs/billing-go-live.md` is completed.
 
 ## Deployment
 
