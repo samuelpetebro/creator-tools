@@ -62,11 +62,11 @@ This file distinguishes **code present**, **deployed**, and **behavior actually 
 
 - [ ] Decide the first paid benefit that is already deliverable.
 - [ ] Agree price and billing interval.
-- [ ] Confirm Lemon Squeezy account/store/product/variant in test mode.
-- [ ] Harden the webhook before deployment: fail closed on missing variant, validate store + test/live mode, model real subscription statuses, persist subscription ownership, add idempotency/out-of-order protection, and verify profile updates affect a row.
-- [ ] Confirm the Edge Function accepts Lemon webhooks without requiring a Supabase user JWT.
-- [ ] Build authenticated checkout linkage; do not trust a browser-provided plan change.
-- [ ] Test create/update/cancel/resume/expire/refund/payment-failure and duplicate/out-of-order events.
+- [x] Lemon Squeezy test store/product/variant identified: store 477243, Pro variant 1371942.
+- [x] Webhook hardened and deployed with store/variant/test-mode validation, persisted subscription ownership, idempotency and stale-event protection.
+- [x] Lemon webhook Edge Function deployed with JWT verification disabled; HMAC signature validation remains inside the function.
+- [x] Authenticated checkout Edge Function deployed; temporary account test UI invokes it only from a signed-in session and never accepts a browser-provided plan.
+- [ ] Perform the first real Lemon test-mode checkout and verify persisted webhook/subscription rows; then exercise lifecycle/duplicate/out-of-order events.
 - [ ] Only then enable live checkout.
 
 ## Product / acquisition

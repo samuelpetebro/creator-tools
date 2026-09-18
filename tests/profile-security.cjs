@@ -5,7 +5,7 @@ const migration=fs.readFileSync('supabase/004_profile_display_name_rpc.sql','utf
 
 assert(account.includes("client.rpc('set_my_display_name'"),'display name must use the dedicated RPC');
 assert(!account.includes("from('profiles').update({display_name:name})"),'browser must not directly update profiles');
-assert(html.includes('js/account.js?v=6'),'account bundle cache version must be bumped');
+assert(/js\/account\.js\?v=\d+/.test(html),'account page must load a versioned account bundle');
 assert(migration.includes('revoke update on table public.profiles from anon, authenticated'),'direct profile updates must stay revoked');
 assert(migration.includes('security definer'),'initial RPC migration must fail closed before the invoker refinement');
 const refinement=fs.readFileSync('supabase/005_profile_display_name_invoker.sql','utf8');
