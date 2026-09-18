@@ -10,10 +10,12 @@ This file distinguishes **code present**, **deployed**, and **behavior actually 
 
 ## Public site / GitHub Pages
 
+- [x] Added a production smoke workflow that retries against `droopweb.lat` after each `main` push and checks core pages, manifest, icons, sitemap and custom 404.
 - [x] Shared tool translation selectors fixed so tool i18n and cloud preset loading do not abort at runtime.
 - [ ] Confirm the latest `main` commit is the GitHub Pages deployment currently serving `droopweb.lat`.
 - [ ] Desktop smoke test: homepage, catalog search/filter, language switch, FAQ, Pro, account.
-- [ ] Mobile smoke test: navigation remains accessible, catalog scrolls correctly, account/plan links are reachable.
+- [ ] Mobile visual smoke test: navigation remains accessible, catalog scrolls correctly, account/plan links are reachable.
+- [x] All HTML entry points use `viewport-fit=cover` and expose the iOS home-screen icon.
 - [ ] Verify a nested missing URL renders the 404 page with working CSS, navigation and analytics assets.
 - [ ] Verify `/?q=image` pre-fills and filters the catalog; this is required by the homepage SearchAction structured data.
 
@@ -47,8 +49,9 @@ This file distinguishes **code present**, **deployed**, and **behavior actually 
 ## Privacy / PWA
 
 - [x] Privacy page documents local media processing, Umami and Supabase account/preset data.
-- [ ] Test installability in Chrome/Edge Android/desktop.
-- [ ] Add raster PWA icons / iOS touch icon before promoting Droop as an installable app.
+- [ ] Test installability in Chrome/Edge Android/desktop after deployment.
+- [x] Added non-transparent 192px/512px raster icons, maskable 512px icon and iOS touch icon.
+- [x] Manifest now includes stable `id`, standalone display, raster icons and shortcuts.
 - [ ] Do not claim offline support; no service worker exists.
 
 ## Billing / Pro — do not go live yet
