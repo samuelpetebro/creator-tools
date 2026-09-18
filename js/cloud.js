@@ -4,6 +4,12 @@ const cfg=window.DroopSupabaseConfig||{};
 const CDN='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
 const FREE_LIMIT=5;
 const PRO_LIMIT=100;
+const lang=(()=>{try{return (localStorage.getItem('droop-language')||localStorage.getItem('droop-lang')||navigator.language||'en').toLowerCase().startsWith('es')?'es':'en';}catch(_){return 'en';}})();
+const copy={
+  en:{title:'Saved presets',account:'Account',intro:'Save reusable settings only. Your media is never uploaded.',signin:'Sign in to save presets',choose:'Choose a preset…',load:'Load',delete:'Delete',name:'Preset name',save:'Save current settings',used:'presets used',noSettings:'This tool has no reusable settings yet.',saving:'Saving…',saved:'Preset saved.',chooseFirst:'Choose a preset first.',loaded:'loaded.',confirm:'Delete',deleted:'Preset deleted.',loadError:'Could not load presets.',saveError:'Could not save preset.',deleteError:'Could not delete preset.'},
+  es:{title:'Presets guardados',account:'Cuenta',intro:'Guardá solo configuraciones reutilizables. Tus archivos nunca se suben.',signin:'Iniciá sesión para guardar presets',choose:'Elegí un preset…',load:'Cargar',delete:'Eliminar',name:'Nombre del preset',save:'Guardar configuración actual',used:'presets usados',noSettings:'Esta herramienta todavía no tiene configuraciones reutilizables.',saving:'Guardando…',saved:'Preset guardado.',chooseFirst:'Primero elegí un preset.',loaded:'cargado.',confirm:'¿Eliminar',deleted:'Preset eliminado.',loadError:'No se pudieron cargar los presets.',saveError:'No se pudo guardar el preset.',deleteError:'No se pudo eliminar el preset.'}
+};
+const t=key=>copy[lang][key]||copy.en[key]||key;
 let client=null;
 let session=null;
 let profile=null;
@@ -118,8 +124,8 @@ const deletePreset=async id=>{
   if(error)throw error;
 };
 
-const reusableControls=(root=document)=>[...root.querySelectorAll('.controls select,.controls input,.controls textarea')]
-  .filter(el=>el.type!=='file'&&el.type!=='button'&&el.type!=='submit');
+const reusableControls=(root=document)=>[...root.querySelectorAll('.controls select,.controls input,.controls textarea,[data-droop-preset]')]
+  .filter(el=>!el.closest('.droop-presets')&&el.type!=='file'&&el.type!=='button'&&el.type!=='submit');
 
 const captureSettings=(root=document)=>{
   const settings={};
@@ -147,28 +153,28 @@ const escapeHtml=value=>String(value).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&
 
 const mountPresetWidget=async()=>{
   const panel=document.querySelector('.tool-panel');
-  if(!panel||document.querySelector('.droop-presets'))return;
+  if(!panel||document.querySelector('.droop-presets')||!reusableControls(panel).length)return;
 
   const box=document.createElement('section');
   box.className='droop-presets';
   box.innerHTML=`
     <div class="droop-presets-head">
-      <div><span class="droop-presets-kicker">DROOP ACCOUNT</span><strong>Saved presets</strong></div>
-      <a href="/account.html">Account</a>
+      <div><span class="droop-presets-kicker">DROOP ACCOUNT</span><strong>${t('title')}</strong></div>
+      <a href="/account.html">${t('account')}</a>
     </div>
-    <p class="droop-presets-copy">Save reusable settings only. Your media is never uploaded.</p>
+    <p class="droop-presets-copy">${t('intro')}</p>
     <div class="droop-presets-guest" hidden>
-      <a href="/account.html" class="droop-presets-signin">Sign in to save presets</a>
+      <a href="/account.html" class="droop-presets-signin">${t('signin')}</a>
     </div>
     <div class="droop-presets-user" hidden>
       <div class="droop-presets-loadrow">
-        <select aria-label="Saved preset"><option value="">Choose a preset…</option></select>
-        <button type="button" data-action="load">Load</button>
-        <button type="button" data-action="delete" class="is-secondary">Delete</button>
+        <select aria-label="${t('title')}"><option value="">${t('choose')}</option></select>
+        <button type="button" data-action="load">${t('load')}</button>
+        <button type="button" data-action="delete" class="is-secondary">${t('delete')}</button>
       </div>
       <div class="droop-presets-saverow">
-        <input type="text" maxlength="60" placeholder="Preset name" aria-label="Preset name">
-        <button type="button" data-action="save">Save current settings</button>
+        <input type="text" maxlength="60" placeholder="${t('name')}" aria-label="${t('name')}">
+        <button type="button" data-action="save">${t('save')}</button>
       </div>
       <span class="droop-presets-usage"></span>
     </div>
@@ -197,52 +203,52 @@ const mountPresetWidget=async()=>{
       if(!s){say('');return;}
       const [p,toolPresets,all]=await Promise.all([getProfile(true),listPresets(slug),listPresets()]);
       current=toolPresets;
-      select.innerHTML='<option value="">Choose a preset…</option>'+
+      select.innerHTML=`<option value="">${t('choose')}</option>`+
         current.map(p=>`<option value="${p.id}">${escapeHtml(p.name)}</option>`).join('');
       const plan=p?.plan||'free';
-      usage.textContent=`${plan.toUpperCase()} · ${all.length}/${limitForPlan(plan)} presets used`;
+      usage.textContent=`${plan.toUpperCase()} · ${all.length}/${limitForPlan(plan)} ${t('used')}`;
     }catch(err){
-      say(err.message||'Could not load presets.',true);
+      say(err.message||t('loadError'),true);
     }
   };
 
   box.querySelector('[data-action="save"]').addEventListener('click',async()=>{
     const settings=captureSettings(panel);
     if(!Object.keys(settings).length){
-      say('This tool has no reusable settings yet.',true);
+      say(t('noSettings'),true);
       return;
     }
     try{
-      say('Saving…');
+      say(t('saving'));
       await savePreset(input.value,settings,slug);
       input.value='';
       await reload();
       window.DroopAnalytics?.track?.('preset_save');
-      say('Preset saved.');
+      say(t('saved'));
     }catch(err){
-      say(err.message||'Could not save preset.',true);
+      say(err.message||t('saveError'),true);
     }
   });
 
   box.querySelector('[data-action="load"]').addEventListener('click',()=>{
     const chosen=current.find(p=>p.id===select.value);
-    if(!chosen){say('Choose a preset first.',true);return;}
+    if(!chosen){say(t('chooseFirst'),true);return;}
     applySettings(chosen.settings,panel);
     window.DroopAnalytics?.track?.('preset_load');
-    say(`${chosen.name} loaded.`);
+    say(`${chosen.name} ${t('loaded')}`);
   });
 
   box.querySelector('[data-action="delete"]').addEventListener('click',async()=>{
     const chosen=current.find(p=>p.id===select.value);
     if(!chosen){say('Choose a preset first.',true);return;}
-    if(!confirm(`Delete "${chosen.name}"?`))return;
+    if(!confirm(lang==='es'?`${t('confirm')} "${chosen.name}"?`:`${t('confirm')} "${chosen.name}"?`))return;
     try{
       await deletePreset(chosen.id);
       await reload();
       window.DroopAnalytics?.track?.('preset_delete');
-      say('Preset deleted.');
+      say(t('deleted'));
     }catch(err){
-      say(err.message||'Could not delete preset.',true);
+      say(err.message||t('deleteError'),true);
     }
   });
 
