@@ -92,7 +92,12 @@ const toolPages=[
   '/video-under-x-mb.html','/video-trimmer.html','/video-to-gif.html','/subtitle-burner.html',
   '/extract-audio/','/audio-converter.html','/audio-trimmer.html','/thumbnail-maker.html','/safe-zones.html'
 ];
-const presetTools=new Set(toolPages);
+const presetTools=new Set([
+  '/make-it-fit.html','/under-x-mb.html','/release-pack.html','/image-converter.html',
+  '/video-under-x-mb.html','/video-trimmer.html','/extract-audio/','/audio-converter.html',
+  '/audio-trimmer.html','/safe-zones.html','/video-cropper.html','/thumbnail-maker.html',
+  '/video-to-gif.html','/subtitle-burner.html'
+]);
 
 for(const toolPath of toolPages){
   runtimeErrors=[];
