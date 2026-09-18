@@ -3,7 +3,7 @@
 'use strict';
 const noop=()=>{};window.DroopAnalytics=Object.freeze({start:noop,finish:noop,track:noop});
 const config=window.DroopAnalyticsConfig||{};
-const paths=['/','/index.html','/make-it-fit.html','/under-x-mb.html','/release-pack.html','/metadata-cleaner.html','/image-converter.html','/background-remover.html','/video-under-x-mb.html','/video-trimmer.html','/extract-audio/','/extract-audio/index.html','/audio-converter.html','/audio-trimmer.html','/safe-zones.html','/video-cropper.html','/thumbnail-maker.html','/video-to-gif.html','/subtitle-burner.html','/image-upscaler.html','/pro.html','/account.html','/404.html'];
+const paths=['/','/index.html','/make-it-fit.html','/under-x-mb.html','/release-pack.html','/metadata-cleaner.html','/image-converter.html','/background-remover.html','/video-under-x-mb.html','/video-trimmer.html','/extract-audio/','/extract-audio/index.html','/audio-converter.html','/audio-trimmer.html','/safe-zones.html','/video-cropper.html','/thumbnail-maker.html','/video-to-gif.html','/subtitle-burner.html','/image-upscaler.html','/pro.html','/account.html','/faq.html','/404.html'];
 const isNotFound=!!document.querySelector('#not-found-title');if(location.hostname!=='droopweb.lat'||(!paths.includes(location.pathname)&&!isNotFound)||navigator.doNotTrack==='1'||navigator.globalPrivacyControl===true)return;
 if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(config.websiteId||''))return;
 let trackerURL;try{trackerURL=new URL(config.scriptUrl);if(trackerURL.protocol!=='https:'||trackerURL.username||trackerURL.password||trackerURL.search||trackerURL.hash)return;}catch(_){return;}
