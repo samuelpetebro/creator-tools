@@ -1,4 +1,4 @@
-name: Temporary Lemon diagnostics
+name: Temporary Lemon lifecycle test
 
 on:
   push:
@@ -9,9 +9,26 @@ permissions:
   contents: read
 
 jobs:
-  diag:
+  lifecycle:
     runs-on: ubuntu-latest
     timeout-minutes: 3
     steps:
-      - name: Call temporary diagnostics
-        run: curl -fsSL https://qbzqiiinugidkdxcpdln.supabase.co/functions/v1/billing-diagnostics-temp
+      - name: Cancel, resume, pause and unpause test subscription
+        shell: bash
+        run: |
+          set -euo pipefail
+          base='https://qbzqiiinugidkdxcpdln.supabase.co/functions/v1/billing-lifecycle-temp?token=life_7f4a91c2b8de4f87a2c46b0e5d13ac91&action='
+          echo '--- cancel ---'
+          curl -fsSL "${base}cancel"
+          sleep 5
+          echo
+          echo '--- resume ---'
+          curl -fsSL "${base}resume"
+          sleep 5
+          echo
+          echo '--- pause ---'
+          curl -fsSL "${base}pause"
+          sleep 5
+          echo
+          echo '--- unpause ---'
+          curl -fsSL "${base}unpause"
