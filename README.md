@@ -14,6 +14,7 @@ Production: https://droopweb.lat/
 - **Account data:** Supabase Postgres with Row Level Security.
 - **Saved presets:** settings only; media files are not stored with presets.
 - **Analytics:** Umami Cloud through the privacy-focused adapter in `js/analytics.js`.
+- **PWA shell:** manifest + raster icons + standalone display metadata. Droop does not currently claim offline support.
 - **Billing:** Lemon Squeezy is planned. Hardened checkout/webhook source and billing persistence are in the repository, but the Edge Functions are intentionally not deployed until Lemon test-mode onboarding is complete.
 
 ## Important files
@@ -28,6 +29,8 @@ Production: https://droopweb.lat/
 - `supabase/003_billing_subscriptions.sql` — server-only subscription persistence and webhook idempotency.
 - `supabase/functions/lemonsqueezy-checkout/` — authenticated checkout creation.
 - `supabase/functions/lemonsqueezy-webhook/` — signed subscription webhook handler.
+- `site.webmanifest` / `icons/` — install metadata and home-screen icons.
+- `.github/workflows/production-smoke.yml` — live post-deploy HTTP smoke checks.
 - `docs/launch-checklist.md` — pre-launch source of truth.
 
 ## Local checks

@@ -1,4 +1,5 @@
 {
+  "id": "/",
   "name": "droop — Creator tools",
   "short_name": "droop",
   "description": "Private browser-based tools for creators.",
@@ -7,17 +8,43 @@
   "display": "standalone",
   "background_color": "#eef8ff",
   "theme_color": "#eef8ff",
+  "prefer_related_applications": false,
   "icons": [
     {
-      "src": "/favicon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ],
-  "categories": [
-    "photo",
-    "video",
-    "productivity"
-  ]
+  "shortcuts": [
+    {
+      "name": "Image Converter",
+      "short_name": "Images",
+      "url": "/image-converter.html"
+    },
+    {
+      "name": "Video Trimmer",
+      "short_name": "Video",
+      "url": "/video-trimmer.html"
+    },
+    {
+      "name": "Audio Converter",
+      "short_name": "Audio",
+      "url": "/audio-converter.html"
+    }
+  ],
+  "categories": ["photo", "video", "productivity"]
 }
