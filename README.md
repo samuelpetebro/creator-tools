@@ -13,6 +13,7 @@ Production: https://droopweb.lat/
 - **Accounts:** Supabase Auth.
 - **Account data:** Supabase Postgres with Row Level Security.
 - **Saved presets:** settings only; media files are not stored with presets.
+- **Preset UI:** active tool pages load the shared saved-preset widget, so signed-in users can save/load/delete reusable settings directly beside the tool.
 - **Analytics:** Umami Cloud through the privacy-focused adapter in `js/analytics.js`.
 - **PWA shell:** manifest + raster icons + standalone display metadata. Droop does not currently claim offline support.
 - **Billing:** Lemon Squeezy checkout, signed webhooks, server-side subscription persistence and the customer-portal bridge are deployed in test mode. The full test lifecycle passed; real-money checkout remains disabled until the Lemon store is activated and live credentials are configured.
