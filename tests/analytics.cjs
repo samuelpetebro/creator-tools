@@ -15,6 +15,7 @@ const beforeSynthetic=b.requests.length;
 const syntheticDownload={isTrusted:false,target:trustedDownload.target};
 for(const listener of b.listeners.click||[])listener(syntheticDownload);
 assert.equal(b.requests.length,beforeSynthetic);
+for(const name of ['preset_save','preset_load','preset_delete']){b.window.DroopAnalytics.track(name);assert.equal(b.requests.at(-1).name,name);}
 const p=b.window.droopAnalyticsBeforeSend('event',{name:'process_complete',url:'?secret',data:{filename:'private.mov',caption:'personal text'}});assert.equal(p.url,'/subtitle-burner.html');assert.equal(p.referrer,'https://search.example');assert.deepEqual(Object.keys(p.data),['tool']);assert(!JSON.stringify(p).includes('private'));assert.equal(b.window.droopAnalyticsBeforeSend('identify',{}),false);assert.equal(b.window.droopAnalyticsBeforeSend('event',{name:'personal text'}),false);
 b.window.umami.track=()=>{throw Error('blocked')};assert.doesNotThrow(()=>{b.window.DroopAnalytics.start();b.window.DroopAnalytics.finish('error');});
 const failed=boot();failed.scripts[0].onerror();failed.window.DroopAnalytics.start();assert.equal(failed.requests.length,0);
