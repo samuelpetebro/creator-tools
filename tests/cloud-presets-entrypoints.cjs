@@ -1,11 +1,13 @@
 const fs=require('fs'),assert=require('assert');
 
 const pages=[
-  'make-it-fit.html','under-x-mb.html','release-pack.html','metadata-cleaner.html',
-  'image-converter.html','background-remover.html','video-under-x-mb.html','video-trimmer.html',
-  'extract-audio/index.html','audio-converter.html','audio-trimmer.html','safe-zones.html',
-  'video-cropper.html','thumbnail-maker.html','video-to-gif.html','subtitle-burner.html','image-upscaler.html'
+  'make-it-fit.html','under-x-mb.html','release-pack.html','image-converter.html',
+  'video-under-x-mb.html','video-trimmer.html','extract-audio/index.html','audio-converter.html',
+  'audio-trimmer.html','safe-zones.html','video-cropper.html','thumbnail-maker.html',
+  'video-to-gif.html','subtitle-burner.html'
 ];
+
+const settingless=['metadata-cleaner.html','background-remover.html','image-upscaler.html'];
 
 for(const page of pages){
   const html=fs.readFileSync(page,'utf8');
@@ -16,6 +18,11 @@ for(const page of pages){
   assert(html.includes(css),`${page} must load saved-preset styles`);
   assert(html.includes(cfg),`${page} must load Supabase public config`);
   assert(html.includes(cloud),`${page} must load the saved-preset client`);
+}
+
+for(const page of settingless){
+  const html=fs.readFileSync(page,'utf8');
+  assert(!html.includes('js/cloud.js'),`${page} should not expose a preset widget when it has no reusable settings`);
 }
 
 const extract=fs.readFileSync('extract-audio/index.html','utf8');
