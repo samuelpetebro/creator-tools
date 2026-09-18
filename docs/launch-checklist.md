@@ -27,12 +27,12 @@ This file distinguishes **code present**, **deployed**, and **behavior actually 
 - [x] Basic user flow previously confirmed: sign in → save preset → reload → load preset → delete preset.
 - [ ] Fresh registration test with a second account remains pending.
 - [x] Existing account is email-confirmed and has completed at least one successful sign-in; auth user/profile counts are aligned.
-- [ ] Password reset/recovery browser test remains pending.
-- [x] Display-name database path tested through the dedicated authenticated RPC in a rollback-safe transaction; browser UI smoke test remains covered by the normal account test.
+- [x] Browser automation covers forgot-password request, recovery-mode password update, signed-in password update and post-recovery return to the account workspace.
+- [x] Display-name database path tested in a rollback-safe transaction and browser automation verifies the signed-in UI calls the dedicated RPC.
 - [x] Verified in a rollback-safe database test that Free stops at 5 presets and the sixth insert is rejected.
 - [x] Verified authenticated clients have no direct UPDATE privilege on `profiles` and no SELECT access to server-only billing tables.
 - [x] Reconfirmed after the migration that authenticated users cannot directly update `profiles.plan`; unrelated authenticated user IDs see zero profile/preset rows.
-- [ ] Repeat the account/preset smoke test on a phone.
+- [ ] Physical-phone account/preset smoke test remains pending; automated 390×844 signed-in account coverage now includes profile, password and preset deletion flows.
 
 ## Analytics
 
