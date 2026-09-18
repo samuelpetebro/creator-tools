@@ -32,6 +32,9 @@ Production: https://droopweb.lat/
 - `site.webmanifest` / `icons/` — install metadata and home-screen icons.
 - `.github/workflows/production-smoke.yml` — live post-deploy HTTP smoke checks.
 - `docs/launch-checklist.md` — pre-launch source of truth.
+- `docs/billing-go-live.md` — live Lemon activation procedure.
+- `docs/service-inventory.md` — operating services, runtime dependencies and cost/revenue ledger starter.
+- `docs/licensing-and-sale.md` — MIT implications to keep in mind before a future sale.
 
 ## Local checks
 
