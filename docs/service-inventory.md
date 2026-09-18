@@ -10,7 +10,7 @@ This is the starting inventory for operating-cost, dependency and future-sale du
 | --- | --- | --- | --- |
 | GitHub / GitHub Pages | Source control, CI, static production hosting | Production repository and deployment path active | Verify account/plan billing if any |
 | Namecheap | `droopweb.lat` registration / DNS ownership | Registrant contact verified | Record renewal receipt and renewal date from registrar |
-| Supabase | Auth, profiles, presets, billing persistence, Edge Functions | Project `droopweb`; current project reports Free tier | Record any future plan upgrade |
+| Supabase | Auth, profiles, presets, billing persistence, Edge Functions | Project `droopweb` is active and healthy; verify the current billing tier in the Supabase dashboard before recording cost | Record any verified plan charge or future upgrade |
 | Umami Cloud | Privacy-focused product analytics | Production pageviews/events enabled through `js/analytics.js` | Verify current Umami account plan |
 | Lemon Squeezy | Pro checkout, subscriptions, webhooks, customer portal | Test lifecycle passed; live store activation pending | No live subscription revenue yet; record fees/revenue after launch |
 | Google Search Console | Search/indexing diagnostics | Domain property connected; sitemap submitted | No direct project revenue |
