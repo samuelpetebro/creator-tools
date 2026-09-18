@@ -108,6 +108,7 @@ for(const toolPath of toolPages){
   assert(await nav.isVisible(),`${toolPath} navigation must be visible on mobile`);
   const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-window.innerWidth);
   assert(overflow<=2,`${toolPath} should not overflow mobile viewport (overflow ${overflow}px)`);
+  if(toolPath==='/metadata-cleaner.html')assert(await page.locator('.droop-presets').count()===0,'metadata cleaner should not mount an empty preset widget');
   if(presetTools.has(toolPath)){
     await page.waitForSelector('.droop-presets',{timeout:2500});
     assert(await page.locator('.droop-presets-signin').isVisible(),`${toolPath} must mount the guest preset/account widget`);
