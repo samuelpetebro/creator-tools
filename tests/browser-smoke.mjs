@@ -87,7 +87,7 @@ assert(proOverflow<=2,`Pro page should not overflow mobile viewport (overflow ${
 await page.screenshot({path:`${outDir}/pro-mobile.png`,fullPage:true});
 
 const toolPages=[
-  '/make-it-fit.html','/under-x-mb.html','/release-pack.html','/metadata-cleaner.html',
+  '/make-it-fit.html','/under-x-mb.html','/release-pack.html',
   '/image-converter.html','/background-remover.html','/image-upscaler.html','/video-cropper.html',
   '/video-under-x-mb.html','/video-trimmer.html','/video-to-gif.html','/subtitle-burner.html',
   '/extract-audio/','/audio-converter.html','/audio-trimmer.html','/thumbnail-maker.html','/safe-zones.html'
@@ -95,7 +95,7 @@ const toolPages=[
 const presetTools=new Set([
   '/make-it-fit.html','/under-x-mb.html','/release-pack.html','/metadata-cleaner.html',
   '/image-converter.html','/video-under-x-mb.html','/video-trimmer.html','/extract-audio/',
-  '/audio-converter.html','/audio-trimmer.html','/safe-zones.html'
+  '/audio-converter.html','/audio-trimmer.html','/safe-zones.html','/video-to-gif.html','/subtitle-burner.html'
 ]);
 
 for(const toolPath of toolPages){
@@ -108,9 +108,11 @@ for(const toolPath of toolPages){
   assert(await nav.isVisible(),`${toolPath} navigation must be visible on mobile`);
   const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-window.innerWidth);
   assert(overflow<=2,`${toolPath} should not overflow mobile viewport (overflow ${overflow}px)`);
+  if(toolPath==='/metadata-cleaner.html')assert(await page.locator('.droop-presets').count()===0,'metadata cleaner should not mount an empty preset widget');
   if(presetTools.has(toolPath)){
     await page.waitForSelector('.droop-presets',{timeout:2500});
     assert(await page.locator('.droop-presets-signin').isVisible(),`${toolPath} must mount the guest preset/account widget`);
+    if(toolPath==='/image-converter.html')assert((await page.locator('.droop-presets-signin').innerText()).includes('Iniciá sesión'),'preset widget should respect the saved Spanish language');
   }
 }
 
