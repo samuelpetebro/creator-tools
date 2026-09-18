@@ -14,6 +14,7 @@ const pricing=fs.readFileSync('docs/pricing-proposal.md','utf8');
 assert.doesNotThrow(()=>new Function(proAccess),'Pro access helper must remain valid JavaScript');
 assert.doesNotThrow(()=>new Function(imageBatch),'image batch client must remain valid JavaScript');
 assert.doesNotThrow(()=>new Function(metaBatch),'metadata batch client must remain valid JavaScript');
+assert.doesNotThrow(()=>new Function(accountJs),'account Pro backup behavior must remain valid JavaScript');
 assert(proAccess.includes("select('plan')"),'Pro entitlement must come from the signed-in profile plan');
 assert(proAccess.includes("plan==='pro'"),'Pro access must explicitly require the Pro plan');
 
