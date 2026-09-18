@@ -12,12 +12,12 @@ This file distinguishes **code present**, **deployed**, and **behavior actually 
 
 - [x] Production smoke workflow now runs only after GitHub Pages reports a successful deployment, then checks core pages, manifest, icons, sitemap and custom 404.
 - [x] Shared tool translation selectors fixed so tool i18n and cloud preset loading do not abort at runtime.
-- [ ] Confirm the latest `main` commit is the GitHub Pages deployment currently serving `droopweb.lat`.
+- [x] Latest `main` analytics coverage commit deployed successfully to GitHub Pages and passed the matching production smoke workflow.
 - [x] Automated Chromium smoke test covers desktop catalog rendering plus mobile homepage/search/language/account-signup/Pro/tool navigation.
 - [ ] Manual phone visual smoke test remains pending; automated 390×844 Chromium layout checks and screenshots now run in CI.
 - [x] All HTML entry points use `viewport-fit=cover` and expose the iOS home-screen icon.
-- [ ] Verify a nested missing URL renders the 404 page with working CSS, navigation and analytics assets.
-- [ ] Verify `/?q=image` pre-fills and filters the catalog; this is required by the homepage SearchAction structured data.
+- [x] Automated production smoke verifies a nested missing URL returns the custom 404 page.
+- [x] Browser smoke verifies `/?q=image` pre-fills the search and only returns image-category catalog cards.
 
 ## Accounts / presets
 
@@ -37,7 +37,7 @@ This file distinguishes **code present**, **deployed**, and **behavior actually 
 ## Analytics
 
 - [x] Pageviews confirmed in the Umami dashboard after the tracker configuration update. Owner-observed 24h baseline on 2026-09-18: 11 visitors, 17 visits, 94 views, 47% bounce rate and 7m 41s visit duration. Treat this as mixed development/test traffic, not a clean acquisition baseline.
-- [ ] Confirm `process_start`, `process_complete`, `process_error`, `download_click`, `cta_account`, `cta_plans`, `signup_success` and `login_success` arrive.
+- [ ] Confirm `process_start`, `process_complete`, `process_error`, `download_click`, `signup_success` and `login_success` arrive in Umami. `cta_account` and `cta_plans` are already visible. Processing lifecycle instrumentation is now deployed across 15 active processing tools with regression coverage.
 - [ ] Treat CTA events as intent, not completed conversion.
 - [ ] Performance/Core Web Vitals tracking is **not claimed as enabled** until a privacy-compatible implementation is tested in the Umami dashboard.
 
