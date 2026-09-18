@@ -174,6 +174,7 @@ await returned.reload({waitUntil:'domcontentloaded'});
 await returned.waitForSelector('#billing-manage:not([hidden])');
 assert((await returned.locator('#billing-test-status').innerText()).includes('active'),'billing return should load test subscription status');
 assert((await returned.locator('#billing-manage').innerText()).includes('Administrar'),'billing return should expose subscription management');
+assert(await returned.locator('#billing-test-checkout').isHidden(),'existing test subscription should hide the create-checkout button');
 await returnCtx.close();
 
 await browser.close();
