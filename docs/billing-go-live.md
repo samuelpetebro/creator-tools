@@ -57,12 +57,13 @@ Lemon allows test checkout and webhook testing before activation, but real sales
 
 ## Product decisions still required
 
+The first day-one Pro benefit is decided: **up to 100 saved presets**, while Free remains at 5. The database limit and account UI already support that distinction.
+
 The USD 5/month value used so far is a test price, not a committed public price.
 
 Before public launch, decide:
 - final monthly price
 - whether an annual option exists
-- which Pro benefit is already deliverable on day one
 - whether paused subscriptions keep Pro access; current logic does
 - dunning policy for unpaid subscriptions
 
