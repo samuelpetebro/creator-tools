@@ -7,7 +7,7 @@ This file distinguishes **code present**, **deployed**, and **behavior actually 
 ## Critical owner action
 
 - [x] **Verify the Namecheap registrant contact for `droopweb.lat` before 2026-09-22.** User confirmed the verification link was completed on 2026-09-17.
-- [ ] Confirm the Namecheap dashboard shows the registrant contact as verified.
+- [x] Namecheap registrant contact verification confirmed complete by the user on 2026-09-17.
 
 ## Public site / GitHub Pages
 
