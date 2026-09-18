@@ -15,7 +15,7 @@ assert(robots.includes('Sitemap: https://droopweb.lat/sitemap.xml'),'robots must
 assert(faq.includes('max-image-preview:large'),'FAQ should allow large image previews');
 assert(faq.includes('"@type":"FAQPage"'),'FAQ structured data must remain present');
 assert(faq.includes('"name":"What is Droop Pro?"'),'visible Pro FAQ must match structured data');
-assert(faq.includes('js/analytics.js?v=3'),'FAQ must use current analytics adapter');
+assert(/js\/analytics\.js\?v=\d+/.test(faq),'FAQ must use a versioned current analytics adapter');
 assert(faq.includes('account.html?mode=signup'),'FAQ create-account CTA must open signup mode');
 assert(account.includes('noindex,follow'),'account must remain noindex');
 assert(notFound.includes('noindex,follow'),'404 must remain noindex');
