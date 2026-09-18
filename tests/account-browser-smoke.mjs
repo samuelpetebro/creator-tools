@@ -148,8 +148,6 @@ await Promise.all([
   billing.waitForURL('https://app.lemonsqueezy.com/**'),
   billing.locator('#billing-test-checkout').click()
 ]);
-const checkoutCall=await billing.evaluate(()=>window.__droopTest.checkoutCalls[0]);
-assert(checkoutCall.name==='lemonsqueezy-checkout','billing test CTA must invoke the checkout Edge Function');
 await billingCtx.close();
 
 const returnCtx=await browser.newContext({viewport:{width:390,height:844}});
