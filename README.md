@@ -35,6 +35,8 @@ Production: https://droopweb.lat/
 - `docs/billing-go-live.md` — live Lemon activation procedure.
 - `docs/service-inventory.md` — operating services, runtime dependencies and cost/revenue ledger starter.
 - `docs/licensing-and-sale.md` — MIT implications to keep in mind before a future sale.
+- `docs/pricing-proposal.md` — internal Pro launch-price proposal; not public pricing.
+- `docs/product-funnel.md` — event definitions and product-review funnel.
 
 ## Local checks
 

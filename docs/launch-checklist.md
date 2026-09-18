@@ -62,7 +62,7 @@ This file distinguishes **code present**, **deployed**, and **behavior actually 
 ## Billing / Pro — do not go live yet
 
 - [x] First paid benefit decided: Pro raises saved presets from 5 to 100. The limit already exists in the database and account UI; batch/history features remain roadmap items.
-- [ ] Agree price and billing interval.
+- [ ] Agree price and billing interval. Internal proposal recorded in `docs/pricing-proposal.md`: USD 5/month, monthly-only for v1; do not publish it until accepted and Lemon Live Mode is ready.
 - [x] Lemon Squeezy test store/product/variant identified: store 477243, product 1371942, actual Pro variant 2143724.
 - [x] Webhook hardened and deployed with store/variant/test-mode validation, persisted subscription ownership, idempotency and stale-event protection.
 - [x] Lemon webhook Edge Function deployed with JWT verification disabled; HMAC signature validation remains inside the function.
@@ -78,7 +78,7 @@ This file distinguishes **code present**, **deployed**, and **behavior actually 
 - [x] Free → account → plans funnel links are in place, with direct signup entry and a dedicated bilingual Pro comparison page.
 - [x] Pro page clearly separates current Free features from planned Pro features and does not invent a price or live checkout.
 - [ ] Use real Umami data to identify the most-used tools.
-- [ ] Measure visit → tool use → account → preset engagement → Pro intent → payment.
+- [ ] Measure visit → tool use → account → preset engagement → Pro intent → payment using the definitions in `docs/product-funnel.md`.
 - [ ] Create demos/content around the strongest tools instead of adding metadata indefinitely.
 
 ## Licensing / future sale
