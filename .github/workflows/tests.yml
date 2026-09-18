@@ -31,6 +31,10 @@ jobs:
         run: |
           set -euo pipefail
           for test in tests/*.cjs; do
+            if [ "$test" = "tests/analytics-provider.cjs" ]; then
+              echo "↷ $test (requires a separately downloaded official Umami tracker fixture)"
+              continue
+            fi
             echo "→ $test"
             node "$test"
           done
