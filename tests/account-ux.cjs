@@ -1,0 +1,15 @@
+const fs=require('fs'),assert=require('assert');
+const account=fs.readFileSync('account.html','utf8');
+const accountJs=fs.readFileSync('js/account.js','utf8');
+const tools=fs.readFileSync('js/tool-i18n.js','utf8');
+const home=fs.readFileSync('index.html','utf8');
+assert(account.includes('id="account-lang"'),'account must expose language switch');
+assert(account.includes('js/account.js?v=4'),'account JS cache version must be bumped');
+assert(accountJs.includes("params.get('mode')==='signup'"),'account must support direct signup mode');
+assert(accountJs.includes("localStorage.setItem('droop-language',lang)"),'account language must persist');
+assert(accountJs.includes("resetPasswordForEmail"),'password recovery must remain available');
+assert(accountJs.includes("PASSWORD_RECOVERY"),'recovery event handling must remain available');
+assert(tools.includes("const foot=$$('footer span')"),'tool translator must use querySelectorAll for footer spans');
+assert(tools.includes("$$('a[href*=\"account.html\"]')"),'tool translator must iterate account links safely');
+assert(home.includes('account.html?mode=signup'),'explicit create-account CTAs must open signup mode');
+console.log('account ux checks: ok');
