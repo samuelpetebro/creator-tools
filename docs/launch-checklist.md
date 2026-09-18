@@ -45,10 +45,10 @@ This file distinguishes **code present**, **deployed**, and **behavior actually 
 
 - [x] Sitemap source cleaned so it contains valid XML line breaks rather than literal `\\n` text.
 - [x] FAQ metadata / social preview tags / structured FAQ copy aligned with current account and Pro status.
-- [ ] Submit/re-check `https://droopweb.lat/sitemap.xml` in Search Console.
-- [ ] Inspect homepage, FAQ, Pro and the highest-value tool URLs.
+- [x] Search Console sitemap re-check: submitted 2026-09-17, downloaded successfully, 0 warnings/errors, 21 URLs submitted. The sitemap-level indexed counter still shows 0, so URL Inspection is treated as the more current signal.
+- [x] URL Inspection completed for homepage, image converter, Under X MB, video trimmer, FAQ and Pro. Homepage, Image Converter and Under X MB are `Submitted and indexed`; Video Trimmer, FAQ and Pro are currently `URL is unknown to Google`.
 - [ ] Treat “Page with redirect” as informational until the redirect target is checked.
-- [ ] Do not repeatedly request indexing without evidence it is needed.
+- [x] No repeated indexing requests issued. The currently unknown URLs are indexable, return 200, have self-canonicals and are allowed by robots; we will let discovery/crawling catch up before forcing more action.
 
 ## Privacy / PWA
 
