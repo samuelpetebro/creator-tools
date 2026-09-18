@@ -71,4 +71,4 @@ Leaked-password protection remains disabled because the current hosted Supabase 
 - a brand-new second-account registration
 - password reset / recovery link end-to-end
 - account flows on a physical phone
-- paid entitlement changes once Lemon Squeezy test mode is configured and Edge Functions are deployed
+- live paid entitlement and customer-portal behavior after Lemon activates the store and Live Mode is configured
