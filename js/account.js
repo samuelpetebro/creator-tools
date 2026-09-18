@@ -58,13 +58,19 @@ ui.backupImport?.addEventListener('change',async()=>{
       deduped.set(slug+'\u0000'+name,{user_id:currentSession.user.id,tool_slug:slug,name,settings});
     }
     const rows=[...deduped.values()];
-    const {data:existing,error:existingError}=await client.from('presets').select('tool_slug,name').eq('user_id',currentSession.user.id);
+    const {data:existing,error:existingError}=await client.from('presets').select('id,tool_slug,name').eq('user_id',currentSession.user.id);
     if(existingError)throw existingError;
-    const existingKeys=new Set((existing||[]).map(p=>p.tool_slug+'\u0000'+p.name));
-    const newCount=rows.filter(row=>!existingKeys.has(row.tool_slug+'\u0000'+row.name)).length;
-    if((existing||[]).length+newCount>100)throw new Error(t('presetBackupTooLarge'));
-    if(rows.length){
-      const {error}=await client.from('presets').upsert(rows,{onConflict:'user_id,tool_slug,name'});
+    const existingMap=new Map((existing||[]).map(p=>[p.tool_slug+'\u0000'+p.name,p]));
+    const inserts=rows.filter(row=>!existingMap.has(row.tool_slug+'\u0000'+row.name));
+    if((existing||[]).length+inserts.length>100)throw new Error(t('presetBackupTooLarge'));
+    for(const row of rows){
+      const match=existingMap.get(row.tool_slug+'\u0000'+row.name);
+      if(!match)continue;
+      const {error}=await client.from('presets').update({settings:row.settings}).eq('id',match.id).eq('user_id',currentSession.user.id);
+      if(error)throw error;
+    }
+    if(inserts.length){
+      const {error}=await client.from('presets').insert(inserts);
       if(error)throw error;
     }
     window.DroopAnalytics?.track?.('pro_backup_import');
