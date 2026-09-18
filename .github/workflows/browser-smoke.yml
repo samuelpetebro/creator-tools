@@ -1,0 +1,57 @@
+name: Browser smoke checks
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: browser-smoke-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  browser-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install Playwright
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Start local site
+        shell: bash
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 > /tmp/droop-http.log 2>&1 &
+          echo $! > /tmp/droop-http.pid
+          for i in {1..30}; do
+            if curl -fsS http://127.0.0.1:4173/ >/dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/droop-http.log
+          exit 1
+
+      - name: Run browser smoke tests
+        env:
+          DROOP_LOCAL_URL: http://127.0.0.1:4173
+          DROOP_SCREENSHOT_DIR: artifacts/browser-smoke
+        run: node tests/browser-smoke.mjs
+
+      - name: Upload browser screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-smoke-screenshots
+          path: artifacts/browser-smoke
+          if-no-files-found: ignore
+          retention-days: 7

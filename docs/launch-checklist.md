@@ -10,11 +10,11 @@ This file distinguishes **code present**, **deployed**, and **behavior actually 
 
 ## Public site / GitHub Pages
 
-- [x] Added a production smoke workflow that retries against `droopweb.lat` after each `main` push and checks core pages, manifest, icons, sitemap and custom 404.
+- [x] Production smoke workflow now runs only after GitHub Pages reports a successful deployment, then checks core pages, manifest, icons, sitemap and custom 404.
 - [x] Shared tool translation selectors fixed so tool i18n and cloud preset loading do not abort at runtime.
 - [ ] Confirm the latest `main` commit is the GitHub Pages deployment currently serving `droopweb.lat`.
-- [ ] Desktop smoke test: homepage, catalog search/filter, language switch, FAQ, Pro, account.
-- [ ] Mobile visual smoke test: navigation remains accessible, catalog scrolls correctly, account/plan links are reachable.
+- [x] Automated Chromium smoke test covers desktop catalog rendering plus mobile homepage/search/language/account-signup/Pro/tool navigation.
+- [ ] Manual phone visual smoke test remains pending; automated 390×844 Chromium layout checks and screenshots now run in CI.
 - [x] All HTML entry points use `viewport-fit=cover` and expose the iOS home-screen icon.
 - [ ] Verify a nested missing URL renders the 404 page with working CSS, navigation and analytics assets.
 - [ ] Verify `/?q=image` pre-fills and filters the catalog; this is required by the homepage SearchAction structured data.
