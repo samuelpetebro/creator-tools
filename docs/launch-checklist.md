@@ -68,8 +68,9 @@ This file distinguishes **code present**, **deployed**, and **behavior actually 
 - [x] Checkout Edge Function authenticates the bearer token inside the handler; browser checkout sends the current user JWT and publishable key explicitly and never accepts a browser-provided plan.
 - [x] First Lemon test checkout persisted correctly. Cancel → resume → pause → unpause webhooks were observed, final test subscription returned to active, and test purchases kept the Droop profile on FREE.
 - [x] Rollback-safe DB audit verified duplicate-event idempotency, stale-event rejection, live active → PRO entitlement and live expired → FREE revocation.
-- [ ] Verify the signed Lemon customer portal from the Account test panel, then test management from a physical browser. Server-side table access now explicitly grants `service_role` SELECT while browser roles remain revoked.
-- [ ] Only then enable live checkout.
+- [x] Signed portal URL generation was verified, but Lemon blocks the hosted customer portal until the store is activated. Droop now treats this as an activation blocker instead of surfacing a dead test-mode portal link.
+- [ ] After Lemon activates the store, verify the live customer portal from a physical browser.
+- [ ] Activate the Lemon store, copy the tested product to Live Mode, create live API/webhook credentials, replace Store/Variant IDs with the live IDs, flip both mode flags to `false`, and re-run the full checkout/webhook/entitlement smoke test before exposing a paid CTA.
 
 ## Product / acquisition
 

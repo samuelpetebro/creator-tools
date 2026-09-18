@@ -6,7 +6,7 @@ const account=fs.readFileSync('account.html','utf8');
 const accountJs=fs.readFileSync('js/account.js','utf8');
 
 assert(pro.includes('css/pro.css?v=1'),'Pro page must load dedicated styles');
-assert(pro.includes('js/pro.js?v=1'),'Pro page must load dedicated behavior');
+assert(/js\/pro\.js\?v=\d+/.test(pro),'Pro page must load versioned dedicated behavior');
 assert(pro.includes('account.html?mode=signup'),'Free CTA must deep-link to signup');
 assert(pro.includes('Checkout not live yet'),'Pro page must not imply live billing');
 assert(pro.includes('Not announced yet'),'Pro page must not invent a price');

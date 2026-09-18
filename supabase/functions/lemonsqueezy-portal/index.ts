@@ -60,8 +60,14 @@ Deno.serve(async request=>{
   const payload=await lemon.json();
   const attrs=payload?.data?.attributes||{};
   if(String(attrs.store_id)!==String(storeId)||String(attrs.variant_id)!==String(variantId)||Boolean(attrs.test_mode)!==testMode)return json({error:'Subscription configuration mismatch'},409,allowedOrigin);
+  const status=String(attrs.status||local.status);
+  const common={status,cancelled:Boolean(attrs.cancelled),renews_at:attrs.renews_at||local.renews_at||null,ends_at:attrs.ends_at||local.ends_at||null,test_mode:Boolean(attrs.test_mode)};
+  if(testMode){
+    return json({...common,url:null,portal_available:false,reason:'store_activation_required'},200,allowedOrigin);
+  }
+
   const url=attrs?.urls?.customer_portal;
   if(typeof url!=='string'||!url.startsWith('https://'))return json({error:'Customer portal URL missing'},502,allowedOrigin);
 
-  return json({url,status:String(attrs.status||local.status),cancelled:Boolean(attrs.cancelled),renews_at:attrs.renews_at||local.renews_at||null,ends_at:attrs.ends_at||local.ends_at||null,test_mode:Boolean(attrs.test_mode)},200,allowedOrigin);
+  return json({...common,url,portal_available:true},200,allowedOrigin);
 });

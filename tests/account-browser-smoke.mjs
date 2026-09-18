@@ -169,11 +169,11 @@ await returned.goto(base+'/account.html?billing=success',{waitUntil:'domcontentl
 await returned.waitForSelector('#billing-test-panel:not([hidden])');
 assert((await returned.locator('#billing-test-status').innerText()).includes('sigue en FREE'),'test checkout return must explain that production plan stays Free');
 assert(await returned.locator('#billing-test-checkout').isHidden(),'return state should hide the test checkout button');
-await returned.route('https://qbzqiiinugidkdxcpdln.supabase.co/functions/v1/lemonsqueezy-portal',async route=>route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({url:'https://droop.lemonsqueezy.com/billing/test-signed',status:'active',cancelled:false,renews_at:'2026-10-18T20:57:59Z',ends_at:null,test_mode:true})}));
+await returned.route('https://qbzqiiinugidkdxcpdln.supabase.co/functions/v1/lemonsqueezy-portal',async route=>route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({url:null,portal_available:false,reason:'store_activation_required',status:'active',cancelled:false,renews_at:'2026-10-18T20:57:59Z',ends_at:null,test_mode:true})}));
 await returned.reload({waitUntil:'domcontentloaded'});
-await returned.waitForSelector('#billing-manage:not([hidden])');
-assert((await returned.locator('#billing-test-status').innerText()).includes('active'),'billing return should load test subscription status');
-assert((await returned.locator('#billing-manage').innerText()).includes('Administrar'),'billing return should expose subscription management');
+await returned.waitForFunction(()=>document.querySelector('#billing-test-status')?.textContent.includes('active'));
+assert((await returned.locator('#billing-test-status').innerText()).includes('modo live'),'test subscription should explain that Lemon management waits for live store activation');
+assert(await returned.locator('#billing-manage').isHidden(),'test mode should not expose a customer portal that Lemon refuses before activation');
 assert(await returned.locator('#billing-test-checkout').isHidden(),'existing test subscription should hide the create-checkout button');
 await returnCtx.close();
 
