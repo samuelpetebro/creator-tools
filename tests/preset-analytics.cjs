@@ -8,5 +8,5 @@ for(const event of ['preset_save','preset_load','preset_delete']){
   assert(analytics.includes(`'${event}'`),`${event} must stay allowlisted`);
   assert(cloud.includes(`DroopAnalytics?.track?.('${event}')`),`preset client must emit ${event}`);
 }
-assert(toolI18n.includes("js/cloud.js?v=2"),'tool loader must fetch the instrumented preset client');
+assert(toolI18n.includes("js/cloud.js?v=3"),'tool loader must fetch the expanded preset client');
 console.log('preset analytics checks: ok');
