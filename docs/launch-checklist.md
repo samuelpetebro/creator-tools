@@ -79,6 +79,7 @@ This file distinguishes **code present**, **deployed**, and **behavior actually 
 - [x] Free → account → plans funnel links are in place, with direct signup entry and a dedicated bilingual Pro comparison page.
 - [x] Pro page clearly separates current Free features from planned Pro features and does not invent a price or live checkout.
 - [ ] Use real Umami data to identify the most-used tools.
+- [x] Added a privacy-safe Pro interest button that emits only the allowlisted `cta_pro_early_access` event (tool/page slug only; no email or free text).
 - [ ] Measure visit → tool use → account → preset engagement → Pro intent → payment using the definitions in `docs/product-funnel.md`.
 - [ ] Create demos/content around the strongest tools instead of adding metadata indefinitely.
 
