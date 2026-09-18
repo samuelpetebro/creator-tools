@@ -65,6 +65,13 @@ assert(overflow<=2,`homepage should not overflow mobile viewport (overflow ${ove
 await page.locator('.lang-switch').click();
 assert(await page.locator('html').getAttribute('lang')==='es','homepage language switch should change html lang');
 assert((await page.locator('#hero-title').innerText()).includes('Todo lo que necesitás'),'homepage Spanish hero should render');
+const cdp=await context.newCDPSession(page);
+await cdp.send('Page.enable');
+const appManifest=await cdp.send('Page.getAppManifest');
+assert((appManifest.url||'').endsWith('/site.webmanifest'),'Chromium must discover the Droop web app manifest');
+const installability=await cdp.send('Page.getInstallabilityErrors');
+assert((installability.installabilityErrors||[]).length===0,`Chromium installability errors: ${(installability.installabilityErrors||[]).map(x=>x.errorId).join(', ')}`);
+
 await page.screenshot({path:`${outDir}/home-mobile.png`,fullPage:true});
 
 await page.addInitScript(()=>localStorage.setItem('droop-language','es'));
