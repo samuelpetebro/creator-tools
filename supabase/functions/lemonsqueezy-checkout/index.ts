@@ -12,6 +12,16 @@ function requiredEnv(name:string){
   return value;
 }
 
+function supabasePublishableKey(){
+  const modern=Deno.env.get('SUPABASE_PUBLISHABLE_KEYS');
+  if(modern){
+    try{const parsed=JSON.parse(modern);if(parsed?.default)return String(parsed.default);}catch{}
+  }
+  const legacy=Deno.env.get('SUPABASE_ANON_KEY');
+  if(legacy)return legacy;
+  throw new Error('Supabase publishable key is missing');
+}
+
 Deno.serve(async request=>{
   const appUrl=requiredEnv('DROOP_APP_URL');
   const allowedOrigin=new URL(appUrl).origin;
@@ -32,7 +42,7 @@ Deno.serve(async request=>{
   if(!authHeader.toLowerCase().startsWith('bearer '))return json({error:'Sign in required'},401,allowedOrigin);
 
   const supabaseUrl=requiredEnv('SUPABASE_URL');
-  const anonKey=requiredEnv('SUPABASE_ANON_KEY');
+  const anonKey=supabasePublishableKey();
   const authResponse=await fetch(`${supabaseUrl}/auth/v1/user`,{
     headers:{apikey:anonKey,Authorization:authHeader}
   });
