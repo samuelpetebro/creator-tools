@@ -1,0 +1,19 @@
+const fs=require('fs'),assert=require('assert');
+const pro=fs.readFileSync('pro.html','utf8');
+const js=fs.readFileSync('js/pro.js','utf8');
+const css=fs.readFileSync('css/pro.css','utf8');
+const account=fs.readFileSync('account.html','utf8');
+const accountJs=fs.readFileSync('js/account.js','utf8');
+
+assert(pro.includes('css/pro.css?v=1'),'Pro page must load dedicated styles');
+assert(pro.includes('js/pro.js?v=1'),'Pro page must load dedicated behavior');
+assert(pro.includes('account.html?mode=signup'),'Free CTA must deep-link to signup');
+assert(pro.includes('Checkout not live yet'),'Pro page must not imply live billing');
+assert(pro.includes('Not announced yet'),'Pro page must not invent a price');
+assert(pro.includes('data-i18n="rowPrice"'),'comparison table must be translated');
+assert(js.includes("localStorage.setItem('droop-language',lang)"),'Pro language choice must persist');
+assert(js.includes("select('plan')"),'Pro page should reflect signed-in account state');
+assert(css.includes('.pro-plan-grid'),'Pro page must have responsive plan layout');
+assert(account.includes('data-i18n="comparePlans"'),'account page must link back to plan comparison');
+assert(accountJs.includes("comparePlans:'Compare Free and Pro"),'account plan link must be bilingual');
+console.log('pro funnel checks: ok');
