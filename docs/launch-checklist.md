@@ -66,7 +66,9 @@ This file distinguishes **code present**, **deployed**, and **behavior actually 
 - [x] Webhook hardened and deployed with store/variant/test-mode validation, persisted subscription ownership, idempotency and stale-event protection.
 - [x] Lemon webhook Edge Function deployed with JWT verification disabled; HMAC signature validation remains inside the function.
 - [x] Checkout Edge Function authenticates the bearer token inside the handler; browser checkout sends the current user JWT and publishable key explicitly and never accepts a browser-provided plan.
-- [ ] Perform the first real Lemon test-mode checkout and verify persisted webhook/subscription rows; then exercise lifecycle/duplicate/out-of-order events.
+- [x] First Lemon test checkout persisted correctly. Cancel → resume → pause → unpause webhooks were observed, final test subscription returned to active, and test purchases kept the Droop profile on FREE.
+- [x] Rollback-safe DB audit verified duplicate-event idempotency, stale-event rejection, live active → PRO entitlement and live expired → FREE revocation.
+- [ ] Verify the signed Lemon customer portal from the Account test panel, then test management from a physical browser.
 - [ ] Only then enable live checkout.
 
 ## Product / acquisition
