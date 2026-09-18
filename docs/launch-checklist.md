@@ -63,6 +63,8 @@ This file distinguishes **code present**, **deployed**, and **behavior actually 
 
 ## Product / acquisition
 
+- [x] Free → account → plans funnel links are in place, with direct signup entry and a dedicated bilingual Pro comparison page.
+- [x] Pro page clearly separates current Free features from planned Pro features and does not invent a price or live checkout.
 - [ ] Use real Umami data to identify the most-used tools.
 - [ ] Measure visit → tool use → account → Pro intent → payment.
 - [ ] Create demos/content around the strongest tools instead of adding metadata indefinitely.
