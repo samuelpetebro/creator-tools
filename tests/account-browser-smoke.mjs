@@ -12,7 +12,7 @@ function assert(condition,message){
 }
 
 const accountStub=`
-window.__droopTest={rpcCalls:[],updateUserCalls:[],resetCalls:[],signUpCalls:[],signInCalls:[],checkoutCalls:[],deletes:[],signedOut:false,presetDeleted:false};
+window.__droopTest={rpcCalls:[],updateUserCalls:[],resetCalls:[],signUpCalls:[],signInCalls:[],checkoutCalls:[],deletes:[],upserts:[],signedOut:false,presetDeleted:false};
 const session={access_token:'test-user-jwt',user:{id:'user-test-1',email:'creator@example.test'}};
 window.supabase={
   createClient(){
@@ -33,10 +33,11 @@ window.supabase={
         const q={
           select(){action='select';return q;},
           delete(){action='delete';return q;},
+          upsert(rows,options){window.__droopTest.upserts.push({rows,options});return Promise.resolve({data:rows,error:null});},
           eq(key,value){filters[key]=value;return q;},
           order(){return q;},
           single:async()=>{
-            if(table==='profiles')return {data:{id:session.user.id,email:session.user.email,display_name:'Samu Test',plan:'free',updated_at:'2026-09-18T00:00:00Z'},error:null};
+            if(table==='profiles')return {data:{id:session.user.id,email:session.user.email,display_name:'Samu Test',plan:window.__droopPlan||'free',updated_at:'2026-09-18T00:00:00Z'},error:null};
             return {data:null,error:null};
           },
           maybeSingle:async()=>({data:null,error:null}),
