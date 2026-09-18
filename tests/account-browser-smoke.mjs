@@ -141,6 +141,8 @@ await billing.route('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2',route
   route.fulfill({status:200,contentType:'application/javascript',body:accountStub})
 );
 let checkoutRequestHeaders=null;
+let portalRequestHeaders=null;
+await billing.route('https://qbzqiiinugidkdxcpdln.supabase.co/functions/v1/lemonsqueezy-portal',async route=>{portalRequestHeaders=await route.request().allHeaders();await route.fulfill({status:404,contentType:'application/json',body:JSON.stringify({error:'No manageable subscription'})});});
 await billing.route('https://qbzqiiinugidkdxcpdln.supabase.co/functions/v1/lemonsqueezy-checkout',async route=>{
   checkoutRequestHeaders=await route.request().allHeaders();
   await route.fulfill({status:200,contentType:'application/json',headers:{'access-control-allow-origin':base},body:JSON.stringify({url:'https://app.lemonsqueezy.com/checkout/test-droop'})});
@@ -167,6 +169,11 @@ await returned.goto(base+'/account.html?billing=success',{waitUntil:'domcontentl
 await returned.waitForSelector('#billing-test-panel:not([hidden])');
 assert((await returned.locator('#billing-test-status').innerText()).includes('sigue en FREE'),'test checkout return must explain that production plan stays Free');
 assert(await returned.locator('#billing-test-checkout').isHidden(),'return state should hide the test checkout button');
+await returned.route('https://qbzqiiinugidkdxcpdln.supabase.co/functions/v1/lemonsqueezy-portal',async route=>route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({url:'https://droop.lemonsqueezy.com/billing/test-signed',status:'active',cancelled:false,renews_at:'2026-10-18T20:57:59Z',ends_at:null,test_mode:true})}));
+await returned.reload({waitUntil:'domcontentloaded'});
+await returned.waitForSelector('#billing-manage:not([hidden])');
+assert((await returned.locator('#billing-test-status').innerText()).includes('active'),'billing return should load test subscription status');
+assert((await returned.locator('#billing-manage').innerText()).includes('Administrar'),'billing return should expose subscription management');
 await returnCtx.close();
 
 await browser.close();
