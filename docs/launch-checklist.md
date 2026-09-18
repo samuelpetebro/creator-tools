@@ -21,11 +21,13 @@ This file distinguishes **code present**, **deployed**, and **behavior actually 
 
 ## Accounts / presets
 
+- [x] Database integrity audit: no auth users without profiles, no orphan profiles/presets, no invalid plans and no duplicate preset names.
 - [x] Account page is bilingual (EN/ES) and uses the shared `droop-language` preference.
 - [x] Explicit “Create free account” CTAs open account signup mode directly.
 - [x] Basic user flow previously confirmed: sign in → save preset → reload → load preset → delete preset.
-- [ ] Fresh registration test with email confirmation as currently configured.
-- [ ] Password reset/recovery test.
+- [ ] Fresh registration test with a second account remains pending.
+- [x] Existing account is email-confirmed and has completed at least one successful sign-in; auth user/profile counts are aligned.
+- [ ] Password reset/recovery browser test remains pending.
 - [x] Display-name database path tested through the dedicated authenticated RPC in a rollback-safe transaction; browser UI smoke test remains covered by the normal account test.
 - [x] Verified in a rollback-safe database test that Free stops at 5 presets and the sixth insert is rejected.
 - [x] Verified authenticated clients have no direct UPDATE privilege on `profiles` and no SELECT access to server-only billing tables.
