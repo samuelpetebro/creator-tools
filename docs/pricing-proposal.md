@@ -13,6 +13,7 @@ The launch Pro value pack now includes:
 - up to 100 saved presets
 - batch Image Converter for up to 20 images at once
 - batch Metadata Cleaner for up to 20 images at once
+- batch Under X MB for up to 10 images under one shared size target
 - one-click local ZIP download for those batch results
 - preset library backup and restore through the account workspace
 - same current browser tools and privacy-first local processing
