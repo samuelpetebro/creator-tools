@@ -1,7 +1,7 @@
 const fs=require('fs'),assert=require('assert');
 const processingTools=[
 'js/tools/audio-extractor.js','js/tools/audio-trimmer.js','js/tools/background-remover.js',
-'js/tools/image-converter.js','js/tools/image-upscaler.js','js/tools/make-it-fit-v2.js',
+'js/tools/image-converter.js','js/tools/image-upscaler.js','js/tools/make-it-fit-stable.js',
 'js/tools/metadata-cleaner.js','js/tools/release-pack.js','js/tools/subtitle-burner.js',
 'js/tools/thumbnail-maker.js','js/tools/under-x-mb.js','js/tools/video-cropper.js',
 'js/tools/video-to-gif.js','js/tools/video-trimmer.js','js/tools/video-under-x-mb.js'
