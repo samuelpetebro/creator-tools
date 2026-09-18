@@ -1,0 +1,23 @@
+{
+  "name": "droop — Creator tools",
+  "short_name": "droop",
+  "description": "Private browser-based tools for creators.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#eef8ff",
+  "theme_color": "#eef8ff",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": [
+    "photo",
+    "video",
+    "productivity"
+  ]
+}
