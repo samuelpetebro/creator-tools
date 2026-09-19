@@ -49,6 +49,7 @@ jobs:
           node tests/browser-smoke.mjs
           node tests/account-browser-smoke.mjs
           node tests/launch-journey-smoke.mjs
+          node tests/layout-polish-smoke.mjs
 
       - name: Upload browser screenshots
         if: always()
