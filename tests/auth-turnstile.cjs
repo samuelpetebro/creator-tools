@@ -10,7 +10,7 @@ assert(!cfg.toLowerCase().includes('turnstile_secret'),'Turnstile secret must ne
 
 assert(html.includes('id="auth-turnstile"'),'Account form must include the Turnstile mount point');
 assert(html.includes('js/auth-turnstile.js?v=1'),'Account page must load the staged Turnstile helper');
-const turnstilePos=html.indexOf('js/auth-turnstile.js?v=1');const accountMatch=html.match(/js\\/account\\.js\\?v=\\d+/);assert(accountMatch,'Account behavior must load with a versioned script');const accountPos=html.indexOf(accountMatch[0]);assert(turnstilePos>=0&&turnstilePos<accountPos,'Turnstile helper must load before account behavior');
+const turnstilePos=html.indexOf('js/auth-turnstile.js?v=1');const accountMatch=html.match(/js\/account\.js\?v=\d+/);assert(accountMatch,'Account behavior must load with a versioned script');const accountPos=html.indexOf(accountMatch[0]);assert(turnstilePos>=0&&turnstilePos<accountPos,'Turnstile helper must load before account behavior');
 
 assert.doesNotThrow(()=>new Function(helper),'Turnstile helper must remain valid JavaScript');
 assert.doesNotThrow(()=>new Function(account),'Account behavior must remain valid JavaScript');
