@@ -3,6 +3,7 @@ const assert = require("assert");
 
 const readme = fs.readFileSync("README.md", "utf8");
 const checklist = fs.readFileSync("docs/launch-checklist.md", "utf8");
+const billing = fs.readFileSync("docs/billing-go-live.md", "utf8");
 
 assert(!readme.includes("Google OAuth frontend support is feature-flagged"), "README still claims Google OAuth is feature-flagged");
 assert(readme.includes("Google sign-in live in production"), "README must document live Google sign-in");
@@ -15,5 +16,10 @@ assert(checklist.includes("Cloudflare Turnstile is enabled"), "Launch checklist 
 assert(checklist.includes("synced Brand Kits"), "Launch checklist must reflect current Pro Brand Kits");
 assert(checklist.includes("local Recent Runs / Run Again"), "Launch checklist must reflect current Recent Runs feature");
 assert(!checklist.includes("History and additional batch workflows remain roadmap items"), "Launch checklist contains stale Pro roadmap copy");
+
+assert(billing.includes("batch Audio Converter"), "Billing go-live runbook must include current batch Audio Converter value");
+assert(billing.includes("synced Brand Kits"), "Billing go-live runbook must include current Brand Kits value");
+assert(billing.includes("local Recent Runs / Run Again"), "Billing go-live runbook must include current Recent Runs value");
+assert(!billing.includes("history / repeat-export workflows"), "Billing go-live runbook contains a shipped feature in the deferred list");
 
 console.log("✓ launch documentation matches current shipped state");
