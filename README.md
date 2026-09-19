@@ -12,10 +12,10 @@ Production: https://droopweb.lat/
 - **Media processing:** local in the browser for supported tools. Some tools download WASM, processing packages or models at runtime.
 - **Accounts:** Supabase Auth. Email/password is live; Google OAuth frontend support is feature-flagged until the Google provider credentials are configured and real-account QA passes.
 - **Account data:** Supabase Postgres with Row Level Security.
-- **Saved presets:** settings only; media files are not stored with presets.
+- **Saved presets / Creator Profiles:** reusable settings only; media files are not stored with them.
 - **Analytics:** Umami Cloud through the privacy-focused adapter in `js/analytics.js`.
 - **PWA shell:** manifest + raster icons + standalone display metadata. Droop does not currently claim offline support.
-- **Billing / Pro:** USD 5/month monthly-only launch price is accepted. The ready Pro value pack includes up to 100 presets, 20-file batch Image Converter, 20-file batch Metadata Cleaner, 20-file batch Make It Fit, 10-file batch Under X MB, a custom Release Pack builder and preset backup/restore. Lemon Squeezy checkout, signed webhooks, server-side subscription persistence and the customer-portal bridge are deployed in test mode; real-money checkout remains disabled until the Lemon store is activated and live credentials are configured.
+- **Billing / Pro:** USD 5/month monthly-only launch price is accepted. The ready Pro value pack includes up to 100 presets, 20-file batch Image Converter, 20-file batch Metadata Cleaner, 20-file batch Make It Fit, 10-file batch Under X MB, a custom Release Pack builder, up to 10 synced Creator Profiles and preset backup/restore. Lemon Squeezy checkout, signed webhooks, server-side subscription persistence and the customer-portal bridge are deployed in test mode; real-money checkout remains disabled until the Lemon store is activated and live credentials are configured.
 
 ## Important files
 
@@ -26,7 +26,7 @@ Production: https://droopweb.lat/
 - `js/cloud.js` — saved preset client.
 - `js/analytics.js` — allowlisted analytics adapter.
 - `supabase/001_profiles_presets.sql` — account/preset schema.
-- `supabase/003_billing_subscriptions.sql` — server-only subscription persistence and webhook idempotency.
+- `supabase/003_billing_subscriptions.sql` — server-only subscription persistence and webhook idempotency.\n- `supabase/004_creator_profiles.sql` / `005_creator_profile_active_rpc.sql` — Pro Creator Profile storage, RLS, limits and atomic activation.
 - `supabase/functions/lemonsqueezy-checkout/` — authenticated checkout creation.
 - `supabase/functions/lemonsqueezy-webhook/` — signed subscription webhook handler.
 - `site.webmanifest` / `icons/` — install metadata and home-screen icons.
