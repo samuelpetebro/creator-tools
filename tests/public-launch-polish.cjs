@@ -13,11 +13,16 @@ function walk(dir){
   return out;
 }
 function stripQueryHash(href){return href.split('#')[0].split('?')[0];}
-function resolveInternal(from,href){
+function resolveInternal(from,href,baseHref=''){
   if(!href||href.startsWith('#')||/^(?:https?:|mailto:|tel:|data:|javascript:)/i.test(href))return null;
   const clean=decodeURIComponent(stripQueryHash(href));
   if(!clean)return null;
-  const rel=clean.startsWith('/')?clean.slice(1):path.join(path.dirname(from),clean);
+  if(baseHref&&/^(?:https?:)?\/\//i.test(baseHref))return null;
+  const docDir=path.dirname(from);
+  const baseDir=baseHref
+    ? (baseHref.startsWith('/')?baseHref.slice(1):path.normalize(path.join(docDir,stripQueryHash(baseHref))))
+    : docDir;
+  const rel=clean.startsWith('/')?clean.slice(1):path.join(baseDir,clean);
   let target=path.normalize(rel);
   if(clean.endsWith('/'))target=path.join(target,'index.html');
   else if(!path.extname(target)&&fs.existsSync(target)&&fs.statSync(target).isDirectory())target=path.join(target,'index.html');
@@ -29,10 +34,12 @@ const broken=[];
 const empty=[];
 for(const file of htmlFiles){
   const html=fs.readFileSync(file,'utf8');
+  const baseHref=html.match(/<base\s+[^>]*href=["']([^"']+)["']/i)?.[1]||'';
   for(const match of html.matchAll(/href=["']([^"']*)["']/g)){
     const href=match[1];
     if(href==='#'||href.trim()===''){empty.push({file,href});continue;}
-    const target=resolveInternal(file,href);
+    if(match[0].toLowerCase().startsWith('href=')&&baseHref===href&&html.includes('<base'))continue;
+    const target=resolveInternal(file,href,baseHref);
     if(target&&!fs.existsSync(target))broken.push({file,href,target});
   }
 }
