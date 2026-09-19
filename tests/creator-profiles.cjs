@@ -41,7 +41,7 @@ assert(apply.includes("eq('is_active',true)"),'tool helper must load only the ac
 assert(apply.includes("new Set(['youtube','instagram-post','instagram-story','spotify','discord-avatar'])"),'Make It Fit defaults must be allowlisted');
 assert(apply.includes("new Set(['music','youtube','social','profile'])"),'Release Pack defaults must be allowlisted');
 assert(analytics.includes("'pro_creator_profile_save'")&&analytics.includes("'pro_creator_profile_activate'")&&analytics.includes("'pro_creator_profile_apply'"),'Creator Profile analytics must remain explicitly allowlisted');
-assert(privacy.includes('Creator Profiles contain reusable settings only'),'privacy page must document Creator Profile storage');
+assert(privacy.includes('Pro Creator Profiles')&&privacy.includes('reusable settings only'),'privacy page must document Creator Profile storage');
 assert(pro.includes('Up to 10 synced Creator Profiles'),'Pro page must advertise the ready Creator Profile benefit');
 
 console.log('creator profile checks: ok');
