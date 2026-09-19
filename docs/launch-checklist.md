@@ -105,5 +105,5 @@ This file distinguishes **code present**, **deployed**, and **behavior actually 
 - [x] Server-side Pro entitlement and 20-recipe limit.
 - [x] Up to 20 images / 200 MB per local sequential run.
 - [x] Resize/crop, JPEG/WebP, quality, optional target size, safe filename templates and ZIP.
-- [x] Media stays local; only recipe settings sync.
+- [x] Media stays local; only recipe settings sync.\n- [x] Recent Runs stay local to the browser and exclude filenames/media.
 - [ ] Real Pro-account physical-device smoke after live billing activation.
