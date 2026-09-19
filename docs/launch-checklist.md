@@ -88,3 +88,12 @@ This file distinguishes **code present**, **deployed**, and **behavior actually 
 
 - [x] MIT sale/licensing review recorded in `docs/licensing-and-sale.md`: existing distributed copies retain MIT rights, so do not promise exclusivity over those copies.
 - [x] Initial service/dependency inventory created in `docs/service-inventory.md`; unknown recurring amounts are intentionally left for receipt/account-plan verification instead of being guessed.
+
+
+## Pro Creator Profiles
+
+- [x] Dedicated RLS-protected settings table with explicit authenticated grants.
+- [x] Server-side Pro entitlement and 10-profile limit.
+- [x] One active profile per account, switched atomically.
+- [x] Active defaults apply to Make It Fit and Release Pack without storing media.
+- [ ] Real Pro-account browser smoke after live billing activation.
