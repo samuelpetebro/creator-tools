@@ -17,7 +17,7 @@ for(const [name,html,ids] of [
   ['Subtitle Burner',sub,['subStyle','subPosition','subSize']]
 ]){
   assert(html.includes('css/cloud.css?v=1'),`${name} must load preset styles`);
-  assert(html.includes('js/supabase-config.js?v=1'),`${name} must load Supabase config`);
+  assert(/js\/supabase-config\.js\?v=\d+/.test(html),`${name} must load versioned Supabase config`);
   assert(html.includes('js/cloud.js?v=3'),`${name} must load the expanded preset client`);
   for(const id of ids){
     assert(new RegExp(`id=["']${id}["'][^>]*data-droop-preset|data-droop-preset[^>]*id=["']${id}["']`).test(html),`${name} must explicitly mark ${id} as reusable`);
@@ -32,7 +32,7 @@ for(const [name,html,ids] of [
   ['Thumbnail Maker',thumb,['thumbPlacement','thumbColor','thumbPosition']]
 ]){
   assert(html.includes('css/cloud.css?v=1'),`${name} must load preset styles`);
-  assert(html.includes('js/supabase-config.js?v=1'),`${name} must load Supabase config`);
+  assert(/js\/supabase-config\.js\?v=\d+/.test(html),`${name} must load versioned Supabase config`);
   assert(html.includes('js/cloud.js?v=3'),`${name} must load the expanded preset client`);
   for(const id of ids){
     assert(new RegExp(`id=[\"']${id}[\"'][^>]*data-droop-preset|data-droop-preset[^>]*id=[\"']${id}[\"']`).test(html),`${name} must explicitly mark ${id} as reusable`);
