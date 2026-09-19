@@ -4,3 +4,18 @@ input.file-picker-accessible{position:absolute!important;width:1px!important;hei
 label:focus-within{outline:3px solid #7957d9;outline-offset:3px}
 
 .site-footer-links{display:inline-flex;align-items:center;gap:14px;flex-wrap:wrap}.site-footer-links a{font-weight:800;color:#5d4fc2;text-decoration:none}.site-footer-links a:hover{text-decoration:underline}@media(max-width:520px){.site-footer-links{gap:10px}}
+
+
+/* Launch interaction polish */
+:where(a,button,input,select,textarea,summary,[tabindex]):focus-visible{
+  outline:3px solid #6f57d8;
+  outline-offset:3px;
+}
+footer a{
+  display:inline-flex;
+  align-items:center;
+  text-underline-offset:3px;
+}
+@media(max-width:700px){
+  footer a{min-height:44px;padding:8px 2px}
+}
