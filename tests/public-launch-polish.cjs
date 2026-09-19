@@ -14,19 +14,17 @@ function walk(dir){
 }
 function stripQueryHash(href){return href.split('#')[0].split('?')[0];}
 function resolveInternal(from,href,baseHref=''){
-  if(!href||href.startsWith('#')||/^(?:https?:|mailto:|tel:|data:|javascript:)/i.test(href))return null;
-  const clean=decodeURIComponent(stripQueryHash(href));
-  if(!clean)return null;
-  if(baseHref&&/^(?:https?:)?\/\//i.test(baseHref))return null;
-  const docDir=path.dirname(from);
-  const baseDir=baseHref
-    ? (baseHref.startsWith('/')?baseHref.slice(1):path.normalize(path.join(docDir,stripQueryHash(baseHref))))
-    : docDir;
-  const rel=clean.startsWith('/')?clean.slice(1):path.join(baseDir,clean);
-  let target=path.normalize(rel);
-  if(clean.endsWith('/'))target=path.join(target,'index.html');
+  if(!href||href.startsWith('#')||/^(?:mailto:|tel:|data:|javascript:)/i.test(href))return null;
+  const origin='https://droop.test';
+  const docUrl=new URL('/'+from.replace(/\\/g,'/'),origin);
+  const baseUrl=new URL(baseHref||docUrl.href,docUrl);
+  const targetUrl=new URL(href,baseUrl);
+  if(targetUrl.origin!==origin)return null;
+  const pathname=decodeURIComponent(targetUrl.pathname);
+  let target=pathname.replace(/^\//,'');
+  if(pathname.endsWith('/'))target=path.join(target,'index.html');
   else if(!path.extname(target)&&fs.existsSync(target)&&fs.statSync(target).isDirectory())target=path.join(target,'index.html');
-  return target;
+  return path.normalize(target);
 }
 
 const htmlFiles=walk('.').filter(file=>!file.startsWith('docs'+path.sep));
@@ -38,7 +36,6 @@ for(const file of htmlFiles){
   for(const match of html.matchAll(/href=["']([^"']*)["']/g)){
     const href=match[1];
     if(href==='#'||href.trim()===''){empty.push({file,href});continue;}
-    if(match[0].toLowerCase().startsWith('href=')&&baseHref===href&&html.includes('<base'))continue;
     const target=resolveInternal(file,href,baseHref);
     if(target&&!fs.existsSync(target))broken.push({file,href,target});
   }
