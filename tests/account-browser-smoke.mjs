@@ -11,6 +11,19 @@ function assert(condition,message){
   if(!condition)throw new Error(message);
 }
 
+const turnstileStub=`
+window.turnstile={
+  render(_container,options){window.__droopTurnstileOptions=options;return 'droop-test-widget';},
+  execute(){setTimeout(()=>window.__droopTurnstileOptions?.callback?.('test-turnstile-token'),0);},
+  reset(){}
+};
+`;
+async function routeTurnstile(context){
+  await context.route('https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit',route=>
+    route.fulfill({status:200,contentType:'application/javascript',body:turnstileStub})
+  );
+}
+
 const accountStub=`
 window.__droopTest={rpcCalls:[],updateUserCalls:[],resetCalls:[],signUpCalls:[],signInCalls:[],checkoutCalls:[],deletes:[],upserts:[],signedOut:false,presetDeleted:false};
 const session={access_token:'test-user-jwt',user:{id:'user-test-1',email:'creator@example.test'}};
@@ -64,6 +77,7 @@ window.supabase={
 };`;
 
 const ctx=await browser.newContext({viewport:{width:390,height:844}});
+await routeTurnstile(ctx);
 const page=await ctx.newPage();
 await page.addInitScript(()=>localStorage.setItem('droop-language','es'));
 await page.route('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2',route=>
@@ -106,6 +120,7 @@ await page.screenshot({path:`${outDir}/account-signed-in-mobile.png`,fullPage:tr
 await ctx.close();
 
 const recoveryCtx=await browser.newContext({viewport:{width:390,height:844}});
+await routeTurnstile(recoveryCtx);
 const recovery=await recoveryCtx.newPage();
 await recovery.addInitScript(()=>localStorage.setItem('droop-language','es'));
 await recovery.route('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2',route=>
@@ -125,6 +140,7 @@ await recovery.screenshot({path:`${outDir}/account-recovery-mobile.png`,fullPage
 await recoveryCtx.close();
 
 const resetCtx=await browser.newContext({viewport:{width:390,height:844}});
+await routeTurnstile(resetCtx);
 const reset=await resetCtx.newPage();
 const resetStub=accountStub.replace("getSession:async()=>({data:{session},error:null})","getSession:async()=>({data:{session:null},error:null})");
 await reset.route('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2',route=>
@@ -137,9 +153,11 @@ await reset.waitForFunction(()=>window.__droopTest.resetCalls.length===1);
 const resetCall=await reset.evaluate(()=>window.__droopTest.resetCalls[0]);
 assert(resetCall.email==='creator@example.test','forgot-password should use the entered email');
 assert(resetCall.options.redirectTo.endsWith('/account.html'),'password reset should return to the account page');
+assert(resetCall.options.captchaToken==='test-turnstile-token','password reset should forward the Turnstile token');
 await resetCtx.close();
 
 const signupCtx=await browser.newContext({viewport:{width:390,height:844}});
+await routeTurnstile(signupCtx);
 const signup=await signupCtx.newPage();
 await signup.addInitScript(()=>localStorage.setItem('droop-language','es'));
 const signupStub=accountStub.replace("getSession:async()=>({data:{session},error:null})","getSession:async()=>({data:{session:null},error:null})");
@@ -154,10 +172,12 @@ await signup.waitForFunction(()=>window.__droopTest.signUpCalls.length===1);
 const signupCall=await signup.evaluate(()=>window.__droopTest.signUpCalls[0]);
 assert(signupCall.email==='fresh@example.test','fresh registration should call Supabase signUp with the entered email');
 assert(signupCall.options.emailRedirectTo===base+'/account.html','fresh registration should return email confirmation to the production-shaped account route');
+assert(signupCall.options.captchaToken==='test-turnstile-token','fresh registration should forward the Turnstile token');
 assert((await signup.locator('#auth-status').innerText()).includes('Revisá tu correo'),'fresh registration without a session should request email confirmation');
 await signupCtx.close();
 
 const loginCtx=await browser.newContext({viewport:{width:390,height:844}});
+await routeTurnstile(loginCtx);
 const login=await loginCtx.newPage();
 await login.addInitScript(()=>localStorage.setItem('droop-language','es'));
 const loginStub=accountStub.replace("getSession:async()=>({data:{session},error:null})","getSession:async()=>({data:{session:null},error:null})");
@@ -169,10 +189,13 @@ await login.locator('#auth-email').fill('creator@example.test');
 await login.locator('#auth-password').fill('ClaveLogin123');
 await login.locator('#auth-submit').click();
 await login.waitForFunction(()=>window.__droopTest.signInCalls.length===1);
+const loginCall=await login.evaluate(()=>window.__droopTest.signInCalls[0]);
+assert(loginCall.options?.captchaToken==='test-turnstile-token','password login should forward the Turnstile token');
 assert(await login.locator('#signed-in').isVisible(),'successful login should render the signed-in workspace');
 await loginCtx.close();
 
 const billingCtx=await browser.newContext({viewport:{width:390,height:844}});
+await routeTurnstile(billingCtx);
 const billing=await billingCtx.newPage();
 await billing.addInitScript(()=>localStorage.setItem('droop-language','es'));
 await billing.route('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2',route=>
@@ -198,6 +221,7 @@ assert(checkoutRequestHeaders?.apikey,'billing checkout request must send the pu
 await billingCtx.close();
 
 const returnCtx=await browser.newContext({viewport:{width:390,height:844}});
+await routeTurnstile(returnCtx);
 const returned=await returnCtx.newPage();
 await returned.addInitScript(()=>localStorage.setItem('droop-language','es'));
 await returned.route('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2',route=>
