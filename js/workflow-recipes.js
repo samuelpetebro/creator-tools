@@ -34,7 +34,7 @@ const PRESETS={
   spotify:{width:3000,height:3000},'discord-avatar':{width:512,height:512}
 };
 const RESIZES=new Set(Object.keys(PRESETS)),FORMATS=new Set(['jpeg','webp']),QUALITIES=new Set([75,85,92]),UNITS=new Set(['KB','MB']);
-let client=null,session=null,recipes=[],editingId=null,selectedId=null,files=[],entries=[];
+let client=null,session=null,recipes=[],editingId=null,selectedId=null,selectedSnapshot=null,files=[],entries=[];
 
 const copy={
 en:{navTools:'Tools',navAccount:'Account',privacy:'Local processing · No media uploads',title:'Do the boring<br>work once.',lead:'Save a repeatable image workflow, drop in a batch, and let Droop resize, re-export, target a file size, rename and ZIP everything locally.',lockedTitle:'Workflow Recipes are a Pro feature.',lockedCopy:'Free tools stay free. Pro adds repeatable batch workflows that remove setup work.',viewPro:'View Droop Pro · USD 5/month',signIn:'Sign in',editorLabel:'RECIPE EDITOR',editorTitle:'Build the steps once.',name:'Recipe name',resize:'Resize / crop',keepOriginal:'Keep original dimensions',format:'Output format',quality:'Starting quality',target:'Optional max file size',unit:'Unit',downscale:'Allow dimensions to shrink if quality alone cannot hit the target',filename:'Filename template',tokens:'Available: {{name}}, {{recipe}}, {{index}}. Every output is a fresh re-export, so common image metadata is removed.',save:'Save recipe',update:'Update recipe',cancel:'Cancel edit',libraryLabel:'YOUR RECIPES',libraryTitle:'Pick one and run it.',empty:'No Workflow Recipes saved yet.',use:'Use recipe',edit:'Edit',remove:'Delete',runnerLabel:'RUN RECIPE',chooseRecipe:'Choose a saved recipe first.',drop:'Choose up to 20 images',batchLimit:'200 MB total · processed sequentially on this device',run:'Run workflow',download:'Download ZIP',footer:'Private browser-based tools.',saved:'Workflow Recipe saved.',updated:'Workflow Recipe updated.',deleted:'Workflow Recipe deleted.',confirm:'Delete this Workflow Recipe?',tooManyRecipes:'Workflow Recipe limit reached.',filesReady:n=>`${n} images ready.`,tooManyFiles:`Choose up to ${MAX_FILES} images.`,tooLarge:'Keep the batch under 200 MB total.',imagesOnly:'Every batch file must be an image.',processing:(i,n)=>`Processing ${i} of ${n}…`,done:(ok,failed)=>failed?`${ok} ready · ${failed} failed. Download the successful outputs.`:`${ok} outputs ready. Download one ZIP.`,noTarget:'No size limit',couldNotFit:'could not hit the requested size target',error:'Something went wrong with this workflow.'},
@@ -96,7 +96,7 @@ function renderRecipes(){
     actions.append(use,edit,del);card.append(h,p,actions);recipeList.appendChild(card);
   }
 }
-function selectedRecipe(){return recipes.find(r=>r.id===selectedId)||null;}
+function selectedRecipe(){return recipes.find(r=>r.id===selectedId)||selectedSnapshot||null;}
 function renderSelected(){
   const item=selectedRecipe();
   if(!item){runTitle.textContent=t('chooseRecipe');runSummary.textContent='';runButton.disabled=true;return;}
@@ -126,7 +126,7 @@ form.addEventListener('submit',async event=>{
 });
 cancelButton.addEventListener('click',()=>{resetForm();say(formStatus,'');});
 recipeList.addEventListener('click',async event=>{
-  const use=event.target.closest('[data-use]');if(use){selectedId=use.dataset.use;entries=[];results.replaceChildren();downloadButton.hidden=true;say(runStatus,'');renderSelected();return;}
+  const use=event.target.closest('[data-use]');if(use){selectedId=use.dataset.use;selectedSnapshot=null;entries=[];results.replaceChildren();downloadButton.hidden=true;say(runStatus,'');renderSelected();return;}
   const edit=event.target.closest('[data-edit]');if(edit){const item=recipes.find(r=>r.id===edit.dataset.edit);if(item)editRecipe(item);return;}
   const del=event.target.closest('[data-delete]');if(!del)return;
   if(!confirm(t('confirm')))return;
@@ -201,7 +201,7 @@ runButton.addEventListener('click',async()=>{
       appendResult(name,`${pretty(out.blob.size)} · ${out.width}×${out.height} · ${Math.round(out.quality*100)}%`);
     }catch(error){console.error('Workflow file failed',error);failed++;appendResult(files[i].name,t('error'),true);}
   }
-  if(entries.length){window.DroopAnalytics?.finish?.('complete');window.DroopAnalytics?.track?.('pro_recipe_run');downloadButton.hidden=false;say(runStatus,t('done')(entries.length,failed),failed>0);}
+  if(entries.length){window.DroopAnalytics?.finish?.('complete');window.DroopAnalytics?.track?.('pro_recipe_run');window.dispatchEvent(new CustomEvent('droop:workflow-run-complete',{detail:{recipe_id:item.id||null,recipe_name:item.name,recipe,ok:entries.length,failed,total:files.length,ran_at:new Date().toISOString()}}));downloadButton.hidden=false;say(runStatus,t('done')(entries.length,failed),failed>0);}
   else{window.DroopAnalytics?.finish?.('error');say(runStatus,t('error'),true);}
   runButton.disabled=false;filesInput.disabled=false;
 });
@@ -212,6 +212,14 @@ downloadButton.addEventListener('click',async()=>{
   finally{downloadButton.disabled=false;}
 });
 langButton.addEventListener('click',()=>{const next=getLang()==='es'?'en':'es';try{localStorage.setItem('droop-language',next);}catch(_){}applyCopy();});
+window.addEventListener('droop:workflow-run-again',event=>{
+  const detail=event.detail||{};
+  const name=String(detail.recipe_name||'Recent workflow').slice(0,60);
+  selectedId=null;selectedSnapshot={id:null,name,recipe:sanitizeRecipe(detail.recipe||{})};
+  entries=[];results.replaceChildren();downloadButton.hidden=true;say(runStatus,'');renderSelected();
+  window.DroopAnalytics?.track?.('pro_run_again');
+  document.querySelector('.workflow-runner')?.scrollIntoView({behavior:'smooth',block:'start'});
+});
 
 (async()=>{
   applyCopy();
