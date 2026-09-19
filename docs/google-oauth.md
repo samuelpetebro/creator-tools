@@ -18,7 +18,7 @@ Droop uses Supabase Auth. The frontend Google OAuth flow is implemented behind t
 6. In Supabase Auth URL Configuration, keep the production Site URL on `https://droopweb.lat` and allow the account return URL.
 7. Test with a real second Google account.
 8. Verify the resulting user receives a normal `profiles` row and remains `free` unless billing grants Pro.
-9. Test sign-out, sign-back-in, email/password accounts and Google accounts side-by-side.
+9. Test sign-out, sign-back-in, email/password accounts and Google accounts side-by-side. Google-only accounts should be prompted for a Droop display name, not a second password.
 10. `googleOAuthEnabled` is now `true`; complete the real-account smoke and keep Google enabled only if the full flow passes.
 
 Google OAuth is an authentication convenience. It must never write or infer `profiles.plan`.
