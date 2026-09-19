@@ -4,8 +4,8 @@ const html=fs.readFileSync('account.html','utf8');
 const helper=fs.readFileSync('js/auth-turnstile.js','utf8');
 const account=fs.readFileSync('js/account.js','utf8');
 
-assert(cfg.includes("turnstileEnabled:false"),'Turnstile gate must default off');
-assert(cfg.includes("turnstileSiteKey:''"),'Turnstile site key must default empty');
+assert(cfg.includes("turnstileEnabled:true"),'Turnstile gate must be enabled for production');
+assert(cfg.includes("turnstileSiteKey:'0x4AAAAAAE9BxmFBZeIQjQZP'"),'Production Turnstile Site Key must be configured');
 assert(!cfg.toLowerCase().includes('turnstile_secret'),'Turnstile secret must never be exposed in browser config');
 
 assert(html.includes('id="auth-turnstile"'),'Account form must include the Turnstile mount point');
