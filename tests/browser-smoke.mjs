@@ -123,7 +123,7 @@ for(const toolPath of toolPages){
   const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-window.innerWidth);
   assert(overflow<=2,`${toolPath} should not overflow mobile viewport (overflow ${overflow}px)`);
   if(toolPath==='/metadata-cleaner.html')assert(await page.locator('.droop-presets').count()===0,'metadata cleaner should not mount an empty preset widget');
-  if(toolPath==='/image-converter.html'||toolPath==='/metadata-cleaner.html'){
+  if(toolPath==='/image-converter.html'||toolPath==='/metadata-cleaner.html'||toolPath==='/under-x-mb.html'){
     await page.waitForSelector('[data-pro-feature]');
     assert(await page.locator('[data-pro-locked]').isVisible(),`${toolPath} must show the Pro batch upsell to guests`);
     assert(await page.locator('[data-pro-content]').isHidden(),`${toolPath} must keep Pro batch controls hidden for guests`);
@@ -134,6 +134,50 @@ for(const toolPath of toolPages){
     if(toolPath==='/image-converter.html')assert((await page.locator('.droop-presets-signin').innerText()).includes('Iniciá sesión'),'preset widget should respect the saved Spanish language');
   }
 }
+
+const proContext=await browser.newContext({viewport:{width:390,height:844},acceptDownloads:true});
+const proPage=await proContext.newPage();
+const proSupabaseStub=`
+window.supabase={
+  createClient(){
+    const session={user:{id:'pro-smoke-user',email:'pro@example.test'}};
+    return {
+      auth:{
+        getSession:async()=>({data:{session},error:null}),
+        onAuthStateChange:()=>({data:{subscription:{unsubscribe(){}}}})
+      },
+      from(table){
+        const q={
+          select(){return q;},eq(){return q;},order(){return q;},
+          single:async()=>({data:table==='profiles'?{id:session.user.id,plan:'pro'}:null,error:null}),
+          maybeSingle:async()=>({data:null,error:null}),
+          then(resolve,reject){return Promise.resolve({data:[],error:null}).then(resolve,reject);}
+        };
+        return q;
+      }
+    };
+  }
+};`;
+await proPage.route('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2',route=>
+  route.fulfill({status:200,contentType:'application/javascript',body:proSupabaseStub})
+);
+await proPage.goto(base+'/under-x-mb.html',{waitUntil:'domcontentloaded'});
+await proPage.waitForSelector('[data-pro-feature="under-x-batch"] [data-pro-content]:not([hidden])');
+assert(await proPage.locator('[data-pro-feature="under-x-batch"] [data-pro-locked]').isHidden(),'Pro Under X MB must hide its upsell for a Pro account');
+const svg=Buffer.from('<svg xmlns="http://www.w3.org/2000/svg" width="8" height="8"><rect width="8" height="8" fill="red"/></svg>');
+await proPage.locator('#underXBatchInput').setInputFiles([
+  {name:'one.svg',mimeType:'image/svg+xml',buffer:svg},
+  {name:'two.svg',mimeType:'image/svg+xml',buffer:svg}
+]);
+await proPage.locator('#underXBatchButton').click();
+await proPage.waitForFunction(()=>document.querySelectorAll('#underXBatchList li').length===2);
+assert(await proPage.locator('#underXBatchDownload').isVisible(),'Pro Under X MB must expose a ZIP after a successful batch');
+const [batchDownload]=await Promise.all([
+  proPage.waitForEvent('download'),
+  proPage.locator('#underXBatchDownload').click()
+]);
+assert(batchDownload.suggestedFilename()==='droop-under-x-mb-batch.zip','Pro Under X MB ZIP filename must remain stable');
+await proContext.close();
 
 await page.setViewportSize({width:1365,height:900});
 await page.goto(base+'/',{waitUntil:'domcontentloaded'});
