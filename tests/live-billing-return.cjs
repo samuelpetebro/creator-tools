@@ -16,6 +16,6 @@ assert(js.includes("attempt<5"),'live return must retry while waiting for the we
 assert(js.includes("setTimeout(()=>loadBillingPortal(attempt+1),1500)"),'live return retry must remain bounded and delayed');
 assert(js.includes("await loadAccount(currentSession)"),'confirmed live subscription must refresh the account plan');
 assert(js.includes("u.searchParams.delete('billing')"),'confirmed purchase return flag must be cleaned from the URL');
-assert(js.includes("billingLiveReturn?t('billingLivePortalFailed'):t('billingPortalFailed')"),'live and test billing failures must keep separate copy');
+assert(js.includes("isLiveBillingContext()?t('billingLivePortalFailed'):t('billingPortalFailed')"),'live and test billing failures must keep separate copy');
 
 console.log('live billing return UX checks: ok');
