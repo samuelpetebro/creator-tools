@@ -2,9 +2,11 @@ const fs=require('fs'),assert=require('assert'),vm=require('vm');
 
 const proAccess=fs.readFileSync('js/pro-access.js','utf8');
 const zipCode=fs.readFileSync('js/batch-zip.js','utf8');
+const makeHtml=fs.readFileSync('make-it-fit.html','utf8');
 const imageHtml=fs.readFileSync('image-converter.html','utf8');
 const metaHtml=fs.readFileSync('metadata-cleaner.html','utf8');
 const underHtml=fs.readFileSync('under-x-mb.html','utf8');
+const makeBatch=fs.readFileSync('js/tools/make-it-fit-batch.js','utf8');
 const imageBatch=fs.readFileSync('js/tools/image-converter-batch.js','utf8');
 const metaBatch=fs.readFileSync('js/tools/metadata-cleaner-batch.js','utf8');
 const underBatch=fs.readFileSync('js/tools/under-x-mb-batch.js','utf8');
@@ -14,6 +16,7 @@ const analytics=fs.readFileSync('js/analytics.js','utf8');
 const pricing=fs.readFileSync('docs/pricing-proposal.md','utf8');
 
 assert.doesNotThrow(()=>new Function(proAccess),'Pro access helper must remain valid JavaScript');
+assert.doesNotThrow(()=>new Function(makeBatch),'Make It Fit batch client must remain valid JavaScript');
 assert.doesNotThrow(()=>new Function(imageBatch),'image batch client must remain valid JavaScript');
 assert.doesNotThrow(()=>new Function(metaBatch),'metadata batch client must remain valid JavaScript');
 assert.doesNotThrow(()=>new Function(underBatch),'Under X MB batch client must remain valid JavaScript');
@@ -22,6 +25,7 @@ assert(proAccess.includes("select('plan')"),'Pro entitlement must come from the 
 assert(proAccess.includes("plan==='pro'"),'Pro access must explicitly require the Pro plan');
 
 for(const [name,html,slug,script] of [
+  ['Make It Fit',makeHtml,'make-it-fit-batch','make-it-fit-batch.js?v=1'],
   ['Image Converter',imageHtml,'image-converter-batch','image-converter-batch.js?v=1'],
   ['Metadata Cleaner',metaHtml,'metadata-cleaner-batch','metadata-cleaner-batch.js?v=1'],
   ['Under X MB',underHtml,'under-x-batch','under-x-mb-batch.js?v=1']
@@ -32,6 +36,10 @@ for(const [name,html,slug,script] of [
   assert(html.includes(script),`${name} must load its batch behavior`);
   assert(html.includes('multiple'),`${name} batch picker must accept multiple files`);
 }
+assert(makeBatch.includes('const MAX=20'),'Make It Fit batch must cap one run at 20 files');
+assert(makeBatch.includes('MAX_BYTES=200*1024*1024'),'Make It Fit batch must cap total input size');
+assert(makeBatch.includes("access?.isPro"),'Make It Fit batch processing must require Pro at execution time');
+assert(makeBatch.includes("track?.('pro_batch_use')"),'Make It Fit batch must record privacy-safe Pro activation');
 assert(imageBatch.includes('const MAX=20'),'image batch must cap one run at 20 files');
 assert(metaBatch.includes('const MAX=20'),'metadata batch must cap one run at 20 files');
 assert(imageBatch.includes('MAX_BYTES=200*1024*1024'),'image batch must cap total input size');
