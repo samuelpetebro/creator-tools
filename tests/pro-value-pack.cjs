@@ -4,8 +4,10 @@ const proAccess=fs.readFileSync('js/pro-access.js','utf8');
 const zipCode=fs.readFileSync('js/batch-zip.js','utf8');
 const imageHtml=fs.readFileSync('image-converter.html','utf8');
 const metaHtml=fs.readFileSync('metadata-cleaner.html','utf8');
+const underHtml=fs.readFileSync('under-x-mb.html','utf8');
 const imageBatch=fs.readFileSync('js/tools/image-converter-batch.js','utf8');
 const metaBatch=fs.readFileSync('js/tools/metadata-cleaner-batch.js','utf8');
+const underBatch=fs.readFileSync('js/tools/under-x-mb-batch.js','utf8');
 const account=fs.readFileSync('account.html','utf8');
 const accountJs=fs.readFileSync('js/account.js','utf8');
 const analytics=fs.readFileSync('js/analytics.js','utf8');
@@ -14,13 +16,15 @@ const pricing=fs.readFileSync('docs/pricing-proposal.md','utf8');
 assert.doesNotThrow(()=>new Function(proAccess),'Pro access helper must remain valid JavaScript');
 assert.doesNotThrow(()=>new Function(imageBatch),'image batch client must remain valid JavaScript');
 assert.doesNotThrow(()=>new Function(metaBatch),'metadata batch client must remain valid JavaScript');
+assert.doesNotThrow(()=>new Function(underBatch),'Under X MB batch client must remain valid JavaScript');
 assert.doesNotThrow(()=>new Function(accountJs),'account Pro backup behavior must remain valid JavaScript');
 assert(proAccess.includes("select('plan')"),'Pro entitlement must come from the signed-in profile plan');
 assert(proAccess.includes("plan==='pro'"),'Pro access must explicitly require the Pro plan');
 
 for(const [name,html,slug,script] of [
   ['Image Converter',imageHtml,'image-converter-batch','image-converter-batch.js?v=1'],
-  ['Metadata Cleaner',metaHtml,'metadata-cleaner-batch','metadata-cleaner-batch.js?v=1']
+  ['Metadata Cleaner',metaHtml,'metadata-cleaner-batch','metadata-cleaner-batch.js?v=1'],
+  ['Under X MB',underHtml,'under-x-batch','under-x-mb-batch.js?v=1']
 ]){
   assert(html.includes(`data-pro-feature="${slug}"`),`${name} must expose a Pro batch panel`);
   assert(html.includes('js/pro-access.js?v=1'),`${name} must load the shared Pro entitlement helper`);
@@ -32,6 +36,10 @@ assert(imageBatch.includes('const MAX=20'),'image batch must cap one run at 20 f
 assert(metaBatch.includes('const MAX=20'),'metadata batch must cap one run at 20 files');
 assert(imageBatch.includes('MAX_BYTES=200*1024*1024'),'image batch must cap total input size');
 assert(metaBatch.includes('MAX_BYTES=200*1024*1024'),'metadata batch must cap total input size');
+assert(underBatch.includes('MAX_FILES=10'),'Under X MB batch must cap one run at 10 files');
+assert(underBatch.includes('MAX_BYTES=150*1024*1024'),'Under X MB batch must cap total input size');
+assert(underBatch.includes("access?.isPro"),'Under X MB batch processing must require Pro at execution time');
+assert(underBatch.includes("track?.('pro_batch_use')"),'Under X MB batch must record privacy-safe Pro activation');
 assert(imageBatch.includes("access?.isPro"),'image batch processing must require Pro at execution time');
 assert(metaBatch.includes("access?.isPro"),'metadata batch processing must require Pro at execution time');
 assert(imageBatch.includes("track?.('pro_batch_use')"),'image batch must record privacy-safe Pro activation');

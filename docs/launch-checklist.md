@@ -63,7 +63,7 @@ This file distinguishes **code present**, **deployed**, and **behavior actually 
 
 ## Billing / Pro — do not go live yet
 
-- [x] Pro launch value pack prepared: 100 saved presets, batch Image Converter (20 files), batch Metadata Cleaner (20 files), local ZIP batch download, and preset backup/restore. History and additional batch workflows remain roadmap items.
+- [x] Pro launch value pack prepared: 100 saved presets, batch Image Converter (20 files), batch Metadata Cleaner (20 files), batch Under X MB (10 files / one shared target), local ZIP batch download, and preset backup/restore. History and additional batch workflows remain roadmap items.
 - [x] Owner accepted USD 5/month, monthly-only for v1 on 2026-09-18. Public Pro copy may show the price; real-money checkout stays disabled until Lemon Live Mode is ready.
 - [x] Lemon Squeezy test store/product/variant identified: store 477243, product 1371942, actual Pro variant 2143724.
 - [x] Webhook hardened and deployed with store/variant/test-mode validation, persisted subscription ownership, idempotency and stale-event protection.
