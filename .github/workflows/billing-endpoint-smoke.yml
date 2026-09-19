@@ -1,6 +1,8 @@
 name: Billing endpoint smoke
 
 on:
+  schedule:
+    - cron: "23 10 * * *"
   pull_request:
   push:
     branches:
