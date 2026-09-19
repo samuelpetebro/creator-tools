@@ -11,8 +11,9 @@ assert(pro.includes('account.html?mode=signup'),'Free CTA must deep-link to sign
 assert(pro.includes('Checkout not live yet'),'Pro page must not imply live billing');
 assert(pro.includes('USD 5/month'),'Pro page must show the accepted monthly launch price');
 assert(pro.includes('Up to 100 saved presets'),'Pro preset benefit must be explicit');
-assert(pro.includes('3 batch image workflows'),'ready batch benefit must be explicit');
-assert(pro.includes('Image Converter + Metadata Cleaner + Under X MB'),'all ready batch tools must be explicit');
+assert(pro.includes('4 batch image workflows'),'ready batch benefit must be explicit');
+assert(pro.includes('Make It Fit + Image Converter + Metadata Cleaner + Under X MB'),'all ready batch tools must be explicit');
+assert(pro.includes('Custom Release Pack builder'),'custom Release Pack benefit must be explicit');
 assert(pro.includes('Preset backup and restore'),'ready preset backup benefit must be explicit');
 assert(!pro.includes('Prepared for up to 100 saved presets'),'implemented preset benefit must not be described as merely prepared');
 assert(!pro.includes('Batch workflows planned'),'ready batch workflows must not be described as entirely planned');
