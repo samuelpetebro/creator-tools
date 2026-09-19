@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Workflow Recipes — droop Pro</title>
+<meta name="description" content="Save repeatable Droop Pro image workflows and run them locally on a whole batch.">
+<meta name="robots" content="noindex,follow">
+<link rel="canonical" href="https://droopweb.lat/workflows.html">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="css/styles.css?v=8"><link rel="stylesheet" href="css/aero-v2.css?v=5"><link rel="stylesheet" href="css/tool-page.css?v=3"><link rel="stylesheet" href="css/catalog.css?v=6"><link rel="stylesheet" href="css/pro-features.css?v=2"><link rel="stylesheet" href="css/workflows.css?v=1">
+<link rel="manifest" href="/site.webmanifest"><meta name="theme-color" content="#eef8ff"><link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+</head>
+<body class="tool-page">
+<header class="site-header"><a class="brand" href="index.html">droop</a><nav class="top-nav"><a href="index.html#tool-catalog" data-wf="navTools">Tools</a><a href="pro.html">Pro</a><a href="account.html" data-wf="navAccount">Account</a></nav><span class="privacy-pill" data-wf="privacy">Local processing · No media uploads</span><button id="workflow-lang" class="lang-switch" type="button" aria-label="Language">ES</button></header>
+<main>
+<section class="hero workflow-hero"><p class="eyebrow">DROOP PRO · WORKFLOW RECIPES</p><h1 data-wf-html="title">Do the boring<br>work once.</h1><p class="hero-copy" data-wf="lead">Save a repeatable image workflow, drop in a batch, and let Droop resize, re-export, target a file size, rename and ZIP everything locally.</p></section>
+<section class="workflow" id="workflow-access">
+<div id="workflow-locked" class="workflow-locked">
+<p class="section-label">DROOP PRO</p><h2 data-wf="lockedTitle">Workflow Recipes are a Pro feature.</h2><p class="catalog-copy" data-wf="lockedCopy">Free tools stay free. Pro adds repeatable batch workflows that remove setup work.</p><p><a class="button button-primary" href="pro.html" data-droop-event="cta_plans" data-wf="viewPro">View Droop Pro · USD 5/month</a> <a class="button button-secondary" href="account.html" data-wf="signIn">Sign in</a></p>
+</div>
+<div id="workflow-pro" hidden>
+<div class="workflow-recipe-layout">
+<section class="workflow-recipe-editor">
+<p class="section-label" data-wf="editorLabel">RECIPE EDITOR</p><h2 data-wf="editorTitle">Build the steps once.</h2>
+<form id="workflow-recipe-form" class="workflow-form">
+<label for="workflow-name" data-wf="name">Recipe name</label><input id="workflow-name" type="text" maxlength="60" required placeholder="Instagram delivery">
+<label for="workflow-resize" data-wf="resize">Resize / crop</label><select id="workflow-resize"><option value="none" data-wf="keepOriginal">Keep original dimensions</option><option value="youtube">YouTube Thumbnail · 1280×720</option><option value="instagram-post">Instagram Post · 1080×1080</option><option value="instagram-story">Instagram Story · 1080×1920</option><option value="instagram-portrait">Instagram Portrait · 1080×1350</option><option value="spotify">Spotify Cover · 3000×3000</option><option value="discord-avatar">Discord Avatar · 512×512</option></select>
+<label for="workflow-format" data-wf="format">Output format</label><select id="workflow-format"><option value="jpeg">JPEG</option><option value="webp">WebP</option></select>
+<label for="workflow-quality" data-wf="quality">Starting quality</label><select id="workflow-quality"><option value="92">92% · High</option><option value="85">85% · Balanced</option><option value="75">75% · Smaller</option></select>
+<div class="workflow-target-row"><div><label for="workflow-target" data-wf="target">Optional max file size</label><input id="workflow-target" type="number" min="0.05" max="500" step="0.05" placeholder="No limit"></div><div><label for="workflow-unit" data-wf="unit">Unit</label><select id="workflow-unit"><option value="MB">MB</option><option value="KB">KB</option></select></div></div>
+<label class="workflow-check"><input id="workflow-downscale" type="checkbox"> <span data-wf="downscale">Allow dimensions to shrink if quality alone cannot hit the target</span></label>
+<label for="workflow-template" data-wf="filename">Filename template</label><input id="workflow-template" type="text" maxlength="80" value="{{name}}-{{recipe}}-{{index}}">
+<p class="workflow-hint" data-wf="tokens">Available: {{name}}, {{recipe}}, {{index}}. Every output is a fresh re-export, so common image metadata is removed.</p>
+<div class="account-actions"><button id="workflow-save" class="button button-primary" type="submit" data-wf="save">Save recipe</button><button id="workflow-cancel" class="button button-secondary" type="button" hidden data-wf="cancel">Cancel edit</button></div>
+<p id="workflow-form-status" class="pro-feature-status" role="status" aria-live="polite"></p>
+</form>
+</section>
+<section class="workflow-recipe-library">
+<div class="workflow-library-head"><div><p class="section-label" data-wf="libraryLabel">YOUR RECIPES</p><h2 data-wf="libraryTitle">Pick one and run it.</h2></div><strong id="workflow-usage">0 / 20</strong></div>
+<div id="workflow-recipe-list" class="workflow-recipe-list"></div>
+</section>
+</div>
+<section class="workflow-runner">
+<p class="section-label" data-wf="runnerLabel">RUN RECIPE</p><h2 id="workflow-run-title" data-wf="chooseRecipe">Choose a saved recipe first.</h2><p id="workflow-run-summary" class="catalog-copy"></p>
+<label class="drop-zone drop-zone-light" for="workflow-files"><input class="file-picker-accessible" id="workflow-files" type="file" multiple accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"><strong data-wf="drop">Choose up to 20 images</strong><span data-wf="batchLimit">200 MB total · processed sequentially on this device</span></label>
+<div class="account-actions"><button id="workflow-run" class="button button-primary" type="button" disabled data-wf="run">Run workflow</button><button id="workflow-download" class="button button-secondary download-button" type="button" hidden data-wf="download">Download ZIP</button></div>
+<p id="workflow-run-status" class="pro-feature-status" role="status" aria-live="polite"></p><ul id="workflow-results" class="pro-batch-list"></ul>
+</section>
+</div>
+</section>
+</main>
+<footer><span>droop · Everything you need before you post.</span><span data-wf="footer">Private browser-based tools.</span> <a href="privacy.html">Privacy</a></footer>
+<script src="js/analytics-config.js?v=2"></script><script src="js/analytics.js?v=9"></script><script src="js/supabase-config.js?v=2"></script><script src="js/pro-access.js?v=1"></script><script src="js/batch-zip.js?v=1"></script><script src="js/workflow-recipes.js?v=1"></script>
+</body></html>
