@@ -10,12 +10,12 @@ Production: https://droopweb.lat/
 
 - **Frontend / hosting:** plain HTML, CSS and JavaScript on GitHub Pages.
 - **Media processing:** local in the browser for supported tools. Some tools download WASM, processing packages or models at runtime.
-- **Accounts:** Supabase Auth.
+- **Accounts:** Supabase Auth. Email/password is live; Google OAuth frontend support is feature-flagged until the Google provider credentials are configured and real-account QA passes.
 - **Account data:** Supabase Postgres with Row Level Security.
 - **Saved presets:** settings only; media files are not stored with presets.
 - **Analytics:** Umami Cloud through the privacy-focused adapter in `js/analytics.js`.
 - **PWA shell:** manifest + raster icons + standalone display metadata. Droop does not currently claim offline support.
-- **Billing / Pro:** USD 5/month monthly-only launch price is accepted. The ready Pro value pack includes up to 100 presets, 20-file batch Image Converter, 20-file batch Metadata Cleaner, 10-file batch Under X MB and preset backup/restore. Lemon Squeezy checkout, signed webhooks, server-side subscription persistence and the customer-portal bridge are deployed in test mode; real-money checkout remains disabled until the Lemon store is activated and live credentials are configured.
+- **Billing / Pro:** USD 5/month monthly-only launch price is accepted. The ready Pro value pack includes up to 100 presets, 20-file batch Image Converter, 20-file batch Metadata Cleaner, 20-file batch Make It Fit, 10-file batch Under X MB and preset backup/restore. Lemon Squeezy checkout, signed webhooks, server-side subscription persistence and the customer-portal bridge are deployed in test mode; real-money checkout remains disabled until the Lemon store is activated and live credentials are configured.
 
 ## Important files
 
@@ -32,7 +32,7 @@ Production: https://droopweb.lat/
 - `site.webmanifest` / `icons/` — install metadata and home-screen icons.
 - `.github/workflows/production-smoke.yml` — live post-deploy HTTP smoke checks.
 - `docs/launch-checklist.md` — pre-launch source of truth.
-- `docs/billing-go-live.md` — live Lemon activation procedure.
+- `docs/billing-go-live.md` — live Lemon activation procedure.\n- `docs/google-oauth.md` — safe Google sign-in activation checklist.
 - `docs/service-inventory.md` — operating services, runtime dependencies and cost/revenue ledger starter.
 - `docs/licensing-and-sale.md` — MIT implications to keep in mind before a future sale.
 - `docs/pricing-proposal.md` — accepted USD 5/month Pro launch-price decision and review rules.
