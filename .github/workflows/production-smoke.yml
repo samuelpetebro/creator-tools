@@ -1,6 +1,8 @@
 name: Production smoke checks
 
 on:
+  schedule:
+    - cron: "17 10 * * *"
   push:
     branches:
       - main
