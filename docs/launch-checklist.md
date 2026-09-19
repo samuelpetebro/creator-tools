@@ -1,6 +1,6 @@
 # Droop launch checklist
 
-Updated: 2026-09-18
+Updated: 2026-09-19
 
 This file distinguishes **code present**, **deployed**, and **behavior actually tested**.
 
@@ -21,6 +21,8 @@ This file distinguishes **code present**, **deployed**, and **behavior actually 
 
 ## Accounts / presets
 
+- [x] Google sign-in is enabled in production; OAuth-only onboarding creates/uses the same profile path and does not expose password-change controls that do not apply.
+- [x] Cloudflare Turnstile is enabled on Droop auth flows and covered by static/browser smoke tests.
 - [x] Database integrity audit: no auth users without profiles, no orphan profiles/presets, no invalid plans and no duplicate preset names.
 - [x] Account page is bilingual (EN/ES) and uses the shared `droop-language` preference.
 - [x] Explicit “Create free account” CTAs open account signup mode directly.
@@ -63,7 +65,7 @@ This file distinguishes **code present**, **deployed**, and **behavior actually 
 
 ## Billing / Pro — do not go live yet
 
-- [x] Pro launch value pack prepared: 100 saved presets, batch Image Converter (20 files), batch Metadata Cleaner (20 files), batch Under X MB (10 files / one shared target), local ZIP batch download, and preset backup/restore. History and additional batch workflows remain roadmap items.
+- [x] Pro launch value pack prepared: 100 saved presets, batch Image Converter (20 files), batch Metadata Cleaner (20 files), batch Make It Fit (20 files), batch Under X MB (10 files / one shared target), batch Audio Converter, local ZIP downloads, synced Creator Profiles, synced Workflow Recipes, synced Brand Kits, local Recent Runs / Run Again, Release Pack Pro features, and preset backup/restore.
 - [x] Owner accepted USD 5/month, monthly-only for v1 on 2026-09-18. Public Pro copy may show the price; real-money checkout stays disabled until Lemon Live Mode is ready.
 - [x] Lemon Squeezy test store/product/variant identified: store 477243, product 1371942, actual Pro variant 2143724.
 - [x] Webhook hardened and deployed with store/variant/test-mode validation, persisted subscription ownership, idempotency and stale-event protection.

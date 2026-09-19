@@ -63,15 +63,22 @@ Ready launch benefits:
 - up to 100 saved presets (Free remains at 5)
 - batch Image Converter for up to 20 files
 - batch Metadata Cleaner for up to 20 files
+- batch Make It Fit for up to 20 files
 - batch Under X MB for up to 10 files under one shared target
-- local ZIP download for those batch results
+- batch Audio Converter
+- local ZIP downloads for supported batch results
+- custom Release Pack Pro workflow
+- up to 10 synced Creator Profiles
+- up to 20 synced Workflow Recipes with local execution
+- synced Brand Kits
+- local Recent Runs / Run Again
 - preset library backup and restore
 
 The database-enforced preset allowance is a hard entitlement. The local batch UI is intentionally client-side because media stays on the user's device; it is a product entitlement, not a cryptographic DRM boundary.
 
 Still intentionally deferred:
 - annual billing
-- history / repeat-export workflows
-- additional batch-enabled tools
+- custom dunning changes beyond the current entitlement policy
+- additional Pro expansion that is not required for the USD 5/month v1 launch
 
 Current entitlement policy keeps Pro for paused/past-due/cancelled-with-grace states and removes it for unpaid/expired. Revisit dunning only if real payment data shows a reason to change it.

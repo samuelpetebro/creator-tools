@@ -10,12 +10,12 @@ Production: https://droopweb.lat/
 
 - **Frontend / hosting:** plain HTML, CSS and JavaScript on GitHub Pages.
 - **Media processing:** local in the browser for supported tools. Some tools download WASM, processing packages or models at runtime.
-- **Accounts:** Supabase Auth. Email/password is live; Google OAuth frontend support is feature-flagged until the Google provider credentials are configured and real-account QA passes.
+- **Accounts:** Supabase Auth with email/password and Google sign-in live in production. OAuth-only accounts use the same profile/onboarding flow without requiring a separate Droop password.
 - **Account data:** Supabase Postgres with Row Level Security.
 - **Saved presets / Creator Profiles / Workflow Recipes:** reusable settings only; media files are not stored with them.
 - **Analytics:** Umami Cloud through the privacy-focused adapter in `js/analytics.js`.
 - **PWA shell:** manifest + raster icons + standalone display metadata. Droop does not currently claim offline support.
-- **Billing / Pro:** USD 5/month monthly-only launch price is accepted. The ready Pro value pack includes up to 100 presets, 20-file batch Image Converter, 20-file batch Metadata Cleaner, 20-file batch Make It Fit, 10-file batch Under X MB, a custom Release Pack builder, up to 10 synced Creator Profiles, up to 20 synced Workflow Recipes with local batch execution, local Recent Runs / Run Again and preset backup/restore. Lemon Squeezy checkout, signed webhooks, server-side subscription persistence and the customer-portal bridge are deployed in test mode; real-money checkout remains disabled until the Lemon store is activated and live credentials are configured.
+- **Billing / Pro:** USD 5/month monthly-only launch price is accepted. The ready Pro value pack includes up to 100 presets, 20-file batch Image Converter, 20-file batch Metadata Cleaner, 20-file batch Make It Fit, 10-file batch Under X MB, batch Audio Converter, a custom Release Pack builder, up to 10 synced Creator Profiles, up to 20 synced Workflow Recipes with local batch execution, synced Brand Kits, local Recent Runs / Run Again and preset backup/restore. Lemon Squeezy checkout, signed webhooks, server-side subscription persistence and the customer-portal bridge are validated in test mode; real-money checkout remains gated until the Lemon store is activated and live credentials are configured.
 
 ## Important files
 
@@ -23,7 +23,7 @@ Production: https://droopweb.lat/
 - `js/home-catalog.js` — catalog, search and homepage language handling.
 - `js/tool-i18n.js` — shared tool translations.
 - `account.html` / `js/account.js` — authentication and account workspace.
-- `js/cloud.js` — saved preset client.\n- `workflows.html` / `js/workflow-recipes.js` — Pro Workflow Recipe editor and local batch runner.\n- `js/workflow-history.js` — local-only recent-run snapshots for Run Again; no filenames or media.
+- `js/cloud.js` — saved preset client.\n- `workflows.html` / `js/workflow-recipes.js` — Pro Workflow Recipe editor and local batch runner.\n- `js/workflow-history.js` — local-only recent-run snapshots for Run Again; no filenames or media.\n- `js/brand-kits.js` / `js/brand-kit-apply.js` — synced Pro Brand Kits and local application helpers.
 - `js/analytics.js` — allowlisted analytics adapter.
 - `supabase/001_profiles_presets.sql` — account/preset schema.
 - `supabase/003_billing_subscriptions.sql` — server-only subscription persistence and webhook idempotency.\n- `supabase/004_creator_profiles.sql` / `005_creator_profile_active_rpc.sql` — Pro Creator Profile storage, RLS, limits and atomic activation.\n- `supabase/006_workflow_recipes.sql` — synced Pro Workflow Recipe definitions with RLS and server-side limits.
