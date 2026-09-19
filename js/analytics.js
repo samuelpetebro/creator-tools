@@ -11,7 +11,7 @@ function permitted(){try{return navigator.doNotTrack!=='1'&&navigator.globalPriv
 if(!permitted())return;
 const path=isNotFound?'/404.html':location.pathname==='/index.html'?'/':location.pathname.replace('/extract-audio/index.html','/extract-audio/');
 const tool=path==='/'?'home':path.split('/').filter(Boolean)[0].replace('.html','');
-const names=new Set(['process_start','process_complete','process_error','process_cancel','download_click','cta_account','cta_plans','cta_pro_early_access','signup_success','login_success','oauth_google_start','preset_save','preset_load','preset_delete','pro_batch_use','pro_custom_pack_use','pro_backup_export','pro_backup_import']);
+const names=new Set(['process_start','process_complete','process_error','process_cancel','download_click','cta_account','cta_plans','cta_pro_early_access','signup_success','login_success','oauth_google_start','preset_save','preset_load','preset_delete','pro_batch_use','pro_custom_pack_use','pro_creator_profile_save','pro_creator_profile_activate','pro_creator_profile_delete','pro_creator_profile_apply','pro_backup_export','pro_backup_import']);
 let loaded=false,failed=false,running=false,queue=[];
 const payload=name=>{
  let referrer='';try{const u=new URL(document.referrer);if(/^https?:$/.test(u.protocol)&&u.hostname!==location.hostname)referrer=u.origin;}catch(_){}
