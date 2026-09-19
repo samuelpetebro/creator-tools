@@ -21,6 +21,8 @@ This file distinguishes **code present**, **deployed**, and **behavior actually 
 
 ## Accounts / presets
 
+- [x] Google sign-in is enabled in production; OAuth-only onboarding creates/uses the same profile path and does not expose password-change controls that do not apply.
+- [x] Cloudflare Turnstile is enabled on Droop auth flows and covered by static/browser smoke tests.
 - [x] Database integrity audit: no auth users without profiles, no orphan profiles/presets, no invalid plans and no duplicate preset names.
 - [x] Account page is bilingual (EN/ES) and uses the shared `droop-language` preference.
 - [x] Explicit “Create free account” CTAs open account signup mode directly.
