@@ -189,6 +189,8 @@ await proPage.goto(base+'/workflows.html',{waitUntil:'domcontentloaded'});
 await proPage.waitForSelector('#workflow-pro:not([hidden])');
 assert(await proPage.locator('#workflow-locked').isHidden(),'Workflow Recipes must hide the upsell for a Pro account');
 assert((await proPage.locator('#workflow-usage').innerText()).trim()==='0 / 20','new Pro account should render an empty 20-recipe library');
+assert(await proPage.locator('#workflow-history-list .account-empty').isVisible(),'new browser should render an empty local Recent Runs state');
+assert(await proPage.locator('#workflow-history-clear').isHidden(),'clear-history control should stay hidden with no Recent Runs');
 await proContext.close();
 
 await page.setViewportSize({width:1365,height:900});
