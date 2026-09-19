@@ -74,7 +74,7 @@ await page.waitForSelector('#catalogGrid .catalog-card');
 assert((await page.locator('#hero-title').innerText()).includes('Everything you need'),'homepage hero must explain the product immediately');
 assert(await page.locator('#catalogGrid .catalog-card').count()===17,'homepage must expose all 17 launch tools');
 assert(await page.getByRole('link',{name:'Create a free account'}).first().getAttribute('href')==='account.html?mode=signup','homepage signup CTA must deep-link to signup mode');
-const proHome=page.getByRole('link',{name:/See Droop Pro · USD 5\/month/});
+const proHome=page.locator('a[href="pro.html"]').filter({hasText:'USD 5/month'});
 assert(await proHome.count()===1,'homepage must expose the Pro price/value CTA');
 await page.screenshot({path:`${outDir}/launch-home.png`,fullPage:true});
 
