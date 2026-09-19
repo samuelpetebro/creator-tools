@@ -34,8 +34,9 @@ button.addEventListener('click',async()=>{
   const target=format.value,bitrate=quality.value,isMp3=target==='mp3',outputExt=isMp3?'mp3':'wav';
   window.DroopAnalytics?.start?.();
   try{
-    const {engine,fetchFile}=await core.ready();
     core.setProgressSink?.((_,pct)=>say(tr(`Converting ${currentIndex+1} of ${files.length}… ${pct}%`,`Convirtiendo ${currentIndex+1} de ${files.length}… ${pct}%`)));
+    say(tr('Preparing audio engine…','Preparando motor de audio…'));
+    const {engine,fetchFile}=await core.ready();
     for(currentIndex=0;currentIndex<files.length;currentIndex++){
       const source=files[currentIndex],sourceExt=core.ext(source.name),inputName=`batch-audio-${currentIndex}-input.${sourceExt}`,outputName=`batch-audio-${currentIndex}-output.${outputExt}`;
       try{await engine.deleteFile(inputName);}catch(_){}
@@ -45,7 +46,7 @@ button.addEventListener('click',async()=>{
       const args=isMp3?['-i',inputName,'-vn','-map_metadata','0','-c:a','libmp3lame','-b:a',`${bitrate}k`,'-y',outputName]:['-i',inputName,'-vn','-map_metadata','0','-c:a','pcm_s16le','-ar','44100','-y',outputName];
       const code=await engine.exec(args);
       if(code!==0)throw new Error('ffmpeg');
-      const data=await engine.readFile(outputName),blob=new Blob([data.buffer],{type:isMp3?'audio/mpeg':'audio/wav'}),name=`${safeBase(source.name)}-converted.${outputExt}`;
+      const data=await engine.readFile(outputName),bytes=data.buffer.slice(data.byteOffset,data.byteOffset+data.byteLength),blob=new Blob([bytes],{type:isMp3?'audio/mpeg':'audio/wav'}),name=`${safeBase(source.name)}-converted.${outputExt}`;
       entries.push({name,blob});
       const li=document.createElement('li'),left=document.createElement('strong'),right=document.createElement('span');
       left.textContent=name;right.textContent=pretty(blob.size);li.append(left,right);list.appendChild(li);
