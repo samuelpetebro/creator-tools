@@ -1,0 +1,23 @@
+const fs=require('fs'),assert=require('assert');
+const html=fs.readFileSync('account.html','utf8');
+const js=fs.readFileSync('js/brand-kits.js','utf8');
+const sql=fs.readFileSync('supabase/008_brand_kits.sql','utf8');
+const analytics=fs.readFileSync('js/analytics.js','utf8');
+const pro=fs.readFileSync('pro.html','utf8');
+
+assert(html.includes('id="account-brand-kits"'),'account must expose the Pro Brand Kits workspace');
+assert(html.includes('js/brand-kits.js?v=1'),'account must load Brand Kit behavior');
+assert.doesNotThrow(()=>new Function(js),'Brand Kit client must remain valid JavaScript');
+assert(js.includes("const MAX=5"),'Brand Kits must cap the client workspace at 5 kits');
+assert(js.includes("profile?.plan==='pro'"),'Brand Kits must require a Pro profile');
+assert(js.includes("from('brand_kits')"),'Brand Kits must use the synced Brand Kits table');
+assert(js.includes("set_my_active_brand_kit"),'Brand Kits must switch active kits atomically');
+assert(js.includes("pro_brand_kit_save")&&js.includes("pro_brand_kit_activate")&&js.includes("pro_brand_kit_delete"),'Brand Kit activation events must remain privacy-safe');
+assert(sql.includes('enable row level security'),'Brand Kits table must enable RLS');
+assert(sql.includes("account_plan is distinct from 'pro'"),'Brand Kit writes must enforce Pro on the server');
+assert(sql.includes('current_count >= 5'),'Brand Kit writes must enforce the 5-kit server limit');
+assert(sql.includes('brand_kits_one_active_uidx'),'Brand Kits must enforce one active kit per user');
+assert(sql.includes('set_my_active_brand_kit'),'Brand Kits must expose the atomic active-kit RPC');
+assert(analytics.includes("'pro_brand_kit_save'")&&analytics.includes("'pro_brand_kit_activate'")&&analytics.includes("'pro_brand_kit_delete'"),'Brand Kit events must be analytics-allowlisted');
+assert(pro.includes('Up to 5 synced Brand Kits'),'Pro page must list the ready Brand Kit benefit');
+console.log('brand kit checks: ok');
