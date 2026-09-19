@@ -99,6 +99,13 @@ const proOverflow=await page.evaluate(()=>document.documentElement.scrollWidth-w
 assert(proOverflow<=2,`Pro page should not overflow mobile viewport (overflow ${proOverflow}px)`);
 await page.screenshot({path:`${outDir}/pro-mobile.png`,fullPage:true});
 
+await page.goto(base+'/workflows.html',{waitUntil:'domcontentloaded'});
+await page.waitForSelector('#workflow-locked');
+assert(await page.locator('#workflow-locked').isVisible(),'Workflow Recipes must show the Pro gate to guests');
+assert(await page.locator('#workflow-pro').isHidden(),'Workflow Recipes editor must stay hidden for guests');
+const workflowOverflow=await page.evaluate(()=>document.documentElement.scrollWidth-window.innerWidth);
+assert(workflowOverflow<=2,`Workflow Recipes should not overflow mobile viewport (overflow ${workflowOverflow}px)`);
+
 await page.goto(base+'/',{waitUntil:'domcontentloaded'});
 await page.waitForSelector('#catalogGrid .catalog-card');
 const toolPages=await page.locator('#catalogGrid .catalog-card').evaluateAll(nodes=>nodes.map(node=>new URL(node.href).pathname));
@@ -177,6 +184,11 @@ const [batchDownload]=await Promise.all([
   proPage.locator('#underXBatchDownload').click()
 ]);
 assert(batchDownload.suggestedFilename()==='droop-under-x-mb-batch.zip','Pro Under X MB ZIP filename must remain stable');
+
+await proPage.goto(base+'/workflows.html',{waitUntil:'domcontentloaded'});
+await proPage.waitForSelector('#workflow-pro:not([hidden])');
+assert(await proPage.locator('#workflow-locked').isHidden(),'Workflow Recipes must hide the upsell for a Pro account');
+assert((await proPage.locator('#workflow-usage').innerText()).trim()==='0 / 20','new Pro account should render an empty 20-recipe library');
 await proContext.close();
 
 await page.setViewportSize({width:1365,height:900});
