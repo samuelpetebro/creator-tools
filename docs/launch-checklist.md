@@ -97,3 +97,13 @@ This file distinguishes **code present**, **deployed**, and **behavior actually 
 - [x] One active profile per account, switched atomically.
 - [x] Active defaults apply to Make It Fit and Release Pack without storing media.
 - [ ] Real Pro-account browser smoke after live billing activation.
+
+
+## Workflow Recipes
+
+- [x] Recipe definitions sync in a dedicated RLS-protected Pro table.
+- [x] Server-side Pro entitlement and 20-recipe limit.
+- [x] Up to 20 images / 200 MB per local sequential run.
+- [x] Resize/crop, JPEG/WebP, quality, optional target size, safe filename templates and ZIP.
+- [x] Media stays local; only recipe settings sync.
+- [ ] Real Pro-account physical-device smoke after live billing activation.
