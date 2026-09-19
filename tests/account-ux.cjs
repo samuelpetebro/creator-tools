@@ -9,6 +9,10 @@ assert(accountJs.includes("params.get('mode')==='signup'"),'account must support
 assert(accountJs.includes("localStorage.setItem('droop-language',lang)"),'account language must persist');
 assert(accountJs.includes("resetPasswordForEmail"),'password recovery must remain available');
 assert(accountJs.includes("PASSWORD_RECOVERY"),'recovery event handling must remain available');
+assert(account.includes('id="account-onboarding"'),'account must expose first-login display-name onboarding');
+assert(accountJs.includes("needsName=!displayName"),'account must detect incomplete display-name setup');
+assert(accountJs.includes("hasPasswordProvider=providers.includes('email')"),'password controls must only show for accounts with an email/password identity');
+assert(accountJs.includes("ui.passwordForm.hidden=!hasPasswordProvider"),'OAuth-only accounts must not be prompted to manage a Droop password');
 assert(accountJs.includes("signup_success"),'successful signup must emit signup_success analytics');
 assert(accountJs.includes("login_success"),'successful login must emit login_success analytics');
 assert(tools.includes("const foot=$$('footer span')"),'tool translator must use querySelectorAll for footer spans');
