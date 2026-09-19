@@ -7,4 +7,5 @@
   .lang-switch{height:44px!important;min-height:44px!important;min-width:48px!important}
   .button{min-height:44px}
   .text-link{display:inline-flex;align-items:center;min-height:44px;padding:10px 2px}
+  .text-link[hidden]{display:none!important}
 }
