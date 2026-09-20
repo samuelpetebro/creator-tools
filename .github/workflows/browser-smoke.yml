@@ -1,6 +1,8 @@
 name: Browser smoke checks
 
 on:
+  schedule:
+    - cron: "41 10 * * 1"
   pull_request:
   push:
     branches:
