@@ -23,6 +23,7 @@ This defines what to measure before adding more product complexity.
    - `cta_account`
 
 6. **Create / use an account**
+   - `oauth_google_start` — started the Google OAuth path
    - `signup_success`
    - `login_success`
 
