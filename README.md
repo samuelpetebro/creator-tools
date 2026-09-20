@@ -23,16 +23,25 @@ Production: https://droopweb.lat/
 - `js/home-catalog.js` — catalog, search and homepage language handling.
 - `js/tool-i18n.js` — shared tool translations.
 - `account.html` / `js/account.js` — authentication and account workspace.
-- `js/cloud.js` — saved preset client.\n- `workflows.html` / `js/workflow-recipes.js` — Pro Workflow Recipe editor and local batch runner.\n- `js/workflow-history.js` — local-only recent-run snapshots for Run Again; no filenames or media.\n- `js/brand-kits.js` / `js/brand-kit-apply.js` — synced Pro Brand Kits and local application helpers.
+- `js/cloud.js` — saved preset client.
+- `workflows.html` / `js/workflow-recipes.js` — Pro Workflow Recipe editor and local batch runner.
+- `js/workflow-history.js` — local-only recent-run snapshots for Run Again; no filenames or media.
+- `js/brand-kits.js` / `js/brand-kit-apply.js` — synced Pro Brand Kits and local application helpers.
 - `js/analytics.js` — allowlisted analytics adapter.
 - `supabase/001_profiles_presets.sql` — account/preset schema.
-- `supabase/003_billing_subscriptions.sql` — server-only subscription persistence and webhook idempotency.\n- `supabase/004_creator_profiles.sql` / `005_creator_profile_active_rpc.sql` — Pro Creator Profile storage, RLS, limits and atomic activation.\n- `supabase/006_workflow_recipes.sql` — synced Pro Workflow Recipe definitions with RLS and server-side limits.
+- `supabase/003_billing_subscriptions.sql` — server-only subscription persistence and webhook idempotency.
+- `supabase/004_creator_profiles.sql` / `005_creator_profile_active_rpc.sql` — Pro Creator Profile storage, RLS, limits and atomic activation.
+- `supabase/006_workflow_recipes.sql` — synced Pro Workflow Recipe definitions with RLS and server-side limits.
 - `supabase/functions/lemonsqueezy-checkout/` — authenticated checkout creation.
 - `supabase/functions/lemonsqueezy-webhook/` — signed subscription webhook handler.
 - `site.webmanifest` / `icons/` — install metadata and home-screen icons.
-- `.github/workflows/production-smoke.yml` — live post-deploy HTTP smoke checks.
+- `.github/workflows/production-smoke.yml` — live post-deploy HTTP smoke checks plus a daily production check.
+- `.github/workflows/billing-endpoint-smoke.yml` — deployed billing security/availability smoke checks, also scheduled daily.
+- `.github/workflows/browser-smoke.yml` — Chromium journey/layout smoke on PRs, pushes and a weekly scheduled run.
 - `docs/launch-checklist.md` — pre-launch source of truth.
-- `docs/billing-go-live.md` — live Lemon activation procedure.\n- `docs/google-oauth.md` — safe Google sign-in activation checklist.
+- `docs/operations-runbook.md` — routine monitoring, incident triage and launch-day operating procedure.
+- `docs/billing-go-live.md` — live Lemon activation procedure.
+- `docs/google-oauth.md` — safe Google sign-in activation checklist.
 - `docs/service-inventory.md` — operating services, runtime dependencies and cost/revenue ledger starter.
 - `docs/licensing-and-sale.md` — MIT implications to keep in mind before a future sale.
 - `docs/pricing-proposal.md` — accepted USD 5/month Pro launch-price decision and review rules.
@@ -54,7 +63,9 @@ On PowerShell:
 Get-ChildItem tests/*.cjs | ForEach-Object { node $_.FullName; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE } }
 ```
 
-`tests/analytics-provider.cjs` is an optional provider-contract test and requires a separately downloaded official Umami tracker file as its argument, so CI intentionally skips that one file.\n\nAfter shared CSS/JS changes, also smoke-test the public site on desktop and mobile.
+`tests/analytics-provider.cjs` is an optional provider-contract test and requires a separately downloaded official Umami tracker file as its argument, so CI intentionally skips that one file.
+
+After shared CSS/JS changes, also smoke-test the public site on desktop and mobile.
 
 ## Security rules
 

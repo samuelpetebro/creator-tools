@@ -1,6 +1,6 @@
 # Droop launch checklist
 
-Updated: 2026-09-19
+Updated: 2026-09-20
 
 This file distinguishes **code present**, **deployed**, and **behavior actually tested**.
 
@@ -18,6 +18,14 @@ This file distinguishes **code present**, **deployed**, and **behavior actually 
 - [x] All HTML entry points use `viewport-fit=cover` and expose the iOS home-screen icon.
 - [x] Automated production smoke verifies a nested missing URL returns the custom 404 page.
 - [x] Browser smoke verifies `/?q=image` pre-fills the search and only returns image-category catalog cards.
+
+## Operations / monitoring
+
+- [x] Production smoke runs after `main` pushes and on a daily schedule against `https://droopweb.lat`.
+- [x] Billing endpoint smoke runs on PRs/pushes and daily against the deployed Supabase billing endpoints.
+- [x] Full Chromium browser smoke now also runs weekly in addition to PR/push coverage.
+- [x] Incident triage, secret-exposure response, billing launch checks and routine operating cadence are documented in `docs/operations-runbook.md`.
+- [ ] After Live billing launches, review the first real billing cycle against the operations runbook and record any new failure modes.
 
 ## Accounts / presets
 
@@ -47,7 +55,8 @@ This file distinguishes **code present**, **deployed**, and **behavior actually 
 
 ## SEO
 
-- [x] Sitemap source cleaned so it contains valid XML line breaks rather than literal `\\n` text.
+- [x] Sitemap source cleaned so it contains valid XML line breaks rather than literal `\
+` text.
 - [x] FAQ metadata / social preview tags / structured FAQ copy aligned with current account and Pro status.
 - [x] Search Console sitemap re-check: submitted 2026-09-17, downloaded successfully, 0 warnings/errors, 21 URLs submitted. The sitemap-level indexed counter still shows 0, so URL Inspection is treated as the more current signal.
 - [x] URL Inspection completed for homepage, image converter, Under X MB, video trimmer, FAQ and Pro. Homepage, Image Converter and Under X MB are `Submitted and indexed`; Video Trimmer, FAQ and Pro are currently `URL is unknown to Google`.
@@ -107,5 +116,6 @@ This file distinguishes **code present**, **deployed**, and **behavior actually 
 - [x] Server-side Pro entitlement and 20-recipe limit.
 - [x] Up to 20 images / 200 MB per local sequential run.
 - [x] Resize/crop, JPEG/WebP, quality, optional target size, safe filename templates and ZIP.
-- [x] Media stays local; only recipe settings sync.\n- [x] Recent Runs stay local to the browser and exclude filenames/media.
+- [x] Media stays local; only recipe settings sync.
+- [x] Recent Runs stay local to the browser and exclude filenames/media.
 - [ ] Real Pro-account physical-device smoke after live billing activation.
