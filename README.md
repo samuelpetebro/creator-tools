@@ -30,8 +30,11 @@ Production: https://droopweb.lat/
 - `supabase/functions/lemonsqueezy-checkout/` — authenticated checkout creation.
 - `supabase/functions/lemonsqueezy-webhook/` — signed subscription webhook handler.
 - `site.webmanifest` / `icons/` — install metadata and home-screen icons.
-- `.github/workflows/production-smoke.yml` — live post-deploy HTTP smoke checks.
+- `.github/workflows/production-smoke.yml` — live post-deploy HTTP smoke checks plus a daily production check.
+- `.github/workflows/billing-endpoint-smoke.yml` — deployed billing security/availability smoke checks, also scheduled daily.
+- `.github/workflows/browser-smoke.yml` — Chromium journey/layout smoke on PRs, pushes and a weekly scheduled run.
 - `docs/launch-checklist.md` — pre-launch source of truth.
+- `docs/operations-runbook.md` — routine monitoring, incident triage and launch-day operating procedure.
 - `docs/billing-go-live.md` — live Lemon activation procedure.\n- `docs/google-oauth.md` — safe Google sign-in activation checklist.
 - `docs/service-inventory.md` — operating services, runtime dependencies and cost/revenue ledger starter.
 - `docs/licensing-and-sale.md` — MIT implications to keep in mind before a future sale.
