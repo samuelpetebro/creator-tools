@@ -1,6 +1,6 @@
 # Droop launch checklist
 
-Updated: 2026-09-19
+Updated: 2026-09-20
 
 This file distinguishes **code present**, **deployed**, and **behavior actually tested**.
 
@@ -18,6 +18,14 @@ This file distinguishes **code present**, **deployed**, and **behavior actually 
 - [x] All HTML entry points use `viewport-fit=cover` and expose the iOS home-screen icon.
 - [x] Automated production smoke verifies a nested missing URL returns the custom 404 page.
 - [x] Browser smoke verifies `/?q=image` pre-fills the search and only returns image-category catalog cards.
+
+## Operations / monitoring
+
+- [x] Production smoke runs after `main` pushes and on a daily schedule against `https://droopweb.lat`.
+- [x] Billing endpoint smoke runs on PRs/pushes and daily against the deployed Supabase billing endpoints.
+- [x] Full Chromium browser smoke now also runs weekly in addition to PR/push coverage.
+- [x] Incident triage, secret-exposure response, billing launch checks and routine operating cadence are documented in `docs/operations-runbook.md`.
+- [ ] After Live billing launches, review the first real billing cycle against the operations runbook and record any new failure modes.
 
 ## Accounts / presets
 
