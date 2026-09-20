@@ -55,7 +55,8 @@ This file distinguishes **code present**, **deployed**, and **behavior actually 
 
 ## SEO
 
-- [x] Sitemap source cleaned so it contains valid XML line breaks rather than literal `\\n` text.
+- [x] Sitemap source cleaned so it contains valid XML line breaks rather than literal `\
+` text.
 - [x] FAQ metadata / social preview tags / structured FAQ copy aligned with current account and Pro status.
 - [x] Search Console sitemap re-check: submitted 2026-09-17, downloaded successfully, 0 warnings/errors, 21 URLs submitted. The sitemap-level indexed counter still shows 0, so URL Inspection is treated as the more current signal.
 - [x] URL Inspection completed for homepage, image converter, Under X MB, video trimmer, FAQ and Pro. Homepage, Image Converter and Under X MB are `Submitted and indexed`; Video Trimmer, FAQ and Pro are currently `URL is unknown to Google`.
@@ -115,5 +116,6 @@ This file distinguishes **code present**, **deployed**, and **behavior actually 
 - [x] Server-side Pro entitlement and 20-recipe limit.
 - [x] Up to 20 images / 200 MB per local sequential run.
 - [x] Resize/crop, JPEG/WebP, quality, optional target size, safe filename templates and ZIP.
-- [x] Media stays local; only recipe settings sync.\n- [x] Recent Runs stay local to the browser and exclude filenames/media.
+- [x] Media stays local; only recipe settings sync.
+- [x] Recent Runs stay local to the browser and exclude filenames/media.
 - [ ] Real Pro-account physical-device smoke after live billing activation.
