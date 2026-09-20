@@ -5,6 +5,7 @@ const readme = fs.readFileSync("README.md", "utf8");
 const checklist = fs.readFileSync("docs/launch-checklist.md", "utf8");
 const billing = fs.readFileSync("docs/billing-go-live.md", "utf8");
 const operations = fs.readFileSync("docs/operations-runbook.md", "utf8");
+const operationsLower = operations.toLowerCase();
 
 assert(!readme.includes("Google OAuth frontend support is feature-flagged"), "README still claims Google OAuth is feature-flagged");
 assert(readme.includes("Google sign-in live in production"), "README must document live Google sign-in");
@@ -23,9 +24,9 @@ assert(billing.includes("synced Brand Kits"), "Billing go-live runbook must incl
 assert(billing.includes("local Recent Runs / Run Again"), "Billing go-live runbook must include current Recent Runs value");
 assert(!billing.includes("history / repeat-export workflows"), "Billing go-live runbook contains a shipped feature in the deferred list");
 
-assert(operations.includes("daily production smoke"), "Operations runbook must document daily production smoke");
-assert(operations.includes("daily billing endpoint smoke"), "Operations runbook must document daily billing endpoint smoke");
-assert(operations.includes("weekly browser smoke"), "Operations runbook must document weekly browser smoke");
+assert(operationsLower.includes("daily production smoke"), "Operations runbook must document daily production smoke");
+assert(operationsLower.includes("daily billing endpoint smoke"), "Operations runbook must document daily billing endpoint smoke");
+assert(operationsLower.includes("weekly browser smoke"), "Operations runbook must document weekly browser smoke");
 assert(operations.includes("Never paste or commit secrets"), "Operations runbook must retain the secret-handling rule");
 
 console.log("✓ launch documentation matches current shipped state");
