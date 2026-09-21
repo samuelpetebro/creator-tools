@@ -48,6 +48,8 @@ This file distinguishes **code present**, **deployed**, and **behavior actually 
 
 ## Analytics
 
+- [x] Repository-level analytics contract audited: lifecycle coverage spans all 15 active processing tools; auth, presets and all shipped Pro workflow families have explicit success-side events; download controls use the trusted shared click path.
+
 - [x] Pageviews confirmed in the Umami dashboard after the tracker configuration update. Owner-observed 24h baseline on 2026-09-18: 11 visitors, 17 visits, 94 views, 47% bounce rate and 7m 41s visit duration. Treat this as mixed development/test traffic, not a clean acquisition baseline.
 - [ ] Confirm `process_start`, `process_complete`, `process_error`, `download_click`, `signup_success`, `login_success`, `preset_save`, `preset_load` and `preset_delete` arrive in Umami. `cta_account` and `cta_plans` are already visible. Processing lifecycle instrumentation is deployed across 15 active processing tools; download and CTA tracking ignore synthetic script-generated clicks, and preset engagement is instrumented on tools that support saved presets.
 - [ ] Treat CTA events as intent, not completed conversion.

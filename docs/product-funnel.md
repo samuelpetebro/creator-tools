@@ -1,6 +1,6 @@
 # Droop product funnel
 
-Updated: 2026-09-18
+Updated: 2026-09-20
 
 This defines what to measure before adding more product complexity.
 
@@ -23,6 +23,7 @@ This defines what to measure before adding more product complexity.
    - `cta_account`
 
 6. **Create / use an account**
+   - `oauth_google_start` — started the Google OAuth path
    - `signup_success`
    - `login_success`
 
@@ -37,6 +38,11 @@ This defines what to measure before adding more product complexity.
 
 9. **Use a Pro workflow**
    - `pro_batch_use` — completed a Pro batch workflow
+   - `pro_custom_pack_use` — completed a custom Release Pack
+   - `pro_creator_profile_save` / `pro_creator_profile_activate` / `pro_creator_profile_apply` / `pro_creator_profile_delete`
+   - `pro_brand_kit_save` / `pro_brand_kit_activate` / `pro_brand_kit_apply` / `pro_brand_kit_delete`
+   - `pro_recipe_save` / `pro_recipe_run` / `pro_recipe_delete`
+   - `pro_run_again` — repeated a recent local workflow
    - `pro_backup_export` — exported a preset library backup
    - `pro_backup_import` — restored a preset library backup
 
@@ -71,7 +77,7 @@ Once traffic is no longer dominated by owner/development testing, review:
 - preset activation: users who save or load at least one preset
 - plans intent (`cta_plans`)
 - explicit Pro interest (`cta_pro_early_access`)
-- Pro feature activation (`pro_batch_use`, `pro_backup_export`, `pro_backup_import`)
+- Pro feature activation by family: batch, custom pack, Creator Profiles, Brand Kits, Workflow Recipes, Run Again and backup/restore
 - live paid subscribers from Lemon/Supabase
 
 Do not optimize from single-digit impressions or a handful of development sessions.
@@ -84,3 +90,18 @@ Prioritize the tools that show both:
 2. successful completion/download behavior.
 
 Create demos/content around those tools first. Add new product features only when they improve a measured drop-off or a repeated user workflow.
+
+
+## Event contract audit
+
+As of 2026-09-20, the repository-level analytics audit verifies:
+
+- the shared adapter allowlists the funnel/auth/preset/Pro events above;
+- all 15 active processing tools emit lifecycle start + complete/error signals;
+- auth emits signup/login and Google OAuth-start signals;
+- preset save/load/delete emit only after successful actions;
+- each shipped Pro workflow family has a success-side event emitter;
+- trusted download controls use the shared `download_click` path, including individual Release Pack outputs and ZIP downloads;
+- analytics payloads contain only the allowlisted event name plus page/tool slug, language and origin-only external referrer.
+
+This code-level contract does **not** prove that every event has already appeared in the Umami dashboard. Provider receipt remains a separate live-data check.
