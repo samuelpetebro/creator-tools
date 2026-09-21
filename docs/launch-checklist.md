@@ -51,7 +51,7 @@ This file distinguishes **code present**, **deployed**, and **behavior actually 
 - [x] Repository-level analytics contract audited: lifecycle coverage spans all 15 active processing tools; auth, presets and all shipped Pro workflow families have explicit success-side events; download controls use the trusted shared click path.
 
 - [x] Pageviews confirmed in the Umami dashboard after the tracker configuration update. Owner-observed 24h baseline on 2026-09-18: 11 visitors, 17 visits, 94 views, 47% bounce rate and 7m 41s visit duration. Treat this as mixed development/test traffic, not a clean acquisition baseline.
-- [ ] Confirm `process_start`, `process_complete`, `process_error`, `download_click`, `signup_success`, `login_success`, `preset_save`, `preset_load` and `preset_delete` arrive in Umami. `cta_account` and `cta_plans` are already visible. Processing lifecycle instrumentation is deployed across 15 active processing tools; download and CTA tracking ignore synthetic script-generated clicks, and preset engagement is instrumented on tools that support saved presets.
+- [x] Live Umami receipt confirmed for the core Free funnel: `process_start`, `process_complete`, `download_click`, `signup_success`, `login_success`, `oauth_google_start`, `preset_save`, `preset_load`, `preset_delete`, `cta_account`, `cta_plans` and `cta_pro_early_access`. `process_error` remains intentionally unforced because it only represents a real processing failure; shipped Pro-only events will be validated during the controlled Live Pro smoke after Lemon activation.
 - [ ] Treat CTA events as intent, not completed conversion.
 - [ ] Performance/Core Web Vitals tracking is **not claimed as enabled** until a privacy-compatible implementation is tested in the Umami dashboard.
 
