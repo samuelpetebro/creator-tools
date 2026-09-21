@@ -105,3 +105,23 @@ As of 2026-09-20, the repository-level analytics audit verifies:
 - analytics payloads contain only the allowlisted event name plus page/tool slug, language and origin-only external referrer.
 
 This code-level contract does **not** prove that every event has already appeared in the Umami dashboard. Provider receipt remains a separate live-data check.
+
+
+## Live provider receipt
+
+Verified in Umami on 2026-09-21 for the production Free funnel:
+
+- `process_start`
+- `process_complete`
+- `download_click`
+- `signup_success`
+- `login_success`
+- `oauth_google_start`
+- `preset_save`
+- `preset_load`
+- `preset_delete`
+- `cta_account`
+- `cta_plans`
+- `cta_pro_early_access`
+
+`process_error` is not treated as missing simply because it has not been deliberately forced; it is expected only after a real processing failure. Pro-only event receipt remains a launch-day validation item because there is no Live Pro account yet.
