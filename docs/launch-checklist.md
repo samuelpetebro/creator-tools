@@ -60,10 +60,11 @@ This file distinguishes **code present**, **deployed**, and **behavior actually 
 - [x] Sitemap source cleaned so it contains valid XML line breaks rather than literal `\
 ` text.
 - [x] FAQ metadata / social preview tags / structured FAQ copy aligned with current account and Pro status.
-- [x] Search Console sitemap re-check: submitted 2026-09-17, downloaded successfully, 0 warnings/errors, 21 URLs submitted. The sitemap-level indexed counter still shows 0, so URL Inspection is treated as the more current signal.
-- [x] URL Inspection completed for homepage, image converter, Under X MB, video trimmer, FAQ and Pro. Homepage, Image Converter and Under X MB are `Submitted and indexed`; Video Trimmer, FAQ and Pro are currently `URL is unknown to Google`.
+- [x] Search Console sitemap re-check: submitted 2026-09-17, downloaded again on 2026-09-20, 0 warnings/errors, 22 URLs submitted. The sitemap-level indexed counter still shows 0, so URL Inspection is treated as the more current signal.
+- [x] URL Inspection refreshed on 2026-09-21. Homepage, Image Converter and Under X MB remain indexed. FAQ advanced to `Discovered - currently not indexed`; Video Trimmer and Pro remain `URL is unknown to Google`.
 - [ ] Treat “Page with redirect” as informational until the redirect target is checked.
 - [x] No repeated indexing requests issued. The currently unknown URLs are indexable, return 200, have self-canonicals and are allowed by robots; we will let discovery/crawling catch up before forcing more action.
+- [x] On-page audit of Pro, FAQ and Video Trimmer found 0 critical/high/medium issues; all three are indexable. Only low-severity content/title/schema notes remain, so no indexing blocker was identified.
 
 ## Privacy / PWA
 
