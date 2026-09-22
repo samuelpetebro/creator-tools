@@ -14,7 +14,7 @@ This file distinguishes **code present**, **deployed**, and **behavior actually 
 - [x] Shared tool translation selectors fixed so tool i18n and cloud preset loading do not abort at runtime.
 - [x] Latest `main` analytics coverage commit deployed successfully to GitHub Pages and passed the matching production smoke workflow.
 - [x] Automated Chromium smoke derives tool routes from the rendered catalog and covers desktop catalog rendering plus mobile homepage/search/language/account-signup/Pro navigation, all 17 active tool pages, runtime page errors, horizontal overflow, and guest preset-widget mounting on supported tools.
-- [ ] Manual phone visual smoke test remains pending; automated 390×844 Chromium layout checks and screenshots now run in CI.
+- [x] Manual physical-phone visual smoke completed on 2026-09-21: Home → tool → Account → Pro navigation rendered correctly with no reported clipping, unusable controls or horizontal-layout issues. Automated 390×844 Chromium layout checks and screenshots remain in CI.
 - [x] All HTML entry points use `viewport-fit=cover` and expose the iOS home-screen icon.
 - [x] Automated production smoke verifies a nested missing URL returns the custom 404 page.
 - [x] Browser smoke verifies `/?q=image` pre-fills the search and only returns image-category catalog cards.
@@ -44,7 +44,7 @@ This file distinguishes **code present**, **deployed**, and **behavior actually 
 - [x] Verified authenticated clients have no direct UPDATE privilege on `profiles` and no SELECT access to server-only billing tables.
 - [x] Reconfirmed after the migration that authenticated users cannot directly update `profiles.plan`; unrelated authenticated user IDs see zero profile/preset rows.
 - [x] Browser roles were stripped of unnecessary `TRUNCATE`, `REFERENCES` and `TRIGGER` privileges on account/preset/billing tables; row-level app access remains unchanged.
-- [ ] Physical-phone account/preset smoke test remains pending; automated 390×844 signed-in account coverage now includes profile, password and preset deletion flows.
+- [x] Physical-phone account/preset smoke completed on 2026-09-21: signed-in tool use, media processing/download and preset save/load behavior worked correctly. Automated 390×844 signed-in account coverage continues to cover profile, password and preset deletion flows.
 
 ## Analytics
 
@@ -70,7 +70,7 @@ This file distinguishes **code present**, **deployed**, and **behavior actually 
 
 - [x] Privacy page documents local media processing, Umami and Supabase account/preset data.
 - [x] Chromium DevTools installability diagnostics report no blockers in CI, and the browser discovers the deployed-shape manifest configuration.
-- [ ] Physical install test in Chrome/Edge Android/desktop after deployment remains pending.
+- [x] Physical install/add-to-home-screen smoke completed on 2026-09-21 on the tested mobile browser and desktop Chrome; the installed/standalone launch opened correctly. No offline-support claim is made because Droop still has no service worker.
 - [x] Added non-transparent 192px/512px raster icons, maskable 512px icon and iOS touch icon.
 - [x] Manifest now includes stable `id`, standalone display, raster icons and shortcuts.
 - [ ] Do not claim offline support; no service worker exists.
@@ -95,7 +95,7 @@ This file distinguishes **code present**, **deployed**, and **behavior actually 
 - [x] Pro page clearly separates Free, ready Pro benefits, and planned features; public launch price is USD 5/month while checkout remains disabled until Lemon Live Mode.
 - [ ] Use real Umami data to identify the most-used tools.
 - [x] Added a privacy-safe Pro interest button that emits only the allowlisted `cta_pro_early_access` event (tool/page slug only; no email or free text).
-- [ ] Measure visit → tool use → account → preset engagement → Pro intent → Pro feature use → payment using the definitions in `docs/product-funnel.md`.
+- [ ] Free funnel through Pro intent is now live-validated in Umami. Remaining measurement gap is Pro feature use → real payment, which requires Lemon Live and a controlled real Pro subscription.
 - [ ] Create demos/content around the strongest tools instead of adding metadata indefinitely.
 
 ## Licensing / future sale
