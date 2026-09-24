@@ -36,6 +36,7 @@ Production: https://droopweb.lat/
 - `supabase/functions/paypal-checkout/` — authenticated PayPal subscription creation.
 - `supabase/functions/paypal-webhook/` — PayPal webhook verification + subscription persistence.
 - `supabase/functions/paypal-subscription/` — authenticated PayPal subscription status lookup.
+- `supabase/functions/paypal-cancel/` — authenticated owner-only cancellation of future PayPal renewals.
 - `supabase/functions/lemonsqueezy-*` — retained temporarily as rollback/history while PayPal is validated.
 - `site.webmanifest` / `icons/` — install metadata and home-screen icons.
 - `.github/workflows/production-smoke.yml` — live post-deploy HTTP smoke checks plus a daily production check.
