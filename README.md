@@ -15,7 +15,7 @@ Production: https://droopweb.lat/
 - **Saved presets / Creator Profiles / Workflow Recipes:** reusable settings only; media files are not stored with them.
 - **Analytics:** Umami Cloud through the privacy-focused adapter in `js/analytics.js`.
 - **PWA shell:** manifest + raster icons + standalone display metadata. Droop does not currently claim offline support.
-- **Billing / Pro:** USD 5/month monthly-only launch price is accepted. The ready Pro value pack includes up to 100 presets, batch image/audio workflows, Creator Profiles, Workflow Recipes, Brand Kits, Recent Runs and preset backup/restore. Billing is migrating from the rejected Lemon Squeezy merchant application to PayPal Subscriptions. PayPal persistence and Edge Functions are staged in sandbox mode; real-money checkout remains gated until sandbox checkout, verified webhooks and entitlement tests pass with the owner's PayPal app.
+- **Billing / Pro:** USD 5/month monthly-only launch price is accepted. The ready Pro value pack includes up to 100 presets, 20-file batch Image Converter, 20-file batch Metadata Cleaner, 20-file batch Make It Fit, 10-file batch Under X MB, batch Audio Converter, a custom Release Pack builder, up to 10 synced Creator Profiles, up to 20 synced Workflow Recipes, synced Brand Kits, local Recent Runs / Run Again and preset backup/restore. Billing is migrating from the rejected Lemon Squeezy merchant application to PayPal Subscriptions. PayPal persistence and Edge Functions are staged in sandbox mode; real-money checkout remains gated until sandbox checkout, verified webhooks and entitlement tests pass with the owner's PayPal app.
 
 ## Important files
 
