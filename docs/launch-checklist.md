@@ -84,7 +84,8 @@ This file distinguishes **code present**, **deployed**, and **behavior actually 
 - [x] PayPal sandbox is structurally prevented from granting production Pro.
 - [ ] Create/configure the PayPal sandbox REST app, USD 5/month Plan ID and webhook ID.
 - [ ] Set sandbox PayPal secrets in Supabase and run the controlled sandbox subscription lifecycle.
-- [ ] Add/verify customer self-service cancellation/management before public paid launch.
+- [x] Authenticated PayPal self-service cancellation endpoint and account UX are staged.
+- [ ] Verify cancellation end-to-end in PayPal sandbox (future renewals stop and verified webhook updates Droop state) before public paid launch.
 - [ ] Create live PayPal credentials/plan/webhook, flip `PAYPAL_SANDBOX=false`, run one controlled real subscription and confirm FREE → PRO → expiry/cancel lifecycle.
 - [ ] Only after the live smoke passes set `billingLiveEnabled=true` and expose the public paid CTA.
 - [ ] Keep Lemon endpoints only as temporary rollback/history until PayPal completes a successful real billing cycle.
