@@ -77,7 +77,7 @@ This file distinguishes **code present**, **deployed**, and **behavior actually 
 
 ## Billing / Pro — do not go live yet
 
-- [x] Pro launch value pack prepared; price remains USD 5/month monthly-only for v1.
+- [x] Pro launch value pack prepared; price remains USD 5/month monthly-only for v1. Current shipped value includes 100 presets, batch Audio Converter and image workflows, synced Creator Profiles, synced Workflow Recipes, synced Brand Kits, local Recent Runs / Run Again, custom Release Pack and preset backup/restore.
 - [x] Lemon test-mode integration was technically validated, but the Lemon merchant application was rejected; Lemon is no longer the planned production processor.
 - [x] PayPal billing persistence + idempotent webhook tables installed with RLS and no browser access.
 - [x] PayPal checkout, verified webhook and subscription-status Edge Functions deployed with custom authentication/signature checks.
