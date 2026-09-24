@@ -10,7 +10,7 @@ Already complete:
 
 - Droop Pro price remains **USD 5/month**, monthly only for v1.
 - PayPal server-only tables and webhook-event idempotency are installed in Supabase.
-- `paypal-checkout`, `paypal-webhook` and `paypal-subscription` Edge Functions are deployed with custom auth/signature validation.
+- `paypal-checkout`, `paypal-webhook`, `paypal-subscription` and `paypal-cancel` Edge Functions are deployed with custom auth/signature validation.
 - Browser roles have no direct access to PayPal billing tables.
 - Sandbox subscriptions are explicitly prevented from granting production Pro.
 - Existing Lemon test rows remain isolated and do not grant production Pro.
@@ -66,7 +66,7 @@ After the secrets exist:
 9. Confirm duplicate webhook delivery is idempotent.
 10. Confirm an older webhook cannot overwrite a newer subscription state.
 11. Exercise cancel/suspend/activate in sandbox and verify state changes.
-12. Only after this passes, add the in-Droop cancellation/management UX required for launch.
+12. Verify the staged in-Droop cancellation control calls `paypal-cancel`, PayPal stops future renewals, and the verified webhook updates the local subscription state.
 
 ## Live transition
 
@@ -93,7 +93,7 @@ Do not reuse sandbox credentials or Plan IDs.
    - Umami records the expected Pro feature events after use.
 8. Cancel the controlled subscription and verify the chosen paid-through/grace behavior.
 9. Confirm expiry/cancellation eventually returns the account to FREE.
-10. Add/verify customer self-service cancellation before public launch.
+10. Re-verify customer self-service cancellation against the live PayPal subscription before public launch.
 11. Set `billingLiveEnabled=true` only after every check above is green.
 12. Remove/tombstone Lemon endpoints only after PayPal has completed a real billing cycle without issues.
 
