@@ -12,6 +12,8 @@ assert(js.includes("const hideCheckout=billingReturn||livePro"),'existing Pro ac
 assert(js.includes("ui.billingManage.textContent=liveContext?t('billingLiveManageButton'):t('billingManageButton')"),'live subscription management must use production copy');
 assert(js.includes("billingLivePortalLoading:'Loading your subscription…'"),'live subscription management must not reuse test loading copy');
 assert(js.includes("state(ui.billingStatus,t('billingLivePortalReady').replace('{status}',statusText))"),'live subscription status must be visible to the account owner');
-assert(js.includes("ui.billingManage?.addEventListener('click',()=>{if(billingPortalUrl)location.assign(billingPortalUrl);})"),'Manage subscription must open the server-provided customer portal');
+assert(js.includes("/functions/v1/paypal-cancel"),'Subscription management must use the authenticated PayPal cancellation endpoint');
+assert(js.includes("billingCancelConfirm"),'Cancellation must require explicit owner confirmation');
+assert(js.includes("ui.billingManage.disabled=true"),'Cancellation control must prevent duplicate requests');
 
 console.log('Pro subscription management checks: ok');
