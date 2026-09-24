@@ -1,6 +1,6 @@
 # Droop launch checklist
 
-Updated: 2026-09-20
+Updated: 2026-09-24
 
 This file distinguishes **code present**, **deployed**, and **behavior actually tested**.
 
@@ -51,7 +51,7 @@ This file distinguishes **code present**, **deployed**, and **behavior actually 
 - [x] Repository-level analytics contract audited: lifecycle coverage spans all 15 active processing tools; auth, presets and all shipped Pro workflow families have explicit success-side events; download controls use the trusted shared click path.
 
 - [x] Pageviews confirmed in the Umami dashboard after the tracker configuration update. Owner-observed 24h baseline on 2026-09-18: 11 visitors, 17 visits, 94 views, 47% bounce rate and 7m 41s visit duration. Treat this as mixed development/test traffic, not a clean acquisition baseline.
-- [x] Live Umami receipt confirmed for the core Free funnel: `process_start`, `process_complete`, `download_click`, `signup_success`, `login_success`, `oauth_google_start`, `preset_save`, `preset_load`, `preset_delete`, `cta_account`, `cta_plans` and `cta_pro_early_access`. `process_error` remains intentionally unforced because it only represents a real processing failure; shipped Pro-only events will be validated during the controlled Live Pro smoke after Lemon activation.
+- [x] Live Umami receipt confirmed for the core Free funnel: `process_start`, `process_complete`, `download_click`, `signup_success`, `login_success`, `oauth_google_start`, `preset_save`, `preset_load`, `preset_delete`, `cta_account`, `cta_plans` and `cta_pro_early_access`. `process_error` remains intentionally unforced because it only represents a real processing failure; shipped Pro-only events will be validated during the controlled Live Pro smoke after PayPal live activation.
 - [ ] Treat CTA events as intent, not completed conversion.
 - [ ] Performance/Core Web Vitals tracking is **not claimed as enabled** until a privacy-compatible implementation is tested in the Umami dashboard.
 
@@ -77,17 +77,18 @@ This file distinguishes **code present**, **deployed**, and **behavior actually 
 
 ## Billing / Pro — do not go live yet
 
-- [x] Pro launch value pack prepared: 100 saved presets, batch Image Converter (20 files), batch Metadata Cleaner (20 files), batch Make It Fit (20 files), batch Under X MB (10 files / one shared target), batch Audio Converter, local ZIP downloads, synced Creator Profiles, synced Workflow Recipes, synced Brand Kits, local Recent Runs / Run Again, Release Pack Pro features, and preset backup/restore.
-- [x] Owner accepted USD 5/month, monthly-only for v1 on 2026-09-18. Public Pro copy may show the price; real-money checkout stays disabled until Lemon Live Mode is ready.
-- [x] Lemon Squeezy test store/product/variant identified: store 477243, product 1371942, actual Pro variant 2143724.
-- [x] Webhook hardened and deployed with store/variant/test-mode validation, persisted subscription ownership, idempotency and stale-event protection.
-- [x] Lemon webhook Edge Function deployed with JWT verification disabled; HMAC signature validation remains inside the function.
-- [x] Checkout Edge Function authenticates the bearer token inside the handler; browser checkout sends the current user JWT and publishable key explicitly and never accepts a browser-provided plan.
-- [x] First Lemon test checkout persisted correctly. Cancel → resume → pause → unpause webhooks were observed, final test subscription returned to active, and test purchases kept the Droop profile on FREE.
-- [x] Rollback-safe DB audit verified duplicate-event idempotency, stale-event rejection, live active → PRO entitlement and live expired → FREE revocation.
-- [x] Signed portal URL generation was verified, but Lemon blocks the hosted customer portal until the store is activated. Droop now treats this as an activation blocker instead of surfacing a dead test-mode portal link.
-- [ ] After Lemon activates the store, verify the live customer portal from a physical browser.
-- [ ] Activate the Lemon store, copy the tested product to Live Mode, create live API/webhook credentials, replace Store/Variant IDs with the live IDs, flip both mode flags to `false`, and re-run the full checkout/webhook/entitlement smoke test before exposing a paid CTA.
+- [x] Pro launch value pack prepared; price remains USD 5/month monthly-only for v1. Current shipped value includes 100 presets, batch Audio Converter and image workflows, synced Creator Profiles, synced Workflow Recipes, synced Brand Kits, local Recent Runs / Run Again, custom Release Pack and preset backup/restore.
+- [x] Lemon test-mode integration was technically validated, but the Lemon merchant application was rejected; Lemon is no longer the planned production processor.
+- [x] PayPal billing persistence + idempotent webhook tables installed with RLS and no browser access.
+- [x] PayPal checkout, verified webhook and subscription-status Edge Functions deployed with custom authentication/signature checks.
+- [x] PayPal sandbox is structurally prevented from granting production Pro.
+- [ ] Create/configure the PayPal sandbox REST app, USD 5/month Plan ID and webhook ID.
+- [ ] Set sandbox PayPal secrets in Supabase and run the controlled sandbox subscription lifecycle.
+- [x] Authenticated PayPal self-service cancellation endpoint and account UX are staged.
+- [ ] Verify cancellation end-to-end in PayPal sandbox (future renewals stop and verified webhook updates Droop state) before public paid launch.
+- [ ] Create live PayPal credentials/plan/webhook, flip `PAYPAL_SANDBOX=false`, run one controlled real subscription and confirm FREE → PRO → expiry/cancel lifecycle.
+- [ ] Only after the live smoke passes set `billingLiveEnabled=true` and expose the public paid CTA.
+- [ ] Keep Lemon endpoints only as temporary rollback/history until PayPal completes a successful real billing cycle.
 
 ## Product / acquisition
 
@@ -95,7 +96,7 @@ This file distinguishes **code present**, **deployed**, and **behavior actually 
 - [x] Pro page clearly separates Free, ready Pro benefits, and planned features; public launch price is USD 5/month while checkout remains disabled until Lemon Live Mode.
 - [ ] Use real Umami data to identify the most-used tools.
 - [x] Added a privacy-safe Pro interest button that emits only the allowlisted `cta_pro_early_access` event (tool/page slug only; no email or free text).
-- [ ] Free funnel through Pro intent is now live-validated in Umami. Remaining measurement gap is Pro feature use → real payment, which requires Lemon Live and a controlled real Pro subscription.
+- [ ] Free funnel through Pro intent is now live-validated in Umami. Remaining measurement gap is Pro feature use → real payment, which requires PayPal live billing and a controlled real Pro subscription.
 - [ ] Create demos/content around the strongest tools instead of adding metadata indefinitely.
 
 ## Licensing / future sale

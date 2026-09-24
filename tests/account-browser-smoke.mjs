@@ -203,17 +203,17 @@ await billing.route('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2',route
 );
 let checkoutRequestHeaders=null;
 let portalRequestHeaders=null;
-await billing.route('https://qbzqiiinugidkdxcpdln.supabase.co/functions/v1/lemonsqueezy-portal',async route=>{portalRequestHeaders=await route.request().allHeaders();await route.fulfill({status:404,contentType:'application/json',body:JSON.stringify({error:'No manageable subscription'})});});
-await billing.route('https://qbzqiiinugidkdxcpdln.supabase.co/functions/v1/lemonsqueezy-checkout',async route=>{
+await billing.route('https://qbzqiiinugidkdxcpdln.supabase.co/functions/v1/paypal-subscription',async route=>{portalRequestHeaders=await route.request().allHeaders();await route.fulfill({status:404,contentType:'application/json',body:JSON.stringify({error:'No manageable subscription'})});});
+await billing.route('https://qbzqiiinugidkdxcpdln.supabase.co/functions/v1/paypal-checkout',async route=>{
   checkoutRequestHeaders=await route.request().allHeaders();
-  await route.fulfill({status:200,contentType:'application/json',headers:{'access-control-allow-origin':base},body:JSON.stringify({url:'https://app.lemonsqueezy.com/checkout/test-droop'})});
+  await route.fulfill({status:200,contentType:'application/json',headers:{'access-control-allow-origin':base},body:JSON.stringify({url:'https://www.sandbox.paypal.com/checkoutnow?token=test-droop'})});
 });
-await billing.route('https://app.lemonsqueezy.com/**',route=>route.fulfill({status:200,contentType:'text/html',body:'<title>Lemon test</title>'}));
+await billing.route('https://www.sandbox.paypal.com/**',route=>route.fulfill({status:200,contentType:'text/html',body:'<title>PayPal sandbox test</title>'}));
 await billing.goto(base+'/account.html?billing_test=1',{waitUntil:'domcontentloaded'});
 await billing.waitForSelector('#billing-test-panel:not([hidden])');
 assert((await billing.locator('#billing-test-checkout').innerText()).includes('prueba'),'billing test CTA should render in Spanish');
 await Promise.all([
-  billing.waitForURL('https://app.lemonsqueezy.com/**'),
+  billing.waitForURL('https://www.sandbox.paypal.com/**'),
   billing.locator('#billing-test-checkout').click()
 ]);
 assert(checkoutRequestHeaders?.authorization==='Bearer test-user-jwt','billing checkout request must send the signed-in JWT explicitly');
@@ -231,11 +231,12 @@ await returned.goto(base+'/account.html?billing=success',{waitUntil:'domcontentl
 await returned.waitForSelector('#billing-test-panel:not([hidden])');
 assert((await returned.locator('#billing-test-status').innerText()).includes('sigue en FREE'),'test checkout return must explain that production plan stays Free');
 assert(await returned.locator('#billing-test-checkout').isHidden(),'return state should hide the test checkout button');
-await returned.route('https://qbzqiiinugidkdxcpdln.supabase.co/functions/v1/lemonsqueezy-portal',async route=>route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({url:null,portal_available:false,reason:'store_activation_required',status:'active',cancelled:false,renews_at:'2026-10-18T20:57:59Z',ends_at:null,test_mode:true})}));
+await returned.route('https://qbzqiiinugidkdxcpdln.supabase.co/functions/v1/paypal-subscription',async route=>route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({status:'active',sandbox:true,next_billing_at:'2026-10-18T20:57:59Z',subscription_id:'I-TEST-DROOP'})}));
 await returned.reload({waitUntil:'domcontentloaded'});
 await returned.waitForFunction(()=>document.querySelector('#billing-test-status')?.textContent.includes('active'));
-assert((await returned.locator('#billing-test-status').innerText()).includes('modo live'),'test subscription should explain that Lemon management waits for live store activation');
-assert(await returned.locator('#billing-manage').isHidden(),'test mode should not expose a customer portal that Lemon refuses before activation');
+assert((await returned.locator('#billing-test-status').innerText()).includes('active'),'PayPal sandbox subscription status should be visible');
+assert(await returned.locator('#billing-manage').isVisible(),'active PayPal sandbox subscription should expose cancellation');
+assert((await returned.locator('#billing-manage').innerText()).toLowerCase().includes('cancelar'),'sandbox subscription management should be cancellation, not a Lemon portal');
 assert(await returned.locator('#billing-test-checkout').isHidden(),'existing test subscription should hide the create-checkout button');
 await returnCtx.close();
 

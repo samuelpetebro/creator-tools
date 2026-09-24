@@ -15,7 +15,7 @@ Production: https://droopweb.lat/
 - **Saved presets / Creator Profiles / Workflow Recipes:** reusable settings only; media files are not stored with them.
 - **Analytics:** Umami Cloud through the privacy-focused adapter in `js/analytics.js`.
 - **PWA shell:** manifest + raster icons + standalone display metadata. Droop does not currently claim offline support.
-- **Billing / Pro:** USD 5/month monthly-only launch price is accepted. The ready Pro value pack includes up to 100 presets, 20-file batch Image Converter, 20-file batch Metadata Cleaner, 20-file batch Make It Fit, 10-file batch Under X MB, batch Audio Converter, a custom Release Pack builder, up to 10 synced Creator Profiles, up to 20 synced Workflow Recipes with local batch execution, synced Brand Kits, local Recent Runs / Run Again and preset backup/restore. Lemon Squeezy checkout, signed webhooks, server-side subscription persistence and the customer-portal bridge are validated in test mode; real-money checkout remains gated until the Lemon store is activated and live credentials are configured.
+- **Billing / Pro:** USD 5/month monthly-only launch price is accepted. The ready Pro value pack includes up to 100 presets, 20-file batch Image Converter, 20-file batch Metadata Cleaner, 20-file batch Make It Fit, 10-file batch Under X MB, batch Audio Converter, a custom Release Pack builder, up to 10 synced Creator Profiles, up to 20 synced Workflow Recipes, synced Brand Kits, local Recent Runs / Run Again and preset backup/restore. Billing is migrating from the rejected Lemon Squeezy merchant application to PayPal Subscriptions. PayPal persistence and Edge Functions are staged in sandbox mode; real-money checkout remains gated until sandbox checkout, verified webhooks and entitlement tests pass with the owner's PayPal app.
 
 ## Important files
 
@@ -29,18 +29,22 @@ Production: https://droopweb.lat/
 - `js/brand-kits.js` / `js/brand-kit-apply.js` — synced Pro Brand Kits and local application helpers.
 - `js/analytics.js` — allowlisted analytics adapter.
 - `supabase/001_profiles_presets.sql` — account/preset schema.
-- `supabase/003_billing_subscriptions.sql` — server-only subscription persistence and webhook idempotency.
+- `supabase/003_billing_subscriptions.sql` — legacy Lemon test-mode subscription persistence.
+- `supabase/009_paypal_billing.sql` — PayPal subscription persistence, webhook idempotency and entitlement bridge.
 - `supabase/004_creator_profiles.sql` / `005_creator_profile_active_rpc.sql` — Pro Creator Profile storage, RLS, limits and atomic activation.
 - `supabase/006_workflow_recipes.sql` — synced Pro Workflow Recipe definitions with RLS and server-side limits.
-- `supabase/functions/lemonsqueezy-checkout/` — authenticated checkout creation.
-- `supabase/functions/lemonsqueezy-webhook/` — signed subscription webhook handler.
+- `supabase/functions/paypal-checkout/` — authenticated PayPal subscription creation.
+- `supabase/functions/paypal-webhook/` — PayPal webhook verification + subscription persistence.
+- `supabase/functions/paypal-subscription/` — authenticated PayPal subscription status lookup.
+- `supabase/functions/paypal-cancel/` — authenticated owner-only cancellation of future PayPal renewals.
+- `supabase/functions/lemonsqueezy-*` — retained temporarily as rollback/history while PayPal is validated.
 - `site.webmanifest` / `icons/` — install metadata and home-screen icons.
 - `.github/workflows/production-smoke.yml` — live post-deploy HTTP smoke checks plus a daily production check.
 - `.github/workflows/billing-endpoint-smoke.yml` — deployed billing security/availability smoke checks, also scheduled daily.
 - `.github/workflows/browser-smoke.yml` — Chromium journey/layout smoke on PRs, pushes and a weekly scheduled run.
 - `docs/launch-checklist.md` — pre-launch source of truth.
 - `docs/operations-runbook.md` — routine monitoring, incident triage and launch-day operating procedure.
-- `docs/billing-go-live.md` — live Lemon activation procedure.
+- `docs/billing-go-live.md` — PayPal sandbox → live billing runbook.
 - `docs/google-oauth.md` — safe Google sign-in activation checklist.
 - `docs/service-inventory.md` — operating services, runtime dependencies and cost/revenue ledger starter.
 - `docs/licensing-and-sale.md` — MIT implications to keep in mind before a future sale.
@@ -69,10 +73,10 @@ After shared CSS/JS changes, also smoke-test the public site on desktop and mobi
 
 ## Security rules
 
-- Never commit a Supabase `service_role` key, Lemon Squeezy webhook secret or other server credential.
+- Never commit a Supabase secret/service-role key, PayPal client secret, PayPal webhook ID or other server credential.
 - Browser code may contain the Supabase publishable key; access control must be enforced by RLS.
 - A user's `plan` must only be changed by trusted server-side code.
-- Keep Lemon billing in test mode until the store is activated and the live-mode checklist in `docs/billing-go-live.md` is completed.
+- Keep PayPal billing in sandbox and `billingLiveEnabled=false` until the PayPal runbook and controlled subscription smoke are completed.
 
 ## Deployment
 

@@ -8,3 +8,21 @@ verify_jwt = false
 [functions.lemonsqueezy-portal]
 # The handler validates the signed-in Supabase user itself.
 verify_jwt = false
+
+
+[functions.paypal-webhook]
+# External PayPal calls are verified inside the handler.
+verify_jwt = false
+
+[functions.paypal-checkout]
+# The handler validates the signed-in Supabase user itself.
+verify_jwt = false
+
+[functions.paypal-subscription]
+# The handler validates the signed-in Supabase user itself.
+verify_jwt = false
+
+
+[functions.paypal-cancel]
+# The handler authenticates the user and only cancels their own persisted subscription.
+verify_jwt = false
