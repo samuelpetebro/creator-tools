@@ -10,13 +10,13 @@ assert.doesNotThrow(()=>new Function(termsJs),'Terms translation script must rem
 assert.doesNotThrow(()=>new Function(privacyJs),'Privacy script must remain valid JavaScript');
 
 assert(terms.includes('Droop Pro subscriptions'),'Terms must explain Pro subscriptions');
-assert(terms.includes('Lemon Squeezy'),'Terms must identify the billing provider');
-assert(terms.includes('merchant of record'),'Terms must explain Lemon Squeezy merchant-of-record role');
+assert(terms.includes('PayPal'),'Terms must identify the billing provider');
+assert(!terms.includes('merchant of record'),'Terms must not misrepresent PayPal as merchant of record');
 assert(terms.includes('Cancellation'),'Terms must explain cancellation');
 assert(terms.includes('Refunds'),'Terms must include a refund section');
 assert(terms.includes('privacy.html'),'Terms must link to Privacy');
 
-for(const provider of ['Supabase','Google','Resend','Cloudflare','Lemon Squeezy','Umami']){
+for(const provider of ['Supabase','Google','Resend','Cloudflare','PayPal','Umami']){
   assert(privacy.includes(provider)||privacyJs.includes(provider),`Privacy must disclose ${provider}`);
 }
 
